@@ -1,0 +1,37 @@
+package chrislo27.bot.util;
+
+public class Utils {
+
+	public static String getContent(String[] args, int start) {
+		String content = "";
+		for (int i = start; i < args.length; i++) {
+			content += args[i];
+			if (i != args.length - 1) {
+				content += " ";
+			}
+		}
+
+		return content;
+	}
+
+	public static String stripExtension(String fileName) {
+		if (fileName.lastIndexOf('.') > 0) {
+			return fileName.substring(0, fileName.lastIndexOf('.'));
+		}
+
+		return fileName;
+	}
+
+	public static float clamp(float value, float min, float max) {
+		if (value < min) return min;
+		if (value > max) return max;
+		return value;
+	}
+
+	public static int clamp(int value, int min, int max) {
+		if (value < min) return min;
+		if (value > max) return max;
+		return value;
+	}
+
+}
