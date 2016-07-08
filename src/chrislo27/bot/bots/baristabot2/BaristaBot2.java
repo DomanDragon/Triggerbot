@@ -204,17 +204,17 @@ public class BaristaBot2 extends Bot {
 
 	@EventSubscriber
 	public void onAudioFinish(TrackFinishEvent event) {
-		Main.info("Finished playing " + Utils
-				.stripExtension(((File) event.getOldTrack().getMetadata().get("file")).getName()));
-
 		if (!event.getNewTrack().isPresent() || audioPlayer.getPlaylist().size() == 0) {
 			client.changeStatus(Status.empty());
 			Main.info("Finished queue");
 		}
 
 		secondsPlaying += Math.abs(System.currentTimeMillis() - playingStartTime) / 1000.0D;
-		
+
 		emptyQueueIfAllGone(null);
+
+		Main.info("Finished playing " + Utils
+				.stripExtension(((File) event.getOldTrack().getMetadata().get("file")).getName()));
 	}
 
 	@EventSubscriber
@@ -271,6 +271,7 @@ public class BaristaBot2 extends Bot {
 		audioPlayer = null;
 		if (this.radioChannel != null) {
 			audioPlayer = AudioPlayer.getAudioPlayerForGuild(this.radioChannel.getGuild());
+
 			Main.info("Successfully gotten AudioPlayer instance");
 		}
 

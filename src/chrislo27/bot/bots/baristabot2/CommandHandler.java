@@ -265,8 +265,10 @@ public class CommandHandler {
 				stats.appendContent("Music streamed since uptime start: __"
 						+ String.format("%.4f", bot.secondsPlaying / 60f)
 						+ " minutes__, or about __"
-						+ String.format("%.2f", (bot.secondsPlaying * 64_000) / 8 / 1024 / 1024)
-						+ " MB__ (64 kbps)\n");
+						+ String.format("%.2f",
+								(bot.secondsPlaying * bot.radioChannel.getBitrate()) / 8 / 1024
+										/ 1024)
+						+ " MB__ (" + bot.radioChannel.getBitrate() / 1000f + " kbps)\n");
 
 				bot.sendMessage(stats);
 			}
