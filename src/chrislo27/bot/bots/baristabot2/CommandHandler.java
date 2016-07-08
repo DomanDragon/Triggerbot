@@ -890,6 +890,8 @@ public class CommandHandler {
 							.appendContent("Changed radio channel bitrate to " + bitrate));
 				} catch (RateLimitException | MissingPermissionsException | DiscordException e) {
 					e.printStackTrace();
+					bot.sendMessage(bot.getNewBuilder(channel)
+							.appendContent("Failed to set bitrate: " + e.toString()));
 				}
 			}
 
