@@ -29,7 +29,9 @@ import sx.blah.discord.handle.obj.Status;
 import sx.blah.discord.util.DiscordException;
 import sx.blah.discord.util.MessageBuilder;
 import sx.blah.discord.util.MessageBuilder.Styles;
+import sx.blah.discord.util.MissingPermissionsException;
 import sx.blah.discord.util.RateLimitException;
+import sx.blah.discord.util.RequestBuffer;
 import sx.blah.discord.util.audio.AudioPlayer.Track;
 
 public class CommandHandler {
@@ -92,6 +94,7 @@ public class CommandHandler {
 		builder.appendContent(
 				"tempban/arrest <uuid> <seconds> - Temporarily bans someone for the duration\n");
 		builder.appendContent("username <name> - Sets the bot's username\n");
+		builder.appendContent("bitrate [value] - Gets or sets the bitrate of the radio channel\n");
 	}
 
 	public void addGameHelpToBuilder(MessageBuilder builder) {
@@ -794,11 +797,14 @@ public class CommandHandler {
 			} else if (args.length < 1) {
 				return "Requires name argument!";
 			}
-			try {
-				bot.client.changeUsername(Utils.getContent(args, 0).trim());
-			} catch (RateLimitException | DiscordException e1) {
-				e1.printStackTrace();
-			}
+
+			RequestBuffer.request(() -> {
+				try {
+					bot.client.changeUsername(Utils.getContent(args, 0).trim());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			});
 			return null;
 		case "setpermissions":
 			if (permLevel < PermissionTier.ADMIN)
@@ -867,6 +873,26 @@ public class CommandHandler {
 				bot.sendMessage(bot.getNewBuilder(channel)
 						.appendContent("Banned " + args[0] + " for " + duration + " seconds"));
 			}
+			return null;
+		case "bitrate":
+			if (permLevel < PermissionTier.ADMIN)
+				return CommandResponse.insufficientPermission(permLevel, PermissionTier.ADMIN);
+			if (args.length < 1) {
+				bot.sendMessage(bot.getNewBuilder(channel).appendContent(
+						"The bitrate of the radio channel is " + bot.radioChannel.getBitrate()));
+			} else {
+				int bitrate = Integer.parseInt(args[0]);
+
+				try {
+					bot.radioChannel.changeBitrate(bitrate);
+
+					bot.sendMessage(bot.getNewBuilder(channel)
+							.appendContent("Changed radio channel bitrate to " + bitrate));
+				} catch (RateLimitException | MissingPermissionsException | DiscordException e) {
+					e.printStackTrace();
+				}
+			}
+
 			return null;
 		}
 
