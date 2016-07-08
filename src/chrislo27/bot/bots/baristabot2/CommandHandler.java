@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 
 import javax.sound.sampled.UnsupportedAudioFileException;
 
@@ -56,7 +57,9 @@ public class CommandHandler {
 				"reaction/react <wot/wotdraw/salt/donk/zodiackiller/blame> - Posts a reaction picture\n");
 		builder.appendContent("8ball/8-ball - Ask the magic 8-ball\n");
 		builder.appendContent("perms [uuid] - Gets the UUID of either you, or the UUID provided\n");
-		builder.appendContent("uptime - View miscellaneous statistics about the current session\n");
+		builder.appendContent("uptime - View how long the bot has been up\n");
+		builder.appendContent("stats - View miscellaneous statistics\n");
+		builder.appendContent("incidents - View past incidents\n");
 		builder.appendContent("rps <rock/paper/scissors/r/p/s> - Play rock paper scissors\n");
 		builder.appendContent("@" + bot.client.getOurUser().getName()
 				+ " <text> - Talk to the barista (Uses Cleverbot)\n");
@@ -173,7 +176,8 @@ public class CommandHandler {
 		case "hello":
 			if (permLevel < PermissionTier.NORMAL)
 				return CommandResponse.insufficientPermission(permLevel, PermissionTier.NORMAL);
-			bot.sendMessage(bot.getNewBuilder(channel).appendContent("Hello!"));
+			bot.sendMessage(
+					bot.getNewBuilder(channel).appendContent("Hello " + user.mention() + "!"));
 			return null;
 		case "reaction":
 		case "react":
@@ -237,8 +241,9 @@ public class CommandHandler {
 				return CommandResponse.insufficientPermission(permLevel, PermissionTier.NORMAL);
 
 			if (args.length < 1) {
-				bot.sendMessage(bot.getNewBuilder(channel).appendContent(
-						"Your permission tier is " + PermPrefs.getPermissionsLevel(user.getID())));
+				bot.sendMessage(bot.getNewBuilder(channel)
+						.appendContent(user.mention() + " Your permission tier is "
+								+ PermPrefs.getPermissionsLevel(user.getID())));
 			} else {
 				bot.sendMessage(bot.getNewBuilder(channel).appendContent("The permission level of "
 						+ args[0] + " is " + PermPrefs.getPermissionsLevel(args[0])));
@@ -246,6 +251,24 @@ public class CommandHandler {
 
 			return null;
 		case "uptime":
+			if (permLevel < PermissionTier.NORMAL) {
+				return CommandResponse.insufficientPermission(permLevel, PermissionTier.NORMAL);
+			} else {
+				MessageBuilder stats = bot.getNewBuilder(channel);
+
+				long diff = (System.currentTimeMillis() - bot.startTime.getTime()) / 1000;
+
+				stats.appendContent(user.mention() + " __Uptime:__\n");
+				stats.appendContent("Started on: " + bot.startTime.toString() + "\n");
+				stats.appendContent("Current uptime: "
+						+ TimeUnit.DAYS.convert(diff, TimeUnit.SECONDS) + " days, "
+						+ TimeUnit.HOURS.convert(diff, TimeUnit.SECONDS) % 24 + " hours, "
+						+ TimeUnit.MINUTES.convert(diff, TimeUnit.SECONDS) % 60 + " minutes");
+
+				bot.sendMessage(stats);
+			}
+			return null;
+		case "stats":
 			if (permLevel < PermissionTier.NORMAL) {
 				return CommandResponse.insufficientPermission(permLevel, PermissionTier.NORMAL);
 			} else {
@@ -259,9 +282,7 @@ public class CommandHandler {
 
 				long diff = System.currentTimeMillis() - bot.startTime.getTime();
 
-				stats.appendContent("Uptime since: " + bot.startTime.toString() + "\n");
-				stats.appendContent(
-						"Current uptime: " + String.format("%.4f", diff / 60_000f) + " minutes\n");
+				stats.appendContent(user.mention() + " __Stats:__\n");
 				stats.appendContent("Music streamed since uptime start: __"
 						+ String.format("%.4f", bot.secondsPlaying / 60f)
 						+ " minutes__, or about __"
@@ -269,6 +290,22 @@ public class CommandHandler {
 								(bot.secondsPlaying * bot.radioChannel.getBitrate()) / 8 / 1024
 										/ 1024)
 						+ " MB__ (" + bot.radioChannel.getBitrate() / 1000f + " kbps)\n");
+				if (Incidents.incidents.size() > 0) stats.appendContent("Last incident: "
+						+ Incidents.incidents.get(Incidents.incidents.size() - 1) + "\n");
+
+				bot.sendMessage(stats);
+			}
+			return null;
+		case "incidents":
+			if (permLevel < PermissionTier.NORMAL) {
+				return CommandResponse.insufficientPermission(permLevel, PermissionTier.NORMAL);
+			} else {
+				MessageBuilder stats = bot.getNewBuilder(channel);
+
+				stats.appendContent(user.mention() + "\n__Incidents:__ (newest last)\n");
+				for (String s : Incidents.incidents) {
+					stats.appendContent(s + "\n");
+				}
 
 				bot.sendMessage(stats);
 			}
@@ -302,7 +339,7 @@ public class CommandHandler {
 
 				MessageBuilder builder = bot.getNewBuilder(channel);
 
-				builder.appendContent("I chose __"
+				builder.appendContent(user.mention() + " I chose __"
 						+ (mychoice == 0 ? "rock" : (mychoice == 1 ? "paper" : "scissors")));
 				builder.appendContent("__, you chose __"
 						+ (pchoice == 0 ? "rock" : (pchoice == 1 ? "paper" : "scissors")) + "__. ");
@@ -839,7 +876,9 @@ public class CommandHandler {
 
 			MusicDatabase.instance().forceReupdate();
 			MusicDatabase.instance();
-			bot.sendMessage(bot.getNewBuilder(channel).appendContent("Refreshed music database."));
+			Incidents.refresh();
+
+			bot.sendMessage(bot.getNewBuilder(channel).appendContent("Refreshed databases."));
 			return null;
 		case "togglequeue":
 			if (permLevel < PermissionTier.ADMIN)

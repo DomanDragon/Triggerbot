@@ -113,6 +113,7 @@ public class BaristaBot2 extends Bot {
 		IUser author = messageObj.getAuthor();
 
 		for (IUser mention : messageObj.getMentions()) {
+			if (messageObj.mentionsEveryone()) break;
 			if (mention.getID().equals(client.getOurUser().getID())) {
 				long permLevel = PermPrefs.getPermissionsLevel(author.getID());
 
