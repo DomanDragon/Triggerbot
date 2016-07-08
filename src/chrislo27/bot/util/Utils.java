@@ -34,4 +34,12 @@ public class Utils {
 		return value;
 	}
 
+	public static float lerp(float x, float y, float alpha) {
+		return (float) lerp((double) x, y, alpha);
+	}
+
+	public static double lerp(double x, double y, double alpha) {
+		return x + alpha * (y - x);
+	}
+
 }
