@@ -200,8 +200,6 @@ public class BaristaBot2 extends Bot {
 
 			playingStartTime = System.currentTimeMillis();
 		}
-
-		emptyQueueIfAllGone(null);
 	}
 
 	@EventSubscriber
@@ -215,6 +213,8 @@ public class BaristaBot2 extends Bot {
 		}
 
 		secondsPlaying += Math.abs(System.currentTimeMillis() - playingStartTime) / 1000.0D;
+		
+		emptyQueueIfAllGone(null);
 	}
 
 	@EventSubscriber
