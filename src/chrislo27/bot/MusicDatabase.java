@@ -87,7 +87,11 @@ public class MusicDatabase {
 		add(new File("music/special/hontodesuka.mp3"), "!hontodesuka#", "!allright?#");
 		add(new File("music/special/chinesejingles.mp3"), "!chinesejingles#");
 		add(new File("music/special/blastoff.wav"), "!blastoff#");
-
+		add(new File("music/special/bonusducks.mp3"), "!bonusducks#");
+		add(new File("music/special/quack.wav"), "!quack#");
+		add(new File("music/special/chinesejinglesquack.mp3"), "!chinesejinglesquack#");
+		add(new File("music/special/whatcanido.mp3"), "!whatcanido#");
+		
 		// add(new File("music/practice/Practice.mp3"), "Practice");
 		for (File f : new File("music/practice/").listFiles()) {
 			if (f.getName().endsWith(".mp3")) {
