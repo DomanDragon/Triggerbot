@@ -410,7 +410,7 @@ public class MusicDatabase {
 		add(new File("music/Final Remix EN.mp3"), "Final Remix EN", "Final Remix");
 		add(new File("music/Frog Hop EN.mp3"), "Frog Hop EN", "Frog Hop",
 				"Young Love Rock and Roll");
-		add(new File("music/Karate Man Kicks! EN.mp3"), "Karate Man Kicks! EN");
+		add(new File("music/Karate Man Kicks! EN.mp3"), "Karate Man Kicks! EN", "Karate Man Kicks EN");
 		add(new File("music/Lush Remix EN.mp3"), "Lush Remix EN", "Lush Remix");
 		add(new File("music/Machine Remix EN.mp3"), "Machine Remix EN", "Machine Remix");
 		add(new File("music/Right-Hand Remix EN.mp3"), "Right-Hand Remix EN", "Right Remix EN",
