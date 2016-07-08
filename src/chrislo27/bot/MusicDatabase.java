@@ -36,6 +36,7 @@ public class MusicDatabase {
 	private ArrayList<String> keySets = new ArrayList<>();
 	public String sfxList = "";
 	private ArrayList<Entry<String, File>> tempCriteria = new ArrayList<>();
+	public ArrayList<File> allVisibleSongs = new ArrayList<>();
 
 	private void loadResources() {
 		allMusic.clear();
@@ -44,6 +45,7 @@ public class MusicDatabase {
 		allKeys.clear();
 		sfxList = "";
 		tempCriteria.clear();
+		allVisibleSongs.clear();
 
 		// add(new File("music/special/.mp3"), "!#");
 		add(new File("music/special/corruptHai.wav"), "!hai hai hai ha ho#", "!a-hai#");
@@ -410,7 +412,8 @@ public class MusicDatabase {
 		add(new File("music/Final Remix EN.mp3"), "Final Remix EN", "Final Remix");
 		add(new File("music/Frog Hop EN.mp3"), "Frog Hop EN", "Frog Hop",
 				"Young Love Rock and Roll");
-		add(new File("music/Karate Man Kicks! EN.mp3"), "Karate Man Kicks! EN", "Karate Man Kicks EN");
+		add(new File("music/Karate Man Kicks! EN.mp3"), "Karate Man Kicks! EN",
+				"Karate Man Kicks EN");
 		add(new File("music/Lush Remix EN.mp3"), "Lush Remix EN", "Lush Remix");
 		add(new File("music/Machine Remix EN.mp3"), "Machine Remix EN", "Machine Remix");
 		add(new File("music/Right-Hand Remix EN.mp3"), "Right-Hand Remix EN", "Right Remix EN",
@@ -479,6 +482,7 @@ public class MusicDatabase {
 			keySets.add(mus);
 		} else {
 			sfxList += mus + "\n";
+			allVisibleSongs.add(file);
 		}
 	}
 
@@ -577,6 +581,15 @@ public class MusicDatabase {
 
 	public static int getAllMusicPages() {
 		return instance().allMusic.size();
+	}
+
+	public static String getDisguisedName(File file) {
+		if (file.getParentFile().getName().contains("hidden")) {
+			ArrayList<File> visible = instance().allVisibleSongs;
+			return Utils.stripExtension(visible.get(file.hashCode() % visible.size()).getName());
+		} else {
+			return Utils.stripExtension(file.getName());
+		}
 	}
 
 }

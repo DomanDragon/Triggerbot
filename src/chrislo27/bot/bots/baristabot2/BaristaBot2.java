@@ -195,7 +195,7 @@ public class BaristaBot2 extends Bot {
 		File f = ((File) event.getTrack().getMetadata().get("file"));
 
 		if (f != null) {
-			client.changeStatus(Status.game("♫ " + Utils.stripExtension(f.getName()) + " ♫"));
+			client.changeStatus(Status.game("♫ " + MusicDatabase.getDisguisedName(f) + " ♫"));
 			Main.info("Starting to play " + Utils.stripExtension(f.getName()));
 
 			playingStartTime = System.currentTimeMillis();
@@ -365,7 +365,7 @@ public class BaristaBot2 extends Bot {
 			long total = track.getTotalTrackTime();
 
 			builder.appendContent((i == 0 ? "**" : "") + (i + 1) + ". "
-					+ Utils.stripExtension(((File) track.getMetadata().get("file")).getName())
+					+ MusicDatabase.getDisguisedName(((File) track.getMetadata().get("file")))
 					+ (i == 0 ? "**" : ""));
 
 			if (i == 0) {
@@ -438,6 +438,7 @@ public class BaristaBot2 extends Bot {
 			}
 
 			String extensionless = Utils.stripExtension(file.getName());
+			String disguisedName = MusicDatabase.getDisguisedName(file);
 
 			if (!alreadyIn) {
 				String th = "th";
@@ -450,13 +451,13 @@ public class BaristaBot2 extends Bot {
 				}
 
 				Main.info("Queued " + extensionless);
-				builder.appendContent("__" + extensionless + "__ has been queued, it is "
+				builder.appendContent("__" + disguisedName + "__ has been queued, it is "
 						+ audioPlayer.getPlaylist().size() + th + ".");
 			} else {
 				audioPlayer.getPlaylist().remove(audioPlayer.getPlaylist().size() - 1);
 				Main.info("Didn't queue " + extensionless
 						+ " because it was already in the playlist");
-				builder.appendContent(extensionless + " is already in the queue!");
+				builder.appendContent(disguisedName + " is already in the queue!");
 			}
 		} catch (IOException e) {
 			Main.error("IOException while queuing audio");
