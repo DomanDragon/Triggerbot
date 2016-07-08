@@ -91,7 +91,10 @@ public class MusicDatabase {
 		add(new File("music/special/quack.wav"), "!quack#");
 		add(new File("music/special/chinesejinglesquack.mp3"), "!chinesejinglesquack#");
 		add(new File("music/special/whatcanido.mp3"), "!whatcanido#");
-		
+		add(new File("music/special/ifeelgoodallthetime.mp3"), "!ifeelgoodallthetime#");
+		add(new File("music/special/isweartogod.mp3"), "!isweartogod#");
+		add(new File("music/special/spyingroad2.mp3"), "!spyingroad2#");
+
 		// add(new File("music/practice/Practice.mp3"), "Practice");
 		for (File f : new File("music/practice/").listFiles()) {
 			if (f.getName().endsWith(".mp3")) {
@@ -484,9 +487,9 @@ public class MusicDatabase {
 
 		if (!isSfx) {
 			keySets.add(mus);
+			allVisibleSongs.add(file);
 		} else {
 			sfxList += mus + "\n";
-			allVisibleSongs.add(file);
 		}
 	}
 
