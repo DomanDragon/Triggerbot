@@ -349,6 +349,7 @@ public class CommandHandler {
 				return "Requires a song!";
 			} else {
 				String entire = Utils.getContent(args, 0);
+				//entire = "Bouncy Road";
 				File file = MusicDatabase.instance().files.get(entire.toLowerCase());
 
 				if (entire.startsWith("!") && entire.endsWith("#")) file = null;
@@ -418,6 +419,7 @@ public class CommandHandler {
 										BaristaBot2.QUEUE_LIMIT - bot.audioPlayer.playlistSize()),
 						1, number);
 
+				//criteria = "Bouncy Road";
 				List<Entry<String, File>> bound = MusicDatabase.instance().getSearch(criteria);
 				Collections.shuffle(bound);
 
