@@ -57,7 +57,7 @@ public class BaristaBot2 extends Bot {
 	public static final String SONG_METADATA_VOTE_SKIP = "voteSkip_";
 	public static final String[] RESTRICTED_CHANNELS = { "general" };
 	public static final String IDEAL_CHANNEL = "191731385008914432";
-	public static final int IDLE_TEXT_REFRESH = Main.TICK_RATE * 15;
+	public static final int IDLE_TEXT_REFRESH = Main.TICK_RATE * 300;
 	public IVoiceChannel radioChannel = null;
 	public AudioPlayer audioPlayer;
 	protected Date startTime;
