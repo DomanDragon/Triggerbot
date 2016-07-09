@@ -1,7 +1,11 @@
 package chrislo27.bot.bots.baristabot2;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.stream.Stream;
 
 public class IdleTexts {
 
@@ -16,16 +20,18 @@ public class IdleTexts {
 		cycle = 0;
 		texts.clear();
 
-		texts.add("RHINO");
-		texts.add("ウラオモテ");
-		texts.add("RHA");
+		try (Stream<String> stream = Files.lines(Paths.get("resources/idlePlaying.txt"))) {
+			stream.forEach((String s) -> {
+				if (!s.isEmpty()) texts.add(s);
+			});
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 		Collections.shuffle(texts);
 	}
 
 	public static String cycleNext() {
-		if (texts.size() < 2) return "REQUIRES MORE THAN TWO";
-
 		cycle++;
 		if (cycle >= texts.size()) {
 			cycle = 0;
