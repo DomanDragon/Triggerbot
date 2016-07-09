@@ -230,8 +230,8 @@ public class BaristaBot2 extends Bot {
 			ticksWithoutMusic = 0;
 		} else {
 			ticksWithoutMusic++;
-			
-			if (ticksWithoutMusic % IDLE_TEXT_REFRESH == 0 && !debugMode) {
+
+			if (IDLE_TEXT_REFRESH > 0 && ticksWithoutMusic % IDLE_TEXT_REFRESH == 0 && !debugMode) {
 				client.changeStatus(Status.game(IdleTexts.cycleNext()));
 			}
 		}
