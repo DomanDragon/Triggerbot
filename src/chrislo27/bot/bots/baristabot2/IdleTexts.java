@@ -24,8 +24,17 @@ public class IdleTexts {
 	}
 
 	public static String cycleNext() {
+		if (texts.size() < 2) return "REQUIRES MORE THAN TWO";
+
 		cycle++;
-		if (cycle >= texts.size()) cycle = 0;
+		if (cycle >= texts.size()) {
+			String last = texts.get(0);
+			cycle = 0;
+
+			while (texts.get(0).equals(last)) {
+				Collections.shuffle(texts);
+			}
+		}
 
 		return texts.get(cycle);
 	}
