@@ -28,12 +28,8 @@ public class IdleTexts {
 
 		cycle++;
 		if (cycle >= texts.size()) {
-			String last = texts.get(0);
 			cycle = 0;
-
-			while (texts.get(0).equals(last)) {
-				Collections.shuffle(texts);
-			}
+			Collections.shuffle(texts);
 		}
 
 		return texts.get(cycle);
