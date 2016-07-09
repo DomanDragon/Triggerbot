@@ -812,9 +812,9 @@ public class CommandHandler {
 					return "AudioPlayer is null!";
 				}
 
-				bot.audioPlayer.getPlaylist().clear();
+				bot.audioPlayer.skipTo(bot.audioPlayer.playlistSize());
 				bot.sendMessage(bot.getNewBuilder(channel).appendContent("Cleared queue."));
-				bot.client.changeStatus(Status.empty());
+				bot.setStatus(null);
 				bot.rgameHandler.cancelGame();
 
 				return null;

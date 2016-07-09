@@ -67,6 +67,8 @@ public class BaristaBot2 extends Bot {
 	private ChatterBot cleverbot;
 	private ChatterBotSession cleverbotSession;
 
+	private boolean debugMode = false;
+
 	public BaristaBot2() {
 		PermPrefs.instance();
 
@@ -79,6 +81,19 @@ public class BaristaBot2 extends Bot {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void setDebugging(boolean debug) {
+		debugMode = true;
+
+		if (client != null) {
+			client.changePresence(debugMode);
+			setStatus(null);
+		}
+	}
+
+	public boolean isDebugging() {
+		return debugMode;
 	}
 
 	@Override
@@ -185,7 +200,7 @@ public class BaristaBot2 extends Bot {
 		}
 
 		audioPlayer.getPlaylist().clear();
-		client.changeStatus(Status.empty());
+		setStatus(null);
 		rgameHandler.cancelGame();
 
 		Main.info("Cleared queue due to no one/all deaf in the radio channel");
@@ -199,7 +214,7 @@ public class BaristaBot2 extends Bot {
 		File f = ((File) event.getTrack().getMetadata().get("file"));
 
 		if (f != null) {
-			client.changeStatus(Status.game("♫ " + MusicDatabase.getDisguisedName(f) + " ♫"));
+			setStatus("♫ " + MusicDatabase.getDisguisedName(f) + " ♫");
 			Main.info("Starting to play " + Utils.stripExtension(f.getName()));
 
 			playingStartTime = System.currentTimeMillis();
@@ -209,7 +224,7 @@ public class BaristaBot2 extends Bot {
 	@EventSubscriber
 	public void onAudioFinish(TrackFinishEvent event) {
 		if (!event.getNewTrack().isPresent() || audioPlayer.getPlaylist().size() == 0) {
-			client.changeStatus(Status.empty());
+			setStatus(null);
 			Main.info("Finished queue");
 		}
 
@@ -282,7 +297,7 @@ public class BaristaBot2 extends Bot {
 		if (audioPlayer != null) {
 			audioPlayer.getPlaylist().clear();
 		}
-		client.changeStatus(Status.empty());
+		setStatus(null);
 	}
 
 	public IVoiceChannel getRadioChannel() {
@@ -533,6 +548,15 @@ public class BaristaBot2 extends Bot {
 		}
 
 		return false;
+	}
+
+	public void setStatus(String status) {
+		if (debugMode) {
+			client.changeStatus(Status.game("the debugging game"));
+			return;
+		}
+
+		client.changeStatus(status == null ? Status.empty() : Status.game(status));
 	}
 
 }
