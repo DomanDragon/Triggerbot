@@ -314,27 +314,28 @@ public class BaristaBot2 extends Bot {
 		return null;
 	}
 
-	public boolean checkMusicRestricted(IChannel channel, IUser author) {
+	public String checkMusicRestricted(IChannel channel, IUser author) {
 		if (audioPlayer == null) {
-			sendMessage(getNewBuilder(channel).appendContent(
-					"The AudioPlayer is null, ask a mod to use the command `%reconnectaudio`"));
-			return true;
+			return author.mention()
+					+ " The AudioPlayer is null, ask a mod to use the command `%reconnectaudio`";
 		}
 
-		if (PermPrefs.getPermissionsLevel(author.getID()) >= PermissionTier.MODERATOR) return false;
+		if (debugMode && PermPrefs.getPermissionsLevel(author.getID()) < PermissionTier.ADMIN) {
+			return author.mention()
+					+ " :wrench: The bot is in debug mode, so you can't do any music actions for right now.";
+		}
+
+		if (PermPrefs.getPermissionsLevel(author.getID()) >= PermissionTier.MODERATOR) return null;
 
 		for (String s : RESTRICTED_CHANNELS) {
 			if (channel.getName().equalsIgnoreCase(s)) {
-				sendMessage(getNewBuilder(channel).appendContent(author.mention()
-						+ " All BaristaBot music actions should be done in <#" + IDEAL_CHANNEL
-						+ ">, please. (Restricted in this current channel \"" + channel.getName()
-						+ "\")"));
-
-				return true;
+				return author.mention() + " All BaristaBot music actions should be done in <#"
+						+ IDEAL_CHANNEL + ">, please. (Restricted in this current channel \""
+						+ channel.getName() + "\")";
 			}
 		}
 
-		return false;
+		return null;
 	}
 
 	public boolean canPlayMusic(IChannel channel) {

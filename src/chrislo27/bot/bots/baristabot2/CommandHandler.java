@@ -98,6 +98,8 @@ public class CommandHandler {
 				"tempban/arrest <uuid> <seconds> - Temporarily bans someone for the duration\n");
 		builder.appendContent("username <name> - Sets the bot's username\n");
 		builder.appendContent("bitrate [value] - Gets or sets the bitrate of the radio channel\n");
+		builder.appendContent(
+				"debug - Toggles debug mode, which stops non-admins from doing music actions\n");
 	}
 
 	public void addGameHelpToBuilder(MessageBuilder builder) {
@@ -125,6 +127,7 @@ public class CommandHandler {
 	public String doCommand(String command, IMessage message, IChannel channel, IUser user,
 			String[] args) {
 		String caseCommand = command.toLowerCase();
+		String musicRestricted = null;
 		long permLevel = PermPrefs.getPermissionsLevel(user.getID());
 
 		if (permLevel < 0) {
@@ -380,8 +383,8 @@ public class CommandHandler {
 		case "queue":
 			if (permLevel < PermissionTier.NORMAL)
 				return CommandResponse.insufficientPermission(permLevel, PermissionTier.NORMAL);
-			if (bot.checkMusicRestricted(channel, user)) {
-				return null;
+			if ((musicRestricted = bot.checkMusicRestricted(channel, user)) != null) {
+				return musicRestricted;
 			} else if (args.length < 1) {
 				return "Requires a song!";
 			} else {
@@ -422,8 +425,8 @@ public class CommandHandler {
 		case "skip":
 			if (permLevel < PermissionTier.TRUSTED)
 				return CommandResponse.insufficientPermission(permLevel, PermissionTier.TRUSTED);
-			if (bot.checkMusicRestricted(channel, user)) {
-				return null;
+			if ((musicRestricted = bot.checkMusicRestricted(channel, user)) != null) {
+				return musicRestricted;
 			} else {
 				bot.skipTrack(channel);
 			}
@@ -432,8 +435,8 @@ public class CommandHandler {
 		case "random":
 			if (permLevel < PermissionTier.NORMAL)
 				return CommandResponse.insufficientPermission(permLevel, PermissionTier.NORMAL);
-			if (bot.checkMusicRestricted(channel, user)) {
-				return null;
+			if ((musicRestricted = bot.checkMusicRestricted(channel, user)) != null) {
+				return musicRestricted;
 			} else {
 				if (bot.emptyQueueIfAllGone(channel)) return null;
 
@@ -513,8 +516,8 @@ public class CommandHandler {
 		case "shuffle":
 			if (permLevel < PermissionTier.NORMAL)
 				return CommandResponse.insufficientPermission(permLevel, PermissionTier.NORMAL);
-			if (bot.checkMusicRestricted(channel, user)) {
-				return null;
+			if ((musicRestricted = bot.checkMusicRestricted(channel, user)) != null) {
+				return musicRestricted;
 			} else {
 				bot.shuffle(channel);
 
@@ -525,8 +528,8 @@ public class CommandHandler {
 		case "np":
 			if (permLevel < PermissionTier.NORMAL)
 				return CommandResponse.insufficientPermission(permLevel, PermissionTier.NORMAL);
-			if (bot.checkMusicRestricted(channel, user)) {
-				return null;
+			if ((musicRestricted = bot.checkMusicRestricted(channel, user)) != null) {
+				return musicRestricted;
 			} else {
 				bot.showQueue(channel);
 			}
@@ -537,8 +540,8 @@ public class CommandHandler {
 		case "showdatabase":
 			if (permLevel < PermissionTier.NORMAL)
 				return CommandResponse.insufficientPermission(permLevel, PermissionTier.NORMAL);
-			if (bot.checkMusicRestricted(channel, user)) {
-				return null;
+			if ((musicRestricted = bot.checkMusicRestricted(channel, user)) != null) {
+				return musicRestricted;
 			} else {
 				if (args.length < 1) {
 					bot.sendMessage(bot.getNewBuilder(channel)
@@ -915,7 +918,8 @@ public class CommandHandler {
 				PermPrefs.setPermissionsLevel(args[0], -banEndTime);
 
 				bot.sendMessage(bot.getNewBuilder(channel)
-						.appendContent("Banned " + args[0] + " for " + duration + " seconds"));
+						.appendContent((caseCommand.equals("arrest") ? "Arrested" : "Tempbanned")
+								+ " " + args[0] + " for " + duration + " seconds"));
 			}
 			return null;
 		case "bitrate":
@@ -939,6 +943,16 @@ public class CommandHandler {
 				}
 			}
 
+			return null;
+		case "debug":
+			if (permLevel < PermissionTier.ADMIN) {
+				return CommandResponse.insufficientPermission(permLevel, PermissionTier.ADMIN);
+			} else {
+				bot.setDebugging(!bot.isDebugging());
+				bot.sendMessage(bot.getNewBuilder(channel).appendContent(
+						":wrench: Debug mode is now __" + bot.isDebugging() + "__."));
+
+			}
 			return null;
 		}
 
