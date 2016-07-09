@@ -1,7 +1,11 @@
 package chrislo27.bot.util;
 
+import java.util.Random;
+
 public class Utils {
 
+	public static final Random random = new Random();
+	
 	public static String getContent(String[] args, int start) {
 		String content = "";
 		for (int i = start; i < args.length; i++) {
