@@ -1,13 +1,16 @@
 package chrislo27.bot.bots.baristabot2;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import javax.imageio.ImageIO;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 import com.google.code.chatterbotapi.ChatterBot;

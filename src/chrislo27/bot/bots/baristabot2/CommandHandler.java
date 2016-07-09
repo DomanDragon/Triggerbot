@@ -480,6 +480,7 @@ public class CommandHandler {
 					String fileName = Utils.stripExtension(file.getName());
 
 					if (e.getKey().startsWith("!") && e.getKey().endsWith("#")) continue;
+					if (e.getKey().startsWith("?")) continue;
 
 					for (Track track : bot.audioPlayer.getPlaylist()) {
 						String trackName = ((File) track.getMetadata().get("file")).getName();
