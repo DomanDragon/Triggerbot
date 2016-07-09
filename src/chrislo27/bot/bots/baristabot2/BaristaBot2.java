@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
 import javax.sound.sampled.UnsupportedAudioFileException;
@@ -57,7 +56,6 @@ public class BaristaBot2 extends Bot {
 	public static final String SONG_METADATA_VOTE_SKIP = "voteSkip_";
 	public static final String[] RESTRICTED_CHANNELS = { "general" };
 	public static final String IDEAL_CHANNEL = "191731385008914432";
-	public static final int IDLE_TEXT_REFRESH = Main.TICK_RATE * 300;
 	public IVoiceChannel radioChannel = null;
 	public AudioPlayer audioPlayer;
 	protected Date startTime;
@@ -230,10 +228,6 @@ public class BaristaBot2 extends Bot {
 			ticksWithoutMusic = 0;
 		} else {
 			ticksWithoutMusic++;
-
-			if (IDLE_TEXT_REFRESH > 0 && ticksWithoutMusic % IDLE_TEXT_REFRESH == 0 && !debugMode) {
-				client.changeStatus(Status.game(IdleTexts.cycleNext()));
-			}
 		}
 	}
 
@@ -635,9 +629,10 @@ public class BaristaBot2 extends Bot {
 		int skipVoters = 0;
 
 		for (IUser u : radioChannel.getConnectedUsers()) {
-			// bots, the deaf, or dungeon/banned don't count
+			// bots, deafened, idle, or dungeon/banned don't count
 			if (u.isBot() || u.isDeaf(radioChannel.getGuild()) || u.isDeafLocally()
-					|| PermPrefs.getPermissionsLevel(u.getID()) < PermissionTier.NORMAL)
+					|| PermPrefs.getPermissionsLevel(u.getID()) < PermissionTier.NORMAL
+					|| u.getPresence() == Presences.IDLE)
 				continue;
 
 			peopleListening++;

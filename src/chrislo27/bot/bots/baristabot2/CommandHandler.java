@@ -6,16 +6,10 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
 import javax.sound.sampled.UnsupportedAudioFileException;
-
-import com.google.code.chatterbotapi.ChatterBot;
-import com.google.code.chatterbotapi.ChatterBotFactory;
-import com.google.code.chatterbotapi.ChatterBotSession;
-import com.google.code.chatterbotapi.ChatterBotType;
 
 import chrislo27.bot.Main;
 import chrislo27.bot.MusicDatabase;
@@ -26,7 +20,6 @@ import chrislo27.bot.util.Utils;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
-import sx.blah.discord.handle.obj.Status;
 import sx.blah.discord.util.DiscordException;
 import sx.blah.discord.util.MessageBuilder;
 import sx.blah.discord.util.MessageBuilder.Styles;
@@ -884,7 +877,6 @@ public class CommandHandler {
 			MusicDatabase.instance().forceReupdate();
 			MusicDatabase.instance();
 			Incidents.refresh();
-			IdleTexts.refresh();
 
 			bot.sendMessage(bot.getNewBuilder(channel).appendContent("Refreshed databases."));
 			return null;
