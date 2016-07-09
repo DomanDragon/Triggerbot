@@ -69,7 +69,6 @@ public class CommandHandler {
 		builder.appendContent("\n**__Trusted commands:__**\n");
 		builder.appendContent("sfx <name> [any more] - Plays your SFX in the music queue\n");
 		builder.appendContent("sfxlist/sfxdatabase/sfxdb - Displays SFX list\n");
-		builder.appendContent("skip - Skips the current song\n");
 
 		if (permLevel < PermissionTier.MODERATOR) return;
 		// moderator
@@ -100,6 +99,9 @@ public class CommandHandler {
 		builder.appendContent("bitrate [value] - Gets or sets the bitrate of the radio channel\n");
 		builder.appendContent(
 				"debug - Toggles debug mode, which stops non-admins from doing music actions\n");
+		builder.appendContent(
+				"setstatus [status] - Sets the status, or removes it (cannot override debug status)\n");
+		builder.appendContent("senddistress - Sends a test distress signal\n");
 	}
 
 	public void addGameHelpToBuilder(MessageBuilder builder) {
@@ -112,7 +114,8 @@ public class CommandHandler {
 
 	public void addMusicHelpToBuilder(MessageBuilder builder) {
 		// music
-		builder.appendContent("\n**__Music commands:__**\n");
+		builder.appendContent("\n**__Music commands__** *(please do only in <#"
+				+ BaristaBot2.IDEAL_CHANNEL + ">):*\n");
 		builder.appendContent("play/queue <song name> - Queues the song of your choice\n");
 		builder.appendContent(
 				"random [#] [criteria]- Queues a random song or as many as you want up to the limit ("
@@ -122,6 +125,8 @@ public class CommandHandler {
 		builder.appendContent("showqueue/nowplaying/np - Shows queue\n");
 		builder.appendContent("database/showdatabase/db <page> - Shows the song database\n");
 		builder.appendContent("search <key terms> - Searches for a song\n");
+		builder.appendContent(
+				"skip - Vote to skip the current song (or retract your vote if you did already)\n");
 	}
 
 	public String doCommand(String command, IMessage message, IChannel channel, IUser user,
@@ -423,15 +428,13 @@ public class CommandHandler {
 
 			return null;
 		case "skip":
-			if (permLevel < PermissionTier.TRUSTED)
-				return CommandResponse.insufficientPermission(permLevel, PermissionTier.TRUSTED);
+			if (permLevel < PermissionTier.NORMAL)
+				return CommandResponse.insufficientPermission(permLevel, PermissionTier.NORMAL);
 			if ((musicRestricted = bot.checkMusicRestricted(channel, user)) != null) {
 				return musicRestricted;
 			} else {
-				bot.skipTrack(channel);
+				return bot.voteToSkipTrackAndAct(user, channel);
 			}
-
-			return null;
 		case "random":
 			if (permLevel < PermissionTier.NORMAL)
 				return CommandResponse.insufficientPermission(permLevel, PermissionTier.NORMAL);
@@ -881,6 +884,7 @@ public class CommandHandler {
 			MusicDatabase.instance().forceReupdate();
 			MusicDatabase.instance();
 			Incidents.refresh();
+			IdleTexts.refresh();
 
 			bot.sendMessage(bot.getNewBuilder(channel).appendContent("Refreshed databases."));
 			return null;
@@ -952,6 +956,20 @@ public class CommandHandler {
 				bot.sendMessage(bot.getNewBuilder(channel).appendContent(
 						":wrench: Debug mode is now __" + bot.isDebugging() + "__."));
 
+			}
+			return null;
+		case "setstatus":
+			if (permLevel < PermissionTier.ADMIN) {
+				return CommandResponse.insufficientPermission(permLevel, PermissionTier.ADMIN);
+			} else {
+				bot.setStatus(args.length < 0 ? null : Utils.getContent(args, 0));
+			}
+			return null;
+		case "senddistress":
+			if (permLevel < PermissionTier.ADMIN) {
+				return CommandResponse.insufficientPermission(permLevel, PermissionTier.ADMIN);
+			} else {
+				bot.sendDistressSignal();
 			}
 			return null;
 		}

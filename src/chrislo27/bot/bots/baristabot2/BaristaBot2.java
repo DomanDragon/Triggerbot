@@ -1,16 +1,15 @@
 package chrislo27.bot.bots.baristabot2;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
-import javax.imageio.ImageIO;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 import com.google.code.chatterbotapi.ChatterBot;
@@ -29,6 +28,7 @@ import sx.blah.discord.handle.impl.events.MessageReceivedEvent;
 import sx.blah.discord.handle.impl.events.ReadyEvent;
 import sx.blah.discord.handle.impl.events.UserJoinEvent;
 import sx.blah.discord.handle.impl.events.UserLeaveEvent;
+import sx.blah.discord.handle.impl.events.UserVoiceChannelJoinEvent;
 import sx.blah.discord.handle.impl.events.UserVoiceChannelLeaveEvent;
 import sx.blah.discord.handle.impl.events.UserVoiceChannelMoveEvent;
 import sx.blah.discord.handle.obj.IChannel;
@@ -36,6 +36,7 @@ import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IPrivateChannel;
 import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.handle.obj.IVoiceChannel;
+import sx.blah.discord.handle.obj.Presences;
 import sx.blah.discord.handle.obj.Status;
 import sx.blah.discord.util.DiscordException;
 import sx.blah.discord.util.MessageBuilder;
@@ -52,8 +53,11 @@ public class BaristaBot2 extends Bot {
 
 	public static final int QUEUE_LIMIT = 25;
 	public static final int RANDOM_LIMIT = 10;
+	public static final float VOTE_SKIP_RATIO = 0.5f;
+	public static final String SONG_METADATA_VOTE_SKIP = "voteSkip_";
 	public static final String[] RESTRICTED_CHANNELS = { "general" };
 	public static final String IDEAL_CHANNEL = "191731385008914432";
+	public static final int IDLE_TEXT_REFRESH = Main.TICK_RATE * 15;
 	public IVoiceChannel radioChannel = null;
 	public AudioPlayer audioPlayer;
 	protected Date startTime;
@@ -68,6 +72,8 @@ public class BaristaBot2 extends Bot {
 	private ChatterBotSession cleverbotSession;
 
 	private boolean debugMode = false;
+	private int distressingTicks = 0;
+	private int ticksWithoutMusic = 0;
 
 	public BaristaBot2() {
 		PermPrefs.instance();
@@ -84,7 +90,7 @@ public class BaristaBot2 extends Bot {
 	}
 
 	public void setDebugging(boolean debug) {
-		debugMode = true;
+		debugMode = debug;
 
 		if (client != null) {
 			client.changePresence(debugMode);
@@ -94,6 +100,21 @@ public class BaristaBot2 extends Bot {
 
 	public boolean isDebugging() {
 		return debugMode;
+	}
+
+	public void sendDistressSignal() {
+		distressingTicks = Main.TICK_RATE * 15;
+		client.changePresence(true);
+
+		try {
+			sendMessage(getNewBuilder(
+					client.getOrCreatePMChannel(client.getUserByID("188789412426022914")))
+							.appendContent(":warning: **Sending distress signal; please help!**\n")
+							.appendContent("Currently "
+									+ new Date(System.currentTimeMillis()).toString() + "\n"));
+		} catch (RateLimitException | DiscordException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -187,6 +208,33 @@ public class BaristaBot2 extends Bot {
 	@Override
 	public void tickUpdate(float delta) {
 		super.tickUpdate(delta);
+
+		if (distressingTicks > 0) {
+			distressingTicks--;
+
+			if (distressingTicks == 0) {
+				client.changePresence(debugMode);
+			} else {
+				final float speed = 2;
+				boolean yellow = ((distressingTicks % (Main.TICK_RATE * speed))
+						/ (Main.TICK_RATE * speed)) < 0.666666f;
+
+				if (client.getOurUser()
+						.getPresence() != (yellow ? Presences.IDLE : Presences.ONLINE)) {
+					client.changePresence(yellow);
+				}
+			}
+		}
+
+		if (audioPlayer != null && audioPlayer.getCurrentTrack() != null) {
+			ticksWithoutMusic = 0;
+		} else {
+			ticksWithoutMusic++;
+			
+			if (ticksWithoutMusic % IDLE_TEXT_REFRESH == 0 && !debugMode) {
+				client.changeStatus(Status.game(IdleTexts.cycleNext()));
+			}
+		}
 	}
 
 	public boolean emptyQueueIfAllGone(IChannel channel) {
@@ -236,6 +284,22 @@ public class BaristaBot2 extends Bot {
 				.stripExtension(((File) event.getOldTrack().getMetadata().get("file")).getName()));
 	}
 
+	public void warnUserIfNotMuted(IUser user) {
+		if (!user.isMutedLocally() && !user.isMuted(radioChannel.getGuild())) {
+			try {
+				sendMessage(getNewBuilder(client.getOrCreatePMChannel(user)).appendContent(
+						"Please mute yourself if you're in the radio channel. Thank you."));
+			} catch (RateLimitException | DiscordException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	@EventSubscriber
+	public void onUserConnectVoice(UserVoiceChannelJoinEvent event) {
+		warnUserIfNotMuted(event.getUser());
+	}
+
 	@EventSubscriber
 	public void onUserDisconnectVoice(UserVoiceChannelLeaveEvent event) {
 		emptyQueueIfAllGone(null);
@@ -244,6 +308,9 @@ public class BaristaBot2 extends Bot {
 	@EventSubscriber
 	public void onUserMoveVoice(UserVoiceChannelMoveEvent event) {
 		emptyQueueIfAllGone(null);
+		if (event.getNewChannel().getID().equals(radioChannel.getID())) {
+			warnUserIfNotMuted(event.getUser());
+		}
 	}
 
 	@EventSubscriber
@@ -493,7 +560,7 @@ public class BaristaBot2 extends Bot {
 		emptyQueueIfAllGone(channel);
 	}
 
-	public void skipTrack(IChannel channel) {
+	public void skipTrack(IChannel channel, boolean showSkippedMessage) {
 		if (!canPlayMusic(channel)) return;
 
 		List<Track> playlist = audioPlayer.getPlaylist();
@@ -502,8 +569,12 @@ public class BaristaBot2 extends Bot {
 
 		if (playlist.size() == 0) {
 			builder.appendContent("There's nothing in the queue to skip!");
+			sendMessage(builder);
 		} else {
-			builder.appendContent("Skipping to next song...");
+			if (showSkippedMessage) {
+				builder.appendContent("Skipping to next song...");
+				sendMessage(builder);
+			}
 			audioPlayer.skip();
 			Main.info("Skipped to next song");
 			showQueue = true;
@@ -512,11 +583,98 @@ public class BaristaBot2 extends Bot {
 			playingStartTime = System.currentTimeMillis();
 		}
 
-		sendMessage(builder);
-
 		if (showQueue) {
 			showQueue(channel);
 		}
+	}
+
+	/**
+	 * Votes/unvotes the user, then checks if skipping is available, then skips if it's possible.
+	 * @param user
+	 * @param channel
+	 * @return
+	 */
+	public String voteToSkipTrackAndAct(IUser user, IChannel channel) {
+		if (!canPlayMusic(channel)) return null;
+		if (audioPlayer.getCurrentTrack() == null) return "There isn't a song to skip.";
+		if (channel.isPrivate()) return "Cannot vote to skip in a private channel.";
+
+		Track current = audioPlayer.getCurrentTrack();
+		Map<String, Object> metadata = current.getMetadata();
+		final String metadataKey = SONG_METADATA_VOTE_SKIP + user.getID();
+
+		boolean shouldStop = true;
+		for (IUser u : radioChannel.getConnectedUsers()) {
+			if (u.getID().equals(user.getID())) {
+				shouldStop = false;
+				break;
+			}
+		}
+
+		if (shouldStop) {
+			return "Cannot vote if you're not in the radio channel.";
+		} else if (user.isDeaf(channel.getGuild()) || user.isDeafLocally()) {
+			return "Cannot vote if you're deafened.";
+		}
+
+		final boolean voted;
+		if (!metadata.containsKey(metadataKey)) {
+			// vote to skip
+			metadata.put(metadataKey, Boolean.TRUE);
+			Main.info(user.getName() + "#" + user.getDiscriminator()
+					+ " votes to skip the current song");
+			voted = true;
+		} else {
+			// unvote
+			metadata.remove(metadataKey);
+			Main.info(user.getName() + "#" + user.getDiscriminator() + " retracts their skip vote");
+			voted = false;
+		}
+
+		int peopleListening = 0;
+		int skipVoters = 0;
+
+		for (IUser u : radioChannel.getConnectedUsers()) {
+			// bots, the deaf, or dungeon/banned don't count
+			if (u.isBot() || u.isDeaf(radioChannel.getGuild()) || u.isDeafLocally()
+					|| PermPrefs.getPermissionsLevel(u.getID()) < PermissionTier.NORMAL)
+				continue;
+
+			peopleListening++;
+			final String uMetaKey = SONG_METADATA_VOTE_SKIP + u.getID();
+			if (metadata.containsKey(uMetaKey)) {
+				if (metadata.get(uMetaKey) instanceof Boolean
+						&& ((boolean) metadata.get(uMetaKey))) {
+					skipVoters++;
+				}
+			}
+		}
+
+		float ratio = (skipVoters * 1f) / peopleListening;
+		Main.info("Current skip vote ratio: " + ((int) (ratio * 100)) + "% " + skipVoters + " / "
+				+ peopleListening);
+
+		MessageBuilder builder = getNewBuilder(channel);
+
+		builder.appendContent(user.mention() + " " + (voted ? "**voted to skip** the current song."
+				: "**retracts their vote** to skip the current song.") + "\n");
+		builder.appendContent("Current vote ratio: **" + skipVoters + " / " + peopleListening
+				+ "** (__" + String.format("%.1f", (Math.round(ratio * 1000) / 10f)) + "__%)\n");
+
+		if (ratio > VOTE_SKIP_RATIO) {
+			builder.appendContent("The ratio **is above** __" + ((int) (VOTE_SKIP_RATIO * 100))
+					+ "%__; skipping this song...");
+		} else {
+			builder.appendContent("The ratio must be above __" + ((int) (VOTE_SKIP_RATIO * 100))
+					+ "%__ to pass the vote.");
+		}
+		sendMessage(builder);
+
+		if (ratio > VOTE_SKIP_RATIO) {
+			skipTrack(channel, false);
+		}
+
+		return null;
 	}
 
 	public void showDatabase(IChannel channel, int page, IUser user) {
