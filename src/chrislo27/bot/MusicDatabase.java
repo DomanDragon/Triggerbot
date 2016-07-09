@@ -595,7 +595,7 @@ public class MusicDatabase {
 	public static String getDisguisedName(File file) {
 		if (file.getParentFile().getName().contains("hidden")) {
 			ArrayList<File> visible = instance().allVisibleSongs;
-			String disguise = visible.get(file.hashCode() % visible.size()).getName();
+			String disguise = visible.get(Math.abs(file.hashCode()) % visible.size()).getName();
 
 			if (file.getName().contains("Spying Road 2")) disguise = "Bouncy Road";
 
