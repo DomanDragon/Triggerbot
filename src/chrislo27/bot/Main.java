@@ -1,7 +1,12 @@
 package chrislo27.bot;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Scanner;
 
 import chrislo27.bot.bots.Bot;
@@ -26,6 +31,7 @@ public class Main {
 	public static int ticks = 0;
 	public static float lastTickDelta = 0;
 	public static boolean shouldExit = false;
+	private static PrintWriter consoleOutput = null;
 
 	public static String getTimestamp() {
 		return "[" + dateformat.format(Calendar.getInstance().getTime()) + "]";
@@ -33,37 +39,53 @@ public class Main {
 
 	public static void info(String s) {
 		String out = getTimestamp() + " [INFO] " + s;
-		System.out.println(getTimestamp() + " [INFO] " + s);
+		System.out.println(out);
 
 		if (outputMessageBuilder != null) {
 			outputMessageBuilder.appendContent(out + "\n", Styles.CODE);
+		}
+
+		if (consoleOutput != null) {
+			consoleOutput.println(out);
 		}
 	}
 
 	public static void warn(String s) {
 		String out = getTimestamp() + " [WARN] " + s;
-		System.out.println(getTimestamp() + " [WARN] " + s);
+		System.out.println(out);
 
 		if (outputMessageBuilder != null) {
 			outputMessageBuilder.appendContent(out + "\n", Styles.CODE);
+		}
+
+		if (consoleOutput != null) {
+			consoleOutput.println(out);
 		}
 	}
 
 	public static void error(String s) {
 		String out = getTimestamp() + " [ERROR] " + s;
-		System.out.println(getTimestamp() + " [ERROR] " + s);
+		System.out.println(out);
 
 		if (outputMessageBuilder != null) {
 			outputMessageBuilder.appendContent(out + "\n", Styles.CODE);
+		}
+
+		if (consoleOutput != null) {
+			consoleOutput.println(out);
 		}
 	}
 
 	public static void debug(String s) {
 		String out = getTimestamp() + " [DEBUG] " + s;
-		System.out.println(getTimestamp() + " [DEBUG] " + s);
+		System.out.println(out);
 
 		if (outputMessageBuilder != null) {
 			outputMessageBuilder.appendContent(out + "\n", Styles.CODE);
+		}
+
+		if (consoleOutput != null) {
+			consoleOutput.println(out);
 		}
 	}
 
@@ -85,6 +107,17 @@ public class Main {
 			error("Bot not found! " + args[0]);
 
 			return;
+		}
+
+		new File("consoleLogs/").mkdir();
+		try {
+			String date = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss")
+					.format(new Date(System.currentTimeMillis()));
+			String fileName = "consoleLogs/" + date + ".txt";
+			new File(fileName).createNewFile();
+			consoleOutput = new PrintWriter(new FileWriter(fileName, true), true);
+		} catch (IOException e1) {
+			e1.printStackTrace();
 		}
 
 		info("Starting with " + clzz.getSimpleName() + "...");
@@ -203,6 +236,7 @@ public class Main {
 		}
 
 		bot.onProgramExit();
+		consoleOutput.close();
 
 		info("Goodbye!");
 
