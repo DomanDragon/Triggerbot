@@ -598,6 +598,7 @@ public class MusicDatabase {
 			String disguise = visible.get(Math.abs(file.hashCode()) % visible.size()).getName();
 
 			if (file.getName().contains("Spying Road 2")) disguise = "Bouncy Road";
+			if (file.getName().contains("Air Batter Story")) disguise = "Spaceball";
 
 			return Utils.stripExtension(disguise);
 		} else {
