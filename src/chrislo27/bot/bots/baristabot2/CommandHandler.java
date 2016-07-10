@@ -92,6 +92,7 @@ public class CommandHandler {
 		builder.appendContent(
 				"setstatus [status] - Sets the status, or removes it (cannot override debug status)\n");
 		builder.appendContent("senddistress - Sends a test distress signal\n");
+		builder.appendContent("say <channelID> <message> - Say a thing\n");
 	}
 
 	public void addGameHelpToBuilder(MessageBuilder builder) {
@@ -925,6 +926,19 @@ public class CommandHandler {
 				return CommandResponse.insufficientPermission(permLevel, PermissionTier.ADMIN);
 			} else {
 				bot.sendDistressSignal();
+			}
+			return null;
+		case "say":
+			if (permLevel < PermissionTier.ADMIN) {
+				return CommandResponse.insufficientPermission(permLevel, PermissionTier.ADMIN);
+			} else if (args.length < 2) {
+				return "Requires at least two arguments!";
+			} else {
+				IChannel c = bot.client.getChannelByID(args[0]);
+
+				if (c == null) return "Couldn't find that channel.";
+
+				bot.sendMessage(bot.getNewBuilder(c).appendContent(Utils.getContent(args, 1)));
 			}
 			return null;
 		}
