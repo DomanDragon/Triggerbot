@@ -54,8 +54,8 @@ public class BaristaBot2 extends Bot {
 	public static final int RANDOM_LIMIT = 10;
 	public static final float VOTE_SKIP_RATIO = 0.5f;
 	public static final String SONG_METADATA_VOTE_SKIP = "voteSkip_";
-	public static final String[] RESTRICTED_CHANNELS = { "general" };
-	public static final String IDEAL_CHANNEL = "191731385008914432";
+	public static final String[] RESTRICTED_CHANNELS = { "general", "botgeneralandmemes", "rhino" };
+	public static final String IDEAL_CHANNEL = "201511701345075200";
 	public IVoiceChannel radioChannel = null;
 	public AudioPlayer audioPlayer;
 	protected Date startTime;
@@ -377,22 +377,20 @@ public class BaristaBot2 extends Bot {
 
 	public String checkMusicRestricted(IChannel channel, IUser author) {
 		if (audioPlayer == null) {
-			return author.mention()
-					+ " The AudioPlayer is null, ask a mod to use the command `%reconnectaudio`";
+			return "The AudioPlayer is null, ask a mod to use the command `%reconnectaudio`";
 		}
 
 		if (debugMode && PermPrefs.getPermissionsLevel(author.getID()) < PermissionTier.ADMIN) {
-			return author.mention()
-					+ " :wrench: The bot is in debug mode, so you can't do any music actions for right now.";
+			return ":wrench: The bot is in debug mode, so you can't do any music actions for right now.";
 		}
 
-		if (PermPrefs.getPermissionsLevel(author.getID()) >= PermissionTier.MODERATOR) return null;
+		if (PermPrefs.getPermissionsLevel(author.getID()) >= PermissionTier.ADMIN) return null;
 
 		for (String s : RESTRICTED_CHANNELS) {
 			if (channel.getName().equalsIgnoreCase(s)) {
-				return author.mention() + " All BaristaBot music actions should be done in <#"
-						+ IDEAL_CHANNEL + ">, please. (Restricted in this current channel \""
-						+ channel.getName() + "\")";
+				return "All BaristaBot music actions should be done in <#" + IDEAL_CHANNEL
+						+ ">, please. (Restricted in this current channel \"" + channel.getName()
+						+ "\")";
 			}
 		}
 

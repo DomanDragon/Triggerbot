@@ -43,7 +43,7 @@ public class CommandHandler {
 		// normal
 		builder.appendContent("\n**__Normal commands:__**\n");
 		builder.appendContent(
-				"help/? [music/game] - Shows this message or the desired help page\n");
+				"help/? [music] - Shows this message or the desired help page\n");
 		builder.appendContent("woof - woof\n");
 		builder.appendContent("hi/hello - Hello!\n");
 		builder.appendContent(
@@ -95,14 +95,6 @@ public class CommandHandler {
 		builder.appendContent("say <channelID> <message> - Say a thing\n");
 	}
 
-	public void addGameHelpToBuilder(MessageBuilder builder) {
-		builder.appendContent("__Locked to trusted permissions__\n");
-		builder.appendContent("r start/play <game> - Starts a rhythm game for you\n");
-		builder.appendContent("r - Your input for the rhythm game - advised to copy/paste this\n");
-		builder.appendContent("r games - List of games\n");
-		builder.appendContent("r end - Stops the rhythm game\n");
-	}
-
 	public void addMusicHelpToBuilder(MessageBuilder builder) {
 		// music
 		builder.appendContent("\n**__Music commands__** *(please do only in <#"
@@ -142,12 +134,6 @@ public class CommandHandler {
 				String page = args.length < 1 ? "" : args[0].toLowerCase();
 
 				switch (page) {
-				case "game":
-					builder.appendContent("Here are the commands for games.\n");
-					builder.appendContent(
-							"__Please use a percent sign % before issuing commands.__\n");
-					addGameHelpToBuilder(builder);
-					break;
 				case "music":
 					builder.appendContent("Here are the commands for music actions.\n");
 					builder.appendContent(
@@ -936,7 +922,7 @@ public class CommandHandler {
 			} else {
 				IChannel c = bot.client.getChannelByID(args[0]);
 
-				if (c == null) return "Couldn't find that channel.";
+				if (c == null) return "Couldn't find that channel (" + args[0] + ").";
 
 				bot.sendMessage(bot.getNewBuilder(c).appendContent(Utils.getContent(args, 1)));
 			}
@@ -1052,6 +1038,7 @@ public class CommandHandler {
 		}
 
 		public static String insufficientPermission(long perm, long required) {
+			//return "No.";
 			return "You have insufficient permissions. (Required " + required + ", you have " + perm
 					+ ")";
 		}
