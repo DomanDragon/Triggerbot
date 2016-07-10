@@ -42,8 +42,7 @@ public class CommandHandler {
 		if (permLevel < PermissionTier.NORMAL) return;
 		// normal
 		builder.appendContent("\n**__Normal commands:__**\n");
-		builder.appendContent(
-				"help/? [music] - Shows this message or the desired help page\n");
+		builder.appendContent("help/? [music] - Shows this message or the desired help page\n");
 		builder.appendContent("woof - woof\n");
 		builder.appendContent("hi/hello - Hello!\n");
 		builder.appendContent(
@@ -56,6 +55,7 @@ public class CommandHandler {
 		builder.appendContent("rps <rock/paper/scissors/r/p/s> - Play rock paper scissors\n");
 		builder.appendContent("@" + bot.client.getOurUser().getName()
 				+ " <text> - Talk to the barista (Uses Cleverbot)\n");
+		builder.appendContent("timeline - Server's timeline");
 
 		if (permLevel < PermissionTier.TRUSTED) return;
 		// trusted
@@ -356,6 +356,18 @@ public class CommandHandler {
 				bot.sendMessage(builder);
 			}
 
+			return null;
+		case "timeline":
+			if (permLevel < PermissionTier.NORMAL) {
+				return CommandResponse.insufficientPermission(permLevel, PermissionTier.NORMAL);
+			}
+			bot.sendMessage(bot.getNewBuilder(channel).appendContent("__Server Timeline:__\n")
+					.appendContent("General Discussion\n" + "Repainted\n" + "Dead\n"
+							+ "Kinda alive\n" + "Dead\n" + "General Discussion w/ Slight Shitpost\n"
+							+ "Custom Remix Editors\n" + "Shitpost\n" + "RHINO Start\n"
+							+ "RHINO End\n"
+
+							+ "More Shitpost\n" + "Controlled Shitpost (now)"));
 			return null;
 		}
 
