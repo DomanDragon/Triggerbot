@@ -66,9 +66,6 @@ public class CommandHandler {
 		if (permLevel < PermissionTier.MODERATOR) return;
 		// moderator
 		builder.appendContent("\n**__Moderator commands:__**\n");
-		builder.appendContent("getuuid <username/part of username> [discriminator]"
-				+ " - Gets the user's UUID (universally unique ID) from their username and *optional* discriminator (#XXXX),"
-				+ " also returns server UUID\n");
 		builder.appendContent(
 				"getusername <uuid> - Gets the name and discriminator from their UUID\n");
 		builder.appendContent("permissiontiers - Displays all permission tiers\n");
@@ -643,40 +640,6 @@ public class CommandHandler {
 		// -----------------------------------------------------------------------------
 		// mod commands
 		switch (caseCommand) {
-		case "getuuid":
-			if (permLevel < PermissionTier.MODERATOR)
-				return CommandResponse.insufficientPermission(permLevel, PermissionTier.MODERATOR);
-			if (args.length < 1) {
-				return "Requires at least one argument! <username/part of username> [discriminator (4 digit code)]";
-			} else {
-				String part = args[0].toLowerCase();
-				MessageBuilder getUuidBuilder = bot.getNewBuilder(channel);
-
-				getUuidBuilder.appendContent(
-						"This server's UUID is " + channel.getGuild().getID() + "\n");
-
-				boolean found = false;
-				for (IUser u : channel.getUsersHere()) {
-					if (u.getName().toLowerCase().contains(part)) {
-						if (args.length < 2 || u.getDiscriminator().equalsIgnoreCase(args[1])) {
-							getUuidBuilder.appendContent("The UUID for " + u.getName() + "#"
-									+ u.getDiscriminator() + " is " + u.getID() + "\n");
-
-							found = true;
-						}
-					}
-				}
-
-				if (found) {
-					bot.sendMessage(getUuidBuilder);
-
-					return null;
-				} else {
-					return "Couldn't find the user " + args[0]
-							+ (args.length >= 2 ? "#" + args[1] : "");
-				}
-
-			}
 		case "getusername":
 			if (permLevel < PermissionTier.MODERATOR)
 				return CommandResponse.insufficientPermission(permLevel, PermissionTier.MODERATOR);
