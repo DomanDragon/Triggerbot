@@ -589,7 +589,9 @@ public class BaristaBot2 extends Bot {
 	public String voteToSkipTrackAndAct(IUser user, IChannel channel) {
 		if (!canPlayMusic(channel)) return null;
 		if (audioPlayer.getCurrentTrack() == null) return "There isn't a song to skip.";
-		if (channel.isPrivate()) return "Cannot vote to skip in a private channel.";
+		if (channel.isPrivate()
+				&& PermPrefs.getPermissionsLevel(user.getID()) < PermissionTier.ADMIN)
+			return "Cannot vote to skip in a private channel.";
 
 		Track current = audioPlayer.getCurrentTrack();
 		Map<String, Object> metadata = current.getMetadata();
@@ -655,15 +657,15 @@ public class BaristaBot2 extends Bot {
 				+ "** (__" + String.format("%.1f", (Math.round(ratio * 1000) / 10f)) + "__%)\n");
 
 		if (ratio > VOTE_SKIP_RATIO) {
-			builder.appendContent("The ratio **is above** __" + ((int) (VOTE_SKIP_RATIO * 100))
-					+ "%__; skipping this song...");
+			builder.appendContent("The ratio **is at or above** __"
+					+ ((int) (VOTE_SKIP_RATIO * 100)) + "%__; skipping this song...");
 		} else {
-			builder.appendContent("The ratio must be above __" + ((int) (VOTE_SKIP_RATIO * 100))
-					+ "%__ to pass the vote.");
+			builder.appendContent("The ratio must be at or above __"
+					+ ((int) (VOTE_SKIP_RATIO * 100)) + "%__ to pass the vote.");
 		}
 		sendMessage(builder);
 
-		if (ratio > VOTE_SKIP_RATIO) {
+		if (ratio >= VOTE_SKIP_RATIO) {
 			skipTrack(channel, false);
 		}
 
