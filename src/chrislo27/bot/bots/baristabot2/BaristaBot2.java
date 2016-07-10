@@ -668,7 +668,7 @@ public class BaristaBot2 extends Bot {
 		if (ratio >= VOTE_SKIP_RATIO) {
 			skipTrack(channel, false);
 		}
-
+		
 		return null;
 	}
 
