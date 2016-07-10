@@ -13,8 +13,6 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 import chrislo27.bot.Main;
 import chrislo27.bot.MusicDatabase;
-import chrislo27.bot.bots.baristabot2.rhythm.Games;
-import chrislo27.bot.bots.baristabot2.rhythm.RhythmGame;
 import chrislo27.bot.util.EightBall;
 import chrislo27.bot.util.Utils;
 import sx.blah.discord.handle.obj.IChannel;
@@ -614,8 +612,7 @@ public class CommandHandler {
 					if (f == null) {
 						return "Couldn't find SFX " + text;
 					} else {
-						if (!bot.insertTrack(f, Math.max(
-								bot.rgameHandler.currentGame == null ? 0 : 1,
+						if (!bot.insertTrack(f, Math.max(0,
 								Math.min(bot.audioPlayer.getPlaylist().size(), lastSfxSlot + i)))) {
 							return "Failed to add SFX " + text;
 						}
@@ -776,7 +773,6 @@ public class CommandHandler {
 				bot.audioPlayer.skipTo(bot.audioPlayer.playlistSize());
 				bot.sendMessage(bot.getNewBuilder(channel).appendContent("Cleared queue."));
 				bot.setStatus(null);
-				bot.rgameHandler.cancelGame();
 
 				return null;
 			}
@@ -938,78 +934,6 @@ public class CommandHandler {
 
 				bot.sendMessage(bot.getNewBuilder(c).appendContent(Utils.getContent(args, 1)));
 			}
-			return null;
-		}
-
-		if (caseCommand.equals("r")) {
-			if (permLevel < PermissionTier.TRUSTED)
-				return CommandResponse.insufficientPermission(permLevel, PermissionTier.TRUSTED);
-			if (args.length == 0) {
-				// input
-				if (bot.rgameHandler.currentGame == null) return null;
-				if (!bot.rgameHandler.gameAuthor.getID().equals(user.getID())) return null;
-
-				// FIXME use localdatetime
-				float acc = bot.rgameHandler.input(System.currentTimeMillis());
-
-				bot.sendMessage(bot.getNewBuilder(channel)
-						.appendContent("Input success at accuracy " + (1f - Math.abs(acc)) * 100
-								+ "% (" + Math.abs(acc * RhythmGame.DEVIENCY) + " secs "
-								+ (acc < 0 ? "early" : "late") + ")"));
-			} else {
-				switch (args[0].toLowerCase()) {
-				case "play":
-				case "start":
-					if (args.length < 2) {
-						return "Needs a game to play! Check `%r games` for a list of games.";
-					} else {
-						if (bot.rgameHandler.currentGame != null)
-							return "A game is currently in progress.";
-
-						RhythmGame game = Games.getRhythmGame(args[1].toLowerCase());
-
-						if (game == null) {
-							return "That game wasn't found.";
-						}
-
-						try {
-							bot.rgameHandler.startGame(user, game, channel);
-						} catch (IOException | UnsupportedAudioFileException e) {
-							e.printStackTrace();
-							return "An exception occurred. `" + e.toString() + "`";
-						}
-
-						MessageBuilder builder = bot.getNewBuilder(channel);
-						builder.appendContent("Starting rhythm game: " + args[1].toLowerCase());
-						bot.sendMessage(builder);
-					}
-					break;
-				case "games": {
-					MessageBuilder builder = bot.getNewBuilder(channel);
-
-					builder.appendContent("*Here are the games available:*\n");
-
-					for (String game : Games.instance().map.keySet()) {
-						builder.appendContent(game + "\n");
-					}
-
-					bot.sendMessage(builder);
-				}
-					break;
-				case "end":
-					if (bot.rgameHandler.currentGame == null) return "There isn't a game playing!";
-					if (user.getID().equals(bot.rgameHandler.gameAuthor.getID())
-							|| PermPrefs.getPermissionsLevel(user.getID()) > PermPrefs
-									.getPermissionsLevel(bot.rgameHandler.gameAuthor.getID())) {
-						bot.rgameHandler.cancelGame();
-						bot.sendMessage(bot.getNewBuilder(channel)
-								.appendContent("Current rhythm game cancelled."));
-					}
-
-					break;
-				}
-			}
-
 			return null;
 		}
 

@@ -19,7 +19,6 @@ import com.google.code.chatterbotapi.ChatterBotType;
 import chrislo27.bot.Main;
 import chrislo27.bot.MusicDatabase;
 import chrislo27.bot.bots.Bot;
-import chrislo27.bot.bots.baristabot2.rhythm.RhythmGameHandler;
 import chrislo27.bot.util.Utils;
 import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.api.events.EventSubscriber;
@@ -64,7 +63,6 @@ public class BaristaBot2 extends Bot {
 	protected boolean canAddToQueue = true;
 
 	public final CommandHandler cmdHandler;
-	public RhythmGameHandler rgameHandler;
 
 	private ChatterBot cleverbot;
 	private ChatterBotSession cleverbotSession;
@@ -118,10 +116,6 @@ public class BaristaBot2 extends Bot {
 	@Override
 	public void setClient(IDiscordClient c) {
 		super.setClient(c);
-
-		rgameHandler = new RhythmGameHandler(this);
-
-		client.getDispatcher().registerListener(rgameHandler);
 	}
 
 	public MessageBuilder getNewBuilder(IChannel channel) {
@@ -243,7 +237,6 @@ public class BaristaBot2 extends Bot {
 
 		audioPlayer.getPlaylist().clear();
 		setStatus(null);
-		rgameHandler.cancelGame();
 
 		Main.info("Cleared queue due to no one/all deaf in the radio channel");
 		if (channel != null) sendMessage(getNewBuilder(channel)
