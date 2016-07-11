@@ -34,7 +34,7 @@ public class Questions {
 		questions.clear();
 
 		questions.add(new Question(
-				"Are the *middle songs* in Big Rock Finish randomized? *(excluding start and end)*",
+				"Are the songs in Big Rock Finish randomized? *(excluding start and end)*",
 				null, "Yes for DS, No for Megamix", "No for DS, Yes for Megamix",
 				"No for DS and Megamix", new CorrectAnswer("Yes for DS and Megamix")));
 		questions.add(new Question("What control method is in for First/Second Contact?", null,
