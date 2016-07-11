@@ -1050,7 +1050,6 @@ public class CommandHandler {
 		public static String insufficientPermission(long perm, long required) {
 			// best practice indicates that it should fail silently
 			return null;
-			//return "No.";
 			//			return "You have insufficient permissions. (Required " + required + ", you have " + perm
 			//					+ ")";
 		}
