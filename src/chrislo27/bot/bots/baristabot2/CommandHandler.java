@@ -126,8 +126,7 @@ public class CommandHandler {
 				"\n__How to play:__ *(very similar to Kahoot, if you've played that)*\n");
 		builder.appendContent(
 				"The quizmaster (the bot) will set out a question with the multiple choice answers.\n");
-		builder.appendContent(
-				"Simply respond with the answer's letter (A-Z) to answer.\n");
+		builder.appendContent("Simply respond with the answer's letter (A-Z) to answer.\n");
 		builder.appendContent(
 				"**The __faster__ you answer correctly, the __more points__ you'll get! (between 500 to 1000)**\n");
 		builder.appendContent(
@@ -1043,13 +1042,17 @@ public class CommandHandler {
 	public static class CommandResponse {
 
 		public static String doesNotExist() {
-			return "The command does not exist.";
+			// best practice indicates that it should fail silently
+			return null;
+			//return "The command does not exist.";
 		}
 
 		public static String insufficientPermission(long perm, long required) {
+			// best practice indicates that it should fail silently
+			return null;
 			//return "No.";
-			return "You have insufficient permissions. (Required " + required + ", you have " + perm
-					+ ")";
+			//			return "You have insufficient permissions. (Required " + required + ", you have " + perm
+			//					+ ")";
 		}
 
 	}
