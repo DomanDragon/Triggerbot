@@ -145,10 +145,22 @@ public class BaristaBot2 extends Bot {
 	public void sendMessage(MessageBuilder builder) {
 		RequestBuffer.request(() -> {
 			try {
-				builder.build();
+				builder.send();
+			} catch (RateLimitException e) {
+				Main.error("Rate limited! Retry after " + e.getRetryDelay() + " ms, bucket: "
+						+ e.getBucket());
+				// tells RequestBuffer what to do
+				throw e;
 			} catch (DiscordException e) {
 				Main.error("Failed to send message!");
 				e.printStackTrace();
+
+				if (e.getErrorMessage().contains("502")) {
+					Main.info(
+							"Exception was a 502, throwing RateLimitException to trick request buffer");
+					throw new RateLimitException("Fake exception thrown because of HTTP 502", 3500,
+							"bot:msg:server");
+				}
 			} catch (MissingPermissionsException e) {
 				Main.warn("Missing permissions to send messages!");
 				e.printStackTrace();
