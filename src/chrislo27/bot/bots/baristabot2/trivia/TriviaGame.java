@@ -8,6 +8,7 @@ import java.util.List;
 import chrislo27.bot.Main;
 import chrislo27.bot.bots.baristabot2.BaristaBot2;
 import chrislo27.bot.bots.baristabot2.trivia.Question.Answer;
+import chrislo27.bot.util.Utils;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.MessageReceivedEvent;
 import sx.blah.discord.handle.obj.IChannel;
@@ -21,6 +22,7 @@ public class TriviaGame {
 	public static final int LEADERBOARD_DISPLAY_TIME = 5;
 	public static final int ANSWER_DISPLAY_DELAY = 5;
 	public static final int MAX_QUESTION_SCORE = 1000;
+	public static final int MIN_QUESTION_SCORE = 500;
 
 	public final BaristaBot2 bot;
 	public final int numberOfQuestions;
@@ -130,7 +132,7 @@ public class TriviaGame {
 		builder.appendContent(".\n\n");
 
 		for (Score s : playerScores.values()) {
-			s.points += ((int) (s.currentQuestionTime * MAX_QUESTION_SCORE));
+			s.points += calcPoints(s.currentQuestionTime);
 		}
 
 		showLeaderboard(builder);
@@ -164,11 +166,11 @@ public class TriviaGame {
 		for (int i = 0; i < leaderboard.size(); i++) {
 			Score s = leaderboard.get(i);
 
-			builder.appendContent((i + 1) + ". " + s.playerName + " with " + s.points + " points");
+			builder.appendContent(
+					"**" + (i + 1) + ".** " + s.playerName + " with " + s.points + " points");
 
 			if (s.currentQuestionTime > 0) {
-				builder.appendContent(
-						" **+" + ((int) (MAX_QUESTION_SCORE * s.currentQuestionTime)) + "**");
+				builder.appendContent(" **+" + calcPoints(s.currentQuestionTime) + "**");
 			}
 
 			builder.appendContent(" [" + s.correct + ":" + s.wrong + ", ");
@@ -184,6 +186,10 @@ public class TriviaGame {
 
 			builder.appendContent("]\n");
 		}
+	}
+
+	public int calcPoints(float time) {
+		return (int) Utils.lerp(MIN_QUESTION_SCORE, MAX_QUESTION_SCORE, time);
 	}
 
 	public List<Score> getLeaderboard() {
@@ -235,8 +241,8 @@ public class TriviaGame {
 		if (wasRight) {
 			score.correct++;
 			// set question score
-			score.currentQuestionTime = (System.currentTimeMillis() - timeQuestionStarted)
-					/ (QUESTION_TIME_LIMIT * 1000f);
+			score.currentQuestionTime = 1f - ((System.currentTimeMillis() - timeQuestionStarted)
+					/ (QUESTION_TIME_LIMIT * 1000f));
 		} else {
 			score.wrong++;
 			score.currentQuestionTime = 0;
