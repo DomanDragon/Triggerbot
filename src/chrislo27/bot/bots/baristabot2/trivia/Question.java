@@ -47,6 +47,10 @@ public class Question {
 		return this;
 	}
 
+	protected static void resetIdReg() {
+		idRegistration = 0;
+	}
+
 	public static class Answer {
 
 		public final String answer;
