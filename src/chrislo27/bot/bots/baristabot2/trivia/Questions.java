@@ -44,7 +44,7 @@ public class Questions {
 				"A only", "A and D-Pad right", "A and D-Pad left", "A and D-Pad up",
 				"A and D-Pad down", new CorrectAnswer("A and D-Pad")));
 		questions.add(new Question("How many are in the Clappy Trio?", null, "2",
-				new CorrectAnswer("3"), "4", "3.5"));
+				new CorrectAnswer("3"), "4", new CorrectAnswer("3.5")));
 		//questions.add(new Question("", null));
 
 		shouldReload = false;
