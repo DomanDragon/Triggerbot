@@ -158,14 +158,19 @@ public class Main {
 						float delta = (System.nanoTime() - lastTime) / 1_000_000_000f;
 						lastTickDelta = delta;
 
-						bot.tickUpdate(delta);
-						ticks++;
+						try {
+							bot.tickUpdate(delta);
+						} catch (Exception e) {
+							Main.error("Error during tick update " + ticks);
+							e.printStackTrace();
+						}
 
+						ticks++;
 						lastTime = System.nanoTime();
 						long sleepTime = (long) (1000f / TICK_RATE);
 						sleep(sleepTime);
 					} catch (Exception e) {
-						Main.error("Error during tick " + ticks);
+						Main.error("Error during tick sleep " + ticks);
 						e.printStackTrace();
 					}
 				}
@@ -236,10 +241,11 @@ public class Main {
 		}
 
 		bot.onProgramExit();
-		consoleOutput.close();
 
 		info("Goodbye!");
 
+		consoleOutput.close();
+		consoleOutput = null;
 		System.exit(0);
 	}
 

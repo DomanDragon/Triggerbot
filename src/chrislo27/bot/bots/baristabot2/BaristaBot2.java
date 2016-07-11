@@ -19,6 +19,7 @@ import com.google.code.chatterbotapi.ChatterBotType;
 import chrislo27.bot.Main;
 import chrislo27.bot.MusicDatabase;
 import chrislo27.bot.bots.Bot;
+import chrislo27.bot.bots.baristabot2.trivia.TriviaGame;
 import chrislo27.bot.util.Utils;
 import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.api.events.EventSubscriber;
@@ -57,7 +58,7 @@ public class BaristaBot2 extends Bot {
 	public static final String IDEAL_CHANNEL = "201511701345075200";
 	public IVoiceChannel radioChannel = null;
 	public AudioPlayer audioPlayer;
-	protected Date startTime;
+	protected final Date startTime;
 	protected double secondsPlaying = 0;
 	protected long playingStartTime = System.currentTimeMillis();
 	protected boolean canAddToQueue = true;
@@ -70,6 +71,8 @@ public class BaristaBot2 extends Bot {
 	private boolean debugMode = false;
 	private int distressingTicks = 0;
 	private int ticksWithoutMusic = 0;
+
+	private TriviaGame currentTrivia = null;
 
 	public BaristaBot2() {
 		PermPrefs.instance();
@@ -96,6 +99,22 @@ public class BaristaBot2 extends Bot {
 
 	public boolean isDebugging() {
 		return debugMode;
+	}
+
+	public TriviaGame getCurrentTrivia() {
+		return currentTrivia;
+	}
+
+	public void setCurrentTrivia(TriviaGame trivia) {
+		if (currentTrivia != null) {
+			client.getDispatcher().unregisterListener(currentTrivia);
+		}
+
+		currentTrivia = trivia;
+
+		if (currentTrivia != null) {
+			client.getDispatcher().registerListener(currentTrivia);
+		}
 	}
 
 	public void sendDistressSignal() {
@@ -222,6 +241,10 @@ public class BaristaBot2 extends Bot {
 			ticksWithoutMusic = 0;
 		} else {
 			ticksWithoutMusic++;
+		}
+
+		if (currentTrivia != null) {
+			currentTrivia.tickUpdate();
 		}
 	}
 
@@ -396,6 +419,8 @@ public class BaristaBot2 extends Bot {
 			sendMessage(getNewBuilder(channel).appendContent(
 					"I'm not connected to the \"Radio\" channel, so I can't play music/do audio-related things."));
 
+			attemptConnectToRadioChannel();
+
 			return false;
 		}
 
@@ -403,6 +428,8 @@ public class BaristaBot2 extends Bot {
 			Main.info("Audio player is null");
 			sendMessage(getNewBuilder(channel).appendContent(
 					"The AudioPlayer instance is null, ask a dev to reconnect it (reconnectaudio)"));
+
+			attemptConnectToRadioChannel();
 
 			return false;
 		}
@@ -661,7 +688,7 @@ public class BaristaBot2 extends Bot {
 		if (ratio >= VOTE_SKIP_RATIO) {
 			skipTrack(channel, false);
 		}
-		
+
 		return null;
 	}
 

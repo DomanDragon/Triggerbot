@@ -5,7 +5,16 @@ import java.util.Random;
 public class Utils {
 
 	public static final Random random = new Random();
-	
+	public static final String[] alphabet;
+
+	static {
+		alphabet = new String[26];
+
+		for (int start = 'A', i = start; i <= 'Z'; i++) {
+			alphabet[i - start] = i + "";
+		}
+	}
+
 	public static String getContent(String[] args, int start) {
 		String content = "";
 		for (int i = start; i < args.length; i++) {

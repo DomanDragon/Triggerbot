@@ -13,6 +13,8 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 import chrislo27.bot.Main;
 import chrislo27.bot.MusicDatabase;
+import chrislo27.bot.bots.baristabot2.trivia.Questions;
+import chrislo27.bot.bots.baristabot2.trivia.TriviaGame;
 import chrislo27.bot.util.EightBall;
 import chrislo27.bot.util.Utils;
 import sx.blah.discord.handle.obj.IChannel;
@@ -39,75 +41,100 @@ public class CommandHandler {
 
 		if (permLevel < PermissionTier.NORMAL) return;
 		// normal
-		builder.appendContent("\n**__Normal commands:__**\n");
-		builder.appendContent("help/? [music] - Shows this message or the desired help page\n");
-		builder.appendContent("woof - woof\n");
-		builder.appendContent("hi/hello - Hello!\n");
+		builder.appendContent("**__Normal commands:__**\n");
 		builder.appendContent(
-				"reaction/react <wot/wotdraw/salt/donk/zodiackiller/blame> - Posts a reaction picture\n");
-		builder.appendContent("8ball/8-ball - Ask the magic 8-ball\n");
-		builder.appendContent("perms [uuid] - Gets the UUID of either you, or the UUID provided\n");
-		builder.appendContent("uptime - View how long the bot has been up\n");
-		builder.appendContent("stats - View miscellaneous statistics\n");
-		builder.appendContent("incidents - View past incidents\n");
-		builder.appendContent("rps <rock/paper/scissors/r/p/s> - Play rock paper scissors\n");
+				"%help/? [music/trivia] - Shows this message or the desired help page\n");
+		builder.appendContent("%woof - woof\n");
+		builder.appendContent("%hi/hello - Hello!\n");
+		builder.appendContent(
+				"%reaction/react <wot/wotdraw/salt/donk/zodiackiller/blame> - Posts a reaction picture\n");
+		builder.appendContent("%8ball/8-ball - Ask the magic 8-ball\n");
+		builder.appendContent(
+				"%perms [uuid] - Gets the UUID of either you, or the UUID provided\n");
+		builder.appendContent("%uptime - View how long the bot has been up\n");
+		builder.appendContent("%stats - View miscellaneous statistics\n");
+		builder.appendContent("%incidents - View past incidents\n");
+		builder.appendContent("%rps <rock/paper/scissors/r/p/s> - Play rock paper scissors\n");
 		builder.appendContent("@" + bot.client.getOurUser().getName()
 				+ " <text> - Talk to the barista (Uses Cleverbot)\n");
-		builder.appendContent("timeline - Server's timeline");
+		builder.appendContent("%timeline - Server's timeline");
 
 		if (permLevel < PermissionTier.TRUSTED) return;
 		// trusted
 		builder.appendContent("\n**__Trusted commands:__**\n");
-		builder.appendContent("sfx <name> [any more] - Plays your SFX in the music queue\n");
-		builder.appendContent("sfxlist/sfxdatabase/sfxdb - Displays SFX list\n");
+		builder.appendContent("%sfx <name> [any more] - Plays your SFX in the music queue\n");
+		builder.appendContent("%sfxlist/sfxdatabase/sfxdb - Displays SFX list\n");
 
 		if (permLevel < PermissionTier.MODERATOR) return;
 		// moderator
 		builder.appendContent("\n**__Moderator commands:__**\n");
 		builder.appendContent(
-				"getusername <uuid> - Gets the name and discriminator from their UUID\n");
-		builder.appendContent("permissiontiers - Displays all permission tiers\n");
+				"%getusername <uuid> - Gets the name and discriminator from their UUID\n");
+		builder.appendContent("%permissiontiers - Displays all permission tiers\n");
 		builder.appendContent(
-				"insertsong <index> <song> - Inserts the song at the place number, bypasses queue limit\n");
-		builder.appendContent("removesong <index> - Removes the song at the place number\n");
+				"%insertsong <index> <song> - Inserts the song at the place number, bypasses queue limit\n");
+		builder.appendContent("%removesong <index> - Removes the song at the place number\n");
 		builder.appendContent(
-				"reconnectaudio - Attempts to reconnect the audio system and channel\n");
-		builder.appendContent("clearqueue - Clears the queue\n");
+				"%reconnectaudio - Attempts to reconnect the audio system and channel\n");
+		builder.appendContent("%clearqueue - Clears the queue\n");
 
 		if (permLevel < PermissionTier.ADMIN) return;
 		// admin
 		builder.appendContent("\n**__Administrator commands:__**\n");
-		builder.appendContent("exit/quit - Logs off and quits the bot\n");
-		builder.appendContent("setpermissions <uuid> <level> - Sets the user's permission level\n");
-		builder.appendContent("refreshdb/refreshdatabase - Refreshes song database\n");
-		builder.appendContent("togglequeue - Toggles queuing\n");
+		builder.appendContent("%exit/quit - Logs off and quits the bot\n");
 		builder.appendContent(
-				"tempban/arrest <uuid> <seconds> - Temporarily bans someone for the duration\n");
-		builder.appendContent("username <name> - Sets the bot's username\n");
-		builder.appendContent("bitrate [value] - Gets or sets the bitrate of the radio channel\n");
+				"%setpermissions <uuid> <level> - Sets the user's permission level\n");
+		builder.appendContent("%refreshdb/refreshdatabase - Refreshes song database\n");
+		builder.appendContent("%togglequeue - Toggles queuing\n");
 		builder.appendContent(
-				"debug - Toggles debug mode, which stops non-admins from doing music actions\n");
+				"%tempban/arrest <uuid> <seconds> - Temporarily bans someone for the duration\n");
+		builder.appendContent("%username <name> - Sets the bot's username\n");
+		builder.appendContent("%bitrate [value] - Gets or sets the bitrate of the radio channel\n");
 		builder.appendContent(
-				"setstatus [status] - Sets the status, or removes it (cannot override debug status)\n");
-		builder.appendContent("senddistress - Sends a test distress signal\n");
-		builder.appendContent("say <channelID> <message> - Say a thing\n");
+				"%debug - Toggles debug mode, which stops non-admins from doing music actions\n");
+		builder.appendContent(
+				"%setstatus [status] - Sets the status, or removes it (cannot override debug status)\n");
+		builder.appendContent("%senddistress - Sends a test distress signal\n");
+		builder.appendContent("%say <channelID> <message> - Say a thing\n");
 	}
 
 	public void addMusicHelpToBuilder(MessageBuilder builder) {
 		// music
-		builder.appendContent("\n**__Music commands__** *(please do only in <#"
+		builder.appendContent("**__Music commands__** *(please do only in <#"
 				+ BaristaBot2.IDEAL_CHANNEL + ">):*\n");
-		builder.appendContent("play/queue <song name> - Queues the song of your choice\n");
+		builder.appendContent("%play/queue <song name> - Queues the song of your choice\n");
 		builder.appendContent(
-				"random [#] [criteria]- Queues a random song or as many as you want up to the limit ("
+				"%random [#] [criteria]- Queues a random song or as many as you want up to the limit ("
 						+ BaristaBot2.RANDOM_LIMIT
 						+ "), optional criteria will only match song **names** containing it\n");
-		builder.appendContent("shuffle - Shuffles the queue, ignoring the first song\n");
-		builder.appendContent("showqueue/nowplaying/np - Shows queue\n");
-		builder.appendContent("database/showdatabase/db <page> - Shows the song database\n");
-		builder.appendContent("search <key terms> - Searches for a song\n");
+		builder.appendContent("%shuffle - Shuffles the queue, ignoring the first song\n");
+		builder.appendContent("%showqueue/nowplaying/np - Shows queue\n");
+		builder.appendContent("%database/showdatabase/db <page> - Shows the song database\n");
+		builder.appendContent("%search <key terms> - Searches for a song\n");
 		builder.appendContent(
-				"skip - Vote to skip the current song (or retract your vote if you did already)\n");
+				"%skip - Vote to skip the current song (or retract your vote if you did already)\n");
+	}
+
+	public void addTriviaHelpToBuilder(MessageBuilder builder) {
+		builder.appendContent("**__Trivia game commands for moderators+:__**\n");
+		builder.appendContent("%trivia newgame <number of questions> - "
+				+ "Starts a trivia game in the current channel (there can only be one at a time!)"
+				+ " with the desired number of questions\n");
+		builder.appendContent(
+				"%trivia endgame - Stops a trivia game in the current channel, if any\n");
+		builder.appendContent(
+				"\n__How to play:__ *(very similar to Kahoot, if you've played that)*\n");
+		builder.appendContent(
+				"The quizmaster (the bot) will set out a question. *Five seconds later*, the possible multiple choice answers will appear.\n");
+		builder.appendContent(
+				"Simply respond with the answer's letter (typically A, B, C, or D) to answer.\n");
+		builder.appendContent("**The faster you answer correctly, the more points you'll get!**\n");
+		builder.appendContent(
+				"You only get one answer per question. You __cannot__ change your answer!\n");
+		builder.appendContent("After everyone is done answering,"
+				+ " or the time limit expires (the bot will announce it, and give a five second warning),"
+				+ " the answer and the winners of the round will be announced,"
+				+ " along with the new leaderboard.\n");
 	}
 
 	public String doCommand(String command, IMessage message, IChannel channel, IUser user,
@@ -134,15 +161,15 @@ public class CommandHandler {
 				switch (page) {
 				case "music":
 					builder.appendContent("Here are the commands for music actions.\n");
-					builder.appendContent(
-							"__Please use a percent sign % before issuing commands.__\n");
 					addMusicHelpToBuilder(builder);
+					break;
+				case "trivia":
+					builder.appendContent("Here are the rules and commands for trivia.\n");
+					addTriviaHelpToBuilder(builder);
 					break;
 				default:
 					builder.appendContent("Here's your commands for your permission level ("
 							+ permLevel + ").\n");
-					builder.appendContent(
-							"__Please use a percent sign % before issuing commands.__\n");
 					addHelpToBuilder(builder, permLevel);
 					break;
 				}
@@ -776,6 +803,45 @@ public class CommandHandler {
 
 				return null;
 			}
+		case "trivia":
+			// TODO change back to mod
+			if (permLevel < PermissionTier.ADMIN) {
+				return CommandResponse.insufficientPermission(permLevel, PermissionTier.MODERATOR);
+			} else {
+				if (args.length < 1) return "Requires at least one argument!";
+
+				String cmd = args[0].toLowerCase();
+
+				if (cmd.equals("newgame")) {
+					if (bot.getCurrentTrivia() != null) return "Game already in progress!";
+					if (args.length < 2)
+						return "Requires the number of questions you're going to use!";
+
+					int number = Utils.clamp(Integer.parseInt(args[1]), 1,
+							Questions.instance().questions.size());
+
+					TriviaGame game = new TriviaGame(bot, number, channel);
+
+					Main.info("Started new trivia with " + number + " questions");
+					bot.sendMessage(bot.getNewBuilder(channel).appendContent(
+							"Started new trivia game with " + number + " questions."));
+
+					bot.setCurrentTrivia(game);
+
+				} else if (cmd.equals("endgame")) {
+					if (bot.getCurrentTrivia() == null) return "No current game!";
+
+					bot.getCurrentTrivia().finishGame();
+					bot.setCurrentTrivia(null);
+
+					Main.info("Ended current trivia game");
+					bot.sendMessage(
+							bot.getNewBuilder(channel).appendContent("Ended current trivia game."));
+				} else {
+					return "Sub-command not found!";
+				}
+			}
+			return null;
 		}
 
 		// -----------------------------------------------------------------------------
@@ -835,6 +901,8 @@ public class CommandHandler {
 			MusicDatabase.instance().forceReupdate();
 			MusicDatabase.instance();
 			Incidents.refresh();
+			Questions.instance().forceReload();
+			Questions.instance();
 
 			bot.sendMessage(bot.getNewBuilder(channel).appendContent("Refreshed databases."));
 			return null;
