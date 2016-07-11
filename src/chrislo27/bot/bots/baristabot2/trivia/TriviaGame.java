@@ -140,7 +140,7 @@ public class TriviaGame {
 					"\nThe next question begins in " + LEADERBOARD_DISPLAY_TIME + " seconds.");
 			startNextQuestionAt = ticksElapsed + (LEADERBOARD_DISPLAY_TIME * Main.TICK_RATE);
 		} else {
-			builder.appendContent("\n**That's the end of the game!**");
+			builder.appendContent("\n**That's the end of the game! Well done everyone!**");
 		}
 
 		bot.sendMessage(builder);
