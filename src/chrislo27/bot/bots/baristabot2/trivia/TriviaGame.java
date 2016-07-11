@@ -20,7 +20,6 @@ public class TriviaGame {
 
 	public static final int QUESTION_TIME_LIMIT = 10;
 	public static final int LEADERBOARD_DISPLAY_TIME = 5;
-	public static final int ANSWER_DISPLAY_DELAY = 5;
 	public static final int MAX_QUESTION_SCORE = 1000;
 	public static final int MIN_QUESTION_SCORE = 500;
 
@@ -36,7 +35,6 @@ public class TriviaGame {
 	 */
 	private long timeQuestionStarted = 0;
 
-	private int postPossibleAnswersAt = -1;
 	private int endQuestionAt = -1;
 	private int startNextQuestionAt = 0;
 
@@ -64,8 +62,6 @@ public class TriviaGame {
 	public void tickUpdate() {
 		if (questionsCompleted == numberOfQuestions) {
 			finishGame();
-		} else if (ticksElapsed == postPossibleAnswersAt) {
-			postPossibleAnswers();
 		} else if (ticksElapsed == endQuestionAt) {
 			endQuestionAndPostResults();
 		} else if (ticksElapsed == startNextQuestionAt) {
@@ -82,33 +78,28 @@ public class TriviaGame {
 		alreadyDoneIds.add(current.id);
 		current.shuffleAnswers();
 
-		postPossibleAnswersAt = ticksElapsed + (ANSWER_DISPLAY_DELAY * Main.TICK_RATE);
-		endQuestionAt = postPossibleAnswersAt + (QUESTION_TIME_LIMIT * Main.TICK_RATE);
-		timeQuestionStarted = System.currentTimeMillis() + (ANSWER_DISPLAY_DELAY * 1000);
+		timeQuestionStarted = System.currentTimeMillis();
+
+		endQuestionAt = ticksElapsed + (QUESTION_TIME_LIMIT * Main.TICK_RATE);
 
 		MessageBuilder builder = bot.getNewBuilder(channel);
 
 		builder.appendContent("Question."
 				+ (current.author != null ? " (by " + current.author + ")" : "") + "\n");
 		builder.appendContent("**" + current.question + "**\n");
-		builder.appendContent(
-				"*The answers will appear in " + ANSWER_DISPLAY_DELAY + " seconds...*");
+		postPossibleAnswers(builder);
 
 		bot.sendMessage(builder);
 	}
 
-	public void postPossibleAnswers() {
-		MessageBuilder builder = bot.getNewBuilder(channel);
-
-		builder.appendContent("***" + QUESTION_TIME_LIMIT + "** seconds to answer:*\n");
+	public void postPossibleAnswers(MessageBuilder builder) {
+		builder.appendContent("***" + QUESTION_TIME_LIMIT + "*** **seconds to answer:**\n");
 
 		for (int i = 0; i < current.answers.size(); i++) {
 			Answer a = current.answers.get(i);
 
 			builder.appendContent("`" + ((char) ('A' + i)) + ".` " + a.answer + "\n");
 		}
-
-		bot.sendMessage(builder);
 	}
 
 	public void endQuestionAndPostResults() {
@@ -142,7 +133,8 @@ public class TriviaGame {
 					"\nThe next question begins in " + LEADERBOARD_DISPLAY_TIME + " seconds.");
 			startNextQuestionAt = ticksElapsed + (LEADERBOARD_DISPLAY_TIME * Main.TICK_RATE);
 		} else {
-			builder.appendContent("\n**That's the end of the game! Well done everyone!**");
+			builder.appendContent("\n**That's the end of the game! Well done "
+					+ (playerScores.size() == 0 ? "no " : "every") + "one!**");
 		}
 
 		bot.sendMessage(builder);
@@ -171,6 +163,8 @@ public class TriviaGame {
 
 			if (s.currentQuestionTime > 0) {
 				builder.appendContent(" **+" + calcPoints(s.currentQuestionTime) + "**");
+			} else {
+				builder.appendContent(" +0");
 			}
 
 			builder.appendContent(" [" + s.correct + ":" + s.wrong + ", ");
@@ -189,7 +183,7 @@ public class TriviaGame {
 	}
 
 	public int calcPoints(float time) {
-		return (int) Utils.lerp(MIN_QUESTION_SCORE, MAX_QUESTION_SCORE, time);
+		return (int) Utils.lerp(MIN_QUESTION_SCORE, MAX_QUESTION_SCORE, Utils.clamp(time, 0, 1));
 	}
 
 	public List<Score> getLeaderboard() {

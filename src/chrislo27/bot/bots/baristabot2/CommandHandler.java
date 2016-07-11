@@ -121,12 +121,13 @@ public class CommandHandler {
 				+ "Starts a trivia game in the current channel (there can only be one at a time!)"
 				+ " with the desired number of questions\n");
 		builder.appendContent("%trivia endgame - Stops the current trivia game, if any\n");
+		builder.appendContent("%trivia questions - Outputs the number of questions\n");
 		builder.appendContent(
 				"\n__How to play:__ *(very similar to Kahoot, if you've played that)*\n");
 		builder.appendContent(
-				"The quizmaster (the bot) will set out a question. *Five seconds later*, the possible multiple choice answers will appear.\n");
+				"The quizmaster (the bot) will set out a question with the multiple choice answers.\n");
 		builder.appendContent(
-				"Simply respond with the answer's letter (typically A, B, C, or D) to answer.\n");
+				"Simply respond with the answer's letter (A-Z) to answer.\n");
 		builder.appendContent(
 				"**The __faster__ you answer correctly, the __more points__ you'll get! (between 500 to 1000)**\n");
 		builder.appendContent(
@@ -805,7 +806,7 @@ public class CommandHandler {
 			}
 		case "trivia":
 			// TODO change back to mod
-			if (permLevel < PermissionTier.ADMIN) {
+			if (permLevel < PermissionTier.MODERATOR) {
 				return CommandResponse.insufficientPermission(permLevel, PermissionTier.MODERATOR);
 			} else {
 				if (args.length < 1) return "Requires at least one argument!";
@@ -837,6 +838,10 @@ public class CommandHandler {
 					Main.info("Ended current trivia game");
 					bot.sendMessage(
 							bot.getNewBuilder(channel).appendContent("Ended current trivia game."));
+				} else if (cmd.equals("questions")) {
+					bot.sendMessage(bot.getNewBuilder(channel)
+							.appendContent("Number of trivia questions in database: "
+									+ Questions.instance().questions.size()));
 				} else {
 					return "Sub-command not found!";
 				}
