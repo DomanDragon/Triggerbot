@@ -138,7 +138,8 @@ public class BaristaBot2 extends Bot {
 	}
 
 	public MessageBuilder getNewBuilder(IChannel channel) {
-		return new MessageBuilder(client).withChannel(channel);
+		// adds zero-width space to avoid triggering other bots - complies with best practice
+		return new MessageBuilder(client).withChannel(channel).appendContent("\u200B");
 	}
 
 	public void sendMessage(MessageBuilder builder) {
