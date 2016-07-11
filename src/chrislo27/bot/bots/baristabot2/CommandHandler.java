@@ -47,7 +47,7 @@ public class CommandHandler {
 		builder.appendContent("%woof - woof\n");
 		builder.appendContent("%hi/hello - Hello!\n");
 		builder.appendContent(
-				"%reaction/react <wot/wotdraw/salt/donk/zodiackiller/blame> - Posts a reaction picture\n");
+				"%reaction/react <wot/wotdraw/wotserver//salt/donk/zodiackiller/blame> - Posts a reaction picture\n");
 		builder.appendContent("%8ball/8-ball - Ask the magic 8-ball\n");
 		builder.appendContent(
 				"%perms [uuid] - Gets the UUID of either you, or the UUID provided\n");
@@ -205,6 +205,9 @@ public class CommandHandler {
 					break;
 				case "wotdraw":
 					builder.appendContent("http://i.imgur.com/9M2XmwE.png");
+					break;
+				case "wotserver":
+					builder.appendContent("http://i.imgur.com/rIcYC60.png");
 					break;
 				case "salt":
 					builder.appendContent("http://i.imgur.com/43ibnvL.jpg");
