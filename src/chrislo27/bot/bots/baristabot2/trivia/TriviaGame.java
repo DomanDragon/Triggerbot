@@ -98,7 +98,7 @@ public class TriviaGame {
 	public void postPossibleAnswers() {
 		MessageBuilder builder = bot.getNewBuilder(channel);
 
-		builder.appendContent("*" + QUESTION_TIME_LIMIT + " seconds to answer:*\n");
+		builder.appendContent("***" + QUESTION_TIME_LIMIT + "** seconds to answer:*\n");
 
 		for (int i = 0; i < current.answers.size(); i++) {
 			Answer a = current.answers.get(i);
@@ -112,7 +112,7 @@ public class TriviaGame {
 	public void endQuestionAndPostResults() {
 		MessageBuilder builder = bot.getNewBuilder(channel);
 
-		builder.appendContent("The answer was **");
+		builder.appendContent("The answer was ");
 		boolean first = true;
 		for (int i = 0; i < current.answers.size(); i++) {
 			if (current.answers.get(i).isRight == false) continue;
@@ -123,10 +123,11 @@ public class TriviaGame {
 				first = false;
 			}
 
-			builder.appendContent(current.answers.get(i).answer);
+			builder.appendContent(
+					"**" + ((char) ('A' + i)) + ". " + current.answers.get(i).answer + "**");
 		}
 
-		builder.appendContent("**.\n\n");
+		builder.appendContent(".\n\n");
 
 		for (Score s : playerScores.values()) {
 			s.points += ((int) (s.currentQuestionTime * MAX_QUESTION_SCORE));
