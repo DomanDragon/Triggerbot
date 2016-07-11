@@ -120,21 +120,21 @@ public class CommandHandler {
 		builder.appendContent("%trivia newgame <number of questions> - "
 				+ "Starts a trivia game in the current channel (there can only be one at a time!)"
 				+ " with the desired number of questions\n");
-		builder.appendContent(
-				"%trivia endgame - Stops a trivia game in the current channel, if any\n");
+		builder.appendContent("%trivia endgame - Stops the current trivia game, if any\n");
 		builder.appendContent(
 				"\n__How to play:__ *(very similar to Kahoot, if you've played that)*\n");
 		builder.appendContent(
 				"The quizmaster (the bot) will set out a question. *Five seconds later*, the possible multiple choice answers will appear.\n");
 		builder.appendContent(
 				"Simply respond with the answer's letter (typically A, B, C, or D) to answer.\n");
-		builder.appendContent("**The faster you answer correctly, the more points you'll get!**\n");
+		builder.appendContent(
+				"**The __faster__ you answer correctly, the __more points__ you'll get! (between 500 to 1000)**\n");
 		builder.appendContent(
 				"You only get one answer per question. You __cannot__ change your answer!\n");
-		builder.appendContent("After everyone is done answering,"
-				+ " or the time limit expires (the bot will announce it, and give a five second warning),"
-				+ " the answer and the winners of the round will be announced,"
-				+ " along with the new leaderboard.\n");
+		builder.appendContent(
+				"After the time limit expires (the bot will give a three second warning),"
+						+ " the answer and the winners of the round will be announced,"
+						+ " along with the new leaderboard.\n");
 	}
 
 	public String doCommand(String command, IMessage message, IChannel channel, IUser user,
