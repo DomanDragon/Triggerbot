@@ -322,7 +322,21 @@ public class BaristaBot2 extends Bot {
 
 	@EventSubscriber
 	public void onUserConnectVoice(UserVoiceChannelJoinEvent event) {
-		warnUserIfNotMuted(event.getUser());
+		Thread daemon = new Thread("User should be muted warning for " + event.getUser().getName()
+				+ "#" + event.getUser().getDiscriminator()) {
+
+			@Override
+			public void run() {
+				try {
+					sleep(1000 * 30);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				warnUserIfNotMuted(event.getUser());
+			}
+		};
+		daemon.setDaemon(true);
+		daemon.start();
 	}
 
 	@EventSubscriber
