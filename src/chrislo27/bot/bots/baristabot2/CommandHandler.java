@@ -58,7 +58,7 @@ public class CommandHandler {
 		builder.appendContent("%rps <rock/paper/scissors/r/p/s> - Play rock paper scissors\n");
 		builder.appendContent("@" + bot.client.getOurUser().getName()
 				+ " <text> - Talk to the barista (Uses Cleverbot)\n");
-		builder.appendContent("%timeline - Server's timeline");
+		builder.appendContent("%timeline - Server's timeline\n");
 
 		if (permLevel < PermissionTier.TRUSTED) return;
 		// trusted
@@ -347,8 +347,20 @@ public class CommandHandler {
 			} else {
 				MessageBuilder stats = bot.getNewBuilder(channel);
 
+				stats.appendContent("__Stats:__\n");
+
 				// TODO
-				stats.appendContent("Coming soon!");
+				{
+					int peopleListening = 0;
+					for (IUser u : bot.radioChannel.getUsersHere()) {
+						if (u.isDeafLocally() || u.isBot() || u.isDeaf(bot.radioChannel.getGuild()))
+							continue;
+						peopleListening++;
+					}
+
+					stats.appendContent("People actively (not deafened) listening in the radio: "
+							+ peopleListening + (peopleListening == 0 ? " :(" : "") + "\n");
+				}
 
 				bot.sendMessage(stats);
 			}
