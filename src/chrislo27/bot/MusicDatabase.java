@@ -48,7 +48,8 @@ public class MusicDatabase {
 		allVisibleSongs.clear();
 
 		// add(new File("music/special/.mp3"), "!#");
-		add(new File("music/special/corruptHai.wav"), "!hai hai hai ha ho#", "!a-hai#");
+		add(new File("music/special/corruptHai.wav"), "!corrupthai#", "!hai hai hai ha ho#",
+				"!a-hai#");
 		add(new File("music/special/donkdonk.wav"), "!donkdonk#");
 		add(new File("music/special/donkdwonk.wav"), "!donkdwonk#");
 		add(new File("music/special/deetdeetduh.wav"), "!deetdeetduh#");
