@@ -69,6 +69,7 @@ public class CommandHandler {
 		if (permLevel < PermissionTier.MODERATOR) return;
 		// moderator
 		builder.appendContent("\n**__Moderator commands:__**\n");
+		builder.appendContent("%getuuid <name> - Gets the UUID of users containing the name");
 		builder.appendContent(
 				"%getusername <uuid> - Gets the name and discriminator from their UUID\n");
 		builder.appendContent("%permissiontiers - Displays all permission tiers\n");
@@ -713,7 +714,7 @@ public class CommandHandler {
 			if (permLevel < PermissionTier.MODERATOR)
 				return CommandResponse.insufficientPermission(permLevel, PermissionTier.MODERATOR);
 			if (args.length < 1) {
-				return "Requires at least one argument! <username/part of username> [discriminator (4 digit code)]";
+				return "Requires at least one argument!";
 			} else {
 				String part = args[0].toLowerCase();
 				MessageBuilder getUuidBuilder = bot.getNewBuilder(channel);
@@ -723,13 +724,14 @@ public class CommandHandler {
 
 				boolean found = false;
 				for (IUser u : channel.getUsersHere()) {
-					if (u.getName().toLowerCase().contains(part)) {
-						if (args.length < 2 || u.getDiscriminator().equalsIgnoreCase(args[1])) {
-							getUuidBuilder.appendContent("The UUID for " + u.getName() + "#"
-									+ u.getDiscriminator() + " is " + u.getID() + "\n");
+					if (u.getName().toLowerCase().contains(part)
+							|| (u.getNicknameForGuild(channel.getGuild()).isPresent()
+									&& u.getNicknameForGuild(channel.getGuild()).get().toLowerCase()
+											.contains(part))) {
+						getUuidBuilder.appendContent("The UUID for " + u.getName() + "#"
+								+ u.getDiscriminator() + " is " + u.getID() + "\n");
 
-							found = true;
-						}
+						found = true;
 					}
 				}
 
