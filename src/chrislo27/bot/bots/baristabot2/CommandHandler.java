@@ -47,7 +47,7 @@ public class CommandHandler {
 		builder.appendContent("%woof - woof\n");
 		builder.appendContent("%hi/hello - Hello!\n");
 		builder.appendContent(
-				"%reaction/react <wot/wotdraw/wotserver//salt/donk/zodiackiller/blame> - Posts a reaction picture\n");
+				"%reaction/react <wot/wotdraw/wotserver/uncle/salt/donk/zodiackiller/blame> - Posts a reaction picture\n");
 		builder.appendContent("%8ball/8-ball - Ask the magic 8-ball\n");
 		builder.appendContent(
 				"%perms [uuid] - Gets the UUID of either you, or the UUID provided\n");
