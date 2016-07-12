@@ -322,21 +322,25 @@ public class BaristaBot2 extends Bot {
 
 	@EventSubscriber
 	public void onUserConnectVoice(UserVoiceChannelJoinEvent event) {
-		Thread daemon = new Thread("User should be muted warning for " + event.getUser().getName()
-				+ "#" + event.getUser().getDiscriminator()) {
+		IUser user = event.getUser();
 
-			@Override
-			public void run() {
-				try {
-					sleep(1000 * 30);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
+		if (!user.isMutedLocally() && !user.isMuted(radioChannel.getGuild())) {
+			Thread daemon = new Thread("User should be muted warning") {
+
+				@Override
+				public void run() {
+					try {
+						sleep(1000 * 30);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					warnUserIfNotMuted(event.getUser());
+					Main.info("Warned " + event.getUser().getID() + " about muting themselves");
 				}
-				warnUserIfNotMuted(event.getUser());
-			}
-		};
-		daemon.setDaemon(true);
-		daemon.start();
+			};
+			daemon.setDaemon(true);
+			daemon.start();
+		}
 	}
 
 	@EventSubscriber
@@ -705,7 +709,7 @@ public class BaristaBot2 extends Bot {
 		builder.appendContent("Current vote ratio: **" + skipVoters + " / " + peopleListening
 				+ "** (__" + String.format("%.1f", (Math.round(ratio * 1000) / 10f)) + "__%)\n");
 
-		if (ratio > VOTE_SKIP_RATIO) {
+		if (ratio >= VOTE_SKIP_RATIO) {
 			builder.appendContent("The ratio **is at or above** __"
 					+ ((int) (VOTE_SKIP_RATIO * 100)) + "%__; skipping this song...");
 		} else {
