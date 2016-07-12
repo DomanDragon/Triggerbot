@@ -47,10 +47,8 @@ public class CommandHandler {
 				"%help/? [music/trivia] - Shows this message or the desired help page\n");
 		builder.appendContent("%woof - woof\n");
 		builder.appendContent("%hi/hello - Hello!\n");
-		builder.appendContent("%reaction/react/img "
-				+ "<wot/wotdraw/wotserver/uncle/salt/donk/zodiackiller/blame/"
-				+ "273rdcontact/sickbeats/pgj/justright/ilovetap>"
-				+ " - Posts a reaction picture\n");
+		builder.appendContent(
+				"%reaction/react/img [image] - Posts a reaction picture or displays the list, if no image provided\n");
 		builder.appendContent("%8ball/8-ball - Ask the magic 8-ball\n");
 		builder.appendContent(
 				"%perms [uuid] - Gets the UUID of either you, or the UUID provided\n");
@@ -199,7 +197,26 @@ public class CommandHandler {
 			if (permLevel < PermissionTier.NORMAL)
 				return CommandResponse.insufficientPermission(permLevel, PermissionTier.NORMAL);
 			if (args.length < 1) {
-				return "Requires at least one argument!";
+				MessageBuilder builder = bot.getNewBuilder(channel)
+						.appendContent(user.mention() + " __Allowed reaction/img arguments:__\n\n`");
+
+				builder.appendContent("wot, ");
+				builder.appendContent("wotdraw, ");
+				builder.appendContent("wotserver, ");
+				builder.appendContent("salt, ");
+				builder.appendContent("donk, ");
+				builder.appendContent("zodiackiller, ");
+				builder.appendContent("sickbeats, ");
+				builder.appendContent("blame");
+				builder.appendContent("uncle, ");
+				builder.appendContent("pgj, ");
+				builder.appendContent("273rdcontact, ");
+				builder.appendContent("ohyes|justright|*justright*, ");
+				builder.appendContent("ilovetap, ");
+				builder.appendContent("splendidanswers");
+
+				bot.sendMessage(builder.appendContent("`"));
+				return null;
 			} else {
 				MessageBuilder builder = bot.getNewBuilder(channel);
 				boolean send = true;
@@ -246,6 +263,9 @@ public class CommandHandler {
 				case "ilovetap":
 					builder.appendContent("http://i.imgur.com/8JzsqRR.png");
 					break;
+				case "splendidanswers":
+					builder.appendContent("http://i.imgur.com/UoAFy1c.png");
+					break;
 				default:
 					send = false;
 					break;
@@ -285,14 +305,37 @@ public class CommandHandler {
 			} else {
 				MessageBuilder stats = bot.getNewBuilder(channel);
 
-				long diff = (System.currentTimeMillis() - bot.startTime.getTime()) / 1000;
+				long startTimeDiff = (System.currentTimeMillis() - bot.startTime.getTime()) / 1000;
+
+				if (bot.audioPlayer != null && bot.audioPlayer.getPlaylist().size() > 0) {
+					bot.secondsPlaying += Math
+							.abs(System.currentTimeMillis() - bot.playingStartTime) / 1000.0D;
+					bot.playingStartTime = System.currentTimeMillis();
+				}
 
 				stats.appendContent(user.mention() + " __Uptime:__\n");
 				stats.appendContent("Started on: " + bot.startTime.toString() + "\n");
-				stats.appendContent("Current uptime: "
-						+ TimeUnit.DAYS.convert(diff, TimeUnit.SECONDS) + " days, "
-						+ TimeUnit.HOURS.convert(diff, TimeUnit.SECONDS) % 24 + " hours, "
-						+ TimeUnit.MINUTES.convert(diff, TimeUnit.SECONDS) % 60 + " minutes");
+				stats.appendContent("Current uptime: __"
+						+ TimeUnit.DAYS.convert(startTimeDiff, TimeUnit.SECONDS) + " days__, __"
+						+ TimeUnit.HOURS.convert(startTimeDiff, TimeUnit.SECONDS) % 24
+						+ " hours__, __"
+						+ TimeUnit.MINUTES.convert(startTimeDiff, TimeUnit.SECONDS) % 60
+						+ " minutes__\n");
+
+				stats.appendContent(
+						"Music streamed since uptime start: __"
+								+ TimeUnit.DAYS.convert((long) bot.secondsPlaying, TimeUnit.SECONDS)
+								+ " days__, __"
+								+ TimeUnit.HOURS.convert((long) bot.secondsPlaying,
+										TimeUnit.SECONDS) % 24
+								+ " hours__, __"
+								+ TimeUnit.MINUTES.convert((long) bot.secondsPlaying,
+										TimeUnit.SECONDS) % 60
+						+ " minutes__, or about __"
+						+ String.format("%.2f",
+								(bot.secondsPlaying * bot.radioChannel.getBitrate()) / 8 / 1024
+										/ 1024)
+								+ " MB__ (" + bot.radioChannel.getBitrate() / 1000f + " kbps)\n");
 
 				bot.sendMessage(stats);
 			}
@@ -303,24 +346,8 @@ public class CommandHandler {
 			} else {
 				MessageBuilder stats = bot.getNewBuilder(channel);
 
-				if (bot.audioPlayer != null && bot.audioPlayer.getPlaylist().size() > 0) {
-					bot.secondsPlaying += Math
-							.abs(System.currentTimeMillis() - bot.playingStartTime) / 1000.0D;
-					bot.playingStartTime = System.currentTimeMillis();
-				}
-
-				long diff = System.currentTimeMillis() - bot.startTime.getTime();
-
-				stats.appendContent(user.mention() + " __Stats:__\n");
-				stats.appendContent("Music streamed since uptime start: __"
-						+ String.format("%.4f", bot.secondsPlaying / 60f)
-						+ " minutes__, or about __"
-						+ String.format("%.2f",
-								(bot.secondsPlaying * bot.radioChannel.getBitrate()) / 8 / 1024
-										/ 1024)
-						+ " MB__ (" + bot.radioChannel.getBitrate() / 1000f + " kbps)\n");
-				if (Incidents.incidents.size() > 0) stats.appendContent("Last incident: "
-						+ Incidents.incidents.get(Incidents.incidents.size() - 1) + "\n");
+				// TODO
+				stats.appendContent("Coming soon!");
 
 				bot.sendMessage(stats);
 			}
@@ -823,7 +850,6 @@ public class CommandHandler {
 				return null;
 			}
 		case "trivia":
-			// TODO change back to mod
 			if (permLevel < PermissionTier.MODERATOR) {
 				return CommandResponse.insufficientPermission(permLevel, PermissionTier.MODERATOR);
 			} else {
