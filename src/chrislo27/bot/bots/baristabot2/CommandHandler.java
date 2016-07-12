@@ -20,6 +20,7 @@ import chrislo27.bot.util.Utils;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
+import sx.blah.discord.handle.obj.Presences;
 import sx.blah.discord.util.DiscordException;
 import sx.blah.discord.util.MessageBuilder;
 import sx.blah.discord.util.MessageBuilder.Styles;
@@ -46,8 +47,10 @@ public class CommandHandler {
 				"%help/? [music/trivia] - Shows this message or the desired help page\n");
 		builder.appendContent("%woof - woof\n");
 		builder.appendContent("%hi/hello - Hello!\n");
-		builder.appendContent(
-				"%reaction/react <wot/wotdraw/wotserver/uncle/salt/donk/zodiackiller/blame> - Posts a reaction picture\n");
+		builder.appendContent("%reaction/react/img "
+				+ "<wot/wotdraw/wotserver/uncle/salt/donk/zodiackiller/blame/"
+				+ "273rdcontact/sickbeats/pgj/justright/ilovetap>"
+				+ " - Posts a reaction picture\n");
 		builder.appendContent("%8ball/8-ball - Ask the magic 8-ball\n");
 		builder.appendContent(
 				"%perms [uuid] - Gets the UUID of either you, or the UUID provided\n");
@@ -93,7 +96,8 @@ public class CommandHandler {
 		builder.appendContent(
 				"%debug - Toggles debug mode, which stops non-admins from doing music actions\n");
 		builder.appendContent(
-				"%setstatus [status] - Sets the status, or removes it (cannot override debug status)\n");
+				"%setstatus/setplaying [status] - Sets the status, or removes it (cannot override debug status)\n");
+		builder.appendContent("%idle - Toggles idle status light\n");
 		builder.appendContent("%senddistress - Sends a test distress signal\n");
 		builder.appendContent("%say <channelID> <message> - Say a thing\n");
 	}
@@ -191,6 +195,7 @@ public class CommandHandler {
 			return null;
 		case "reaction":
 		case "react":
+		case "img":
 			if (permLevel < PermissionTier.NORMAL)
 				return CommandResponse.insufficientPermission(permLevel, PermissionTier.NORMAL);
 			if (args.length < 1) {
@@ -199,7 +204,7 @@ public class CommandHandler {
 				MessageBuilder builder = bot.getNewBuilder(channel);
 				boolean send = true;
 
-				switch (args[0].toLowerCase()) {
+				switch (Utils.getContent(args, 0).toLowerCase()) {
 				case "wot":
 					builder.appendContent("http://i.imgur.com/rBafTiE.png");
 					break;
@@ -230,6 +235,17 @@ public class CommandHandler {
 				case "pgj":
 					builder.appendContent("http://i.imgur.com/EAOQz0a.png");
 					break;
+				case "273rdcontact":
+					builder.appendContent("http://i.imgur.com/qKaXnoQ.png");
+					break;
+				case "ohyes":
+				case "*justright*":
+				case "justright":
+					builder.appendContent("http://i.imgur.com/2hFqWyM.png");
+					break;
+				case "ilovetap":
+					builder.appendContent("http://i.imgur.com/8JzsqRR.png");
+					break;
 				default:
 					send = false;
 					break;
@@ -241,7 +257,7 @@ public class CommandHandler {
 				}
 			}
 
-			return "Couldn't find the image you wanted (" + args[0] + ")!";
+			return "Couldn't find the image you wanted (" + Utils.getContent(args, 0) + ")!";
 		case "8-ball":
 		case "8ball":
 			if (permLevel < PermissionTier.NORMAL)
@@ -983,6 +999,7 @@ public class CommandHandler {
 
 			}
 			return null;
+		case "setplaying":
 		case "setstatus":
 			if (permLevel < PermissionTier.ADMIN) {
 				return CommandResponse.insufficientPermission(permLevel, PermissionTier.ADMIN);
@@ -1010,6 +1027,14 @@ public class CommandHandler {
 				bot.sendMessage(bot.getNewBuilder(c).appendContent(Utils.getContent(args, 1)));
 			}
 			return null;
+		case "idle":
+			if (permLevel < PermissionTier.ADMIN) {
+				return CommandResponse.insufficientPermission(permLevel, PermissionTier.ADMIN);
+			} else {
+				bot.client.changePresence(bot.client.getOurUser().getPresence() != Presences.IDLE);
+
+				return null;
+			}
 		}
 
 		return CommandResponse.doesNotExist();
