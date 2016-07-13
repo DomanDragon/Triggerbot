@@ -17,6 +17,7 @@ import chrislo27.bot.bots.baristabot2.trivia.Questions;
 import chrislo27.bot.bots.baristabot2.trivia.TriviaGame;
 import chrislo27.bot.util.EightBall;
 import chrislo27.bot.util.Utils;
+import chrislo27.bot.util.WanaKanaJava;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
@@ -37,14 +38,10 @@ public class CommandHandler {
 		this.bot = bot;
 	}
 
-	public void addHelpToBuilder(MessageBuilder builder, long permLevel) {
-		// builder.appendContent("");
-
-		if (permLevel < PermissionTier.NORMAL) return;
-		// normal
+	public void addNormalHelpToBuilder(MessageBuilder builder) {
 		builder.appendContent("**__Normal commands:__**\n");
 		builder.appendContent(
-				"%help/? [music/trivia] - Shows this message or the desired help page\n");
+				"%help/? [trusted/mod/moderator/admin/music/trivia] - Shows this message or the desired help page\n");
 		builder.appendContent("%woof - woof\n");
 		builder.appendContent("%hi/hello - Hello!\n");
 		builder.appendContent(
@@ -59,16 +56,19 @@ public class CommandHandler {
 		builder.appendContent("@" + bot.client.getOurUser().getName()
 				+ " <text> - Talk to the barista (Uses Cleverbot)\n");
 		builder.appendContent("%timeline - Server's timeline\n");
+		builder.appendContent("%toKana <romaji> - Converts Romaji to Japanese Kana - "
+				+ "Use lowercase for Hiragana (ひらがな), and capitals for Katakana (カタカナ) - "
+				+ "Powered by `https://github.com/MasterKale/WanaKanaJava`\n");
+	}
 
-		if (permLevel < PermissionTier.TRUSTED) return;
-		// trusted
-		builder.appendContent("\n**__Trusted commands:__**\n");
+	public void addTrustedHelpToBuilder(MessageBuilder builder) {
+		builder.appendContent("**__Trusted commands:__**\n");
 		builder.appendContent("%sfx <name> [any more] - Plays your SFX in the music queue\n");
 		builder.appendContent("%sfxlist/sfxdatabase/sfxdb - Displays SFX list\n");
+	}
 
-		if (permLevel < PermissionTier.MODERATOR) return;
-		// moderator
-		builder.appendContent("\n**__Moderator commands:__**\n");
+	public void addModHelpToBuilder(MessageBuilder builder) {
+		builder.appendContent("**__Moderator commands:__**\n");
 		builder.appendContent("%getuuid <name> - Gets the UUID of users containing the name");
 		builder.appendContent(
 				"%getusername <uuid> - Gets the name and discriminator from their UUID\n");
@@ -79,10 +79,10 @@ public class CommandHandler {
 		builder.appendContent(
 				"%reconnectaudio - Attempts to reconnect the audio system and channel\n");
 		builder.appendContent("%clearqueue - Clears the queue\n");
+	}
 
-		if (permLevel < PermissionTier.ADMIN) return;
-		// admin
-		builder.appendContent("\n**__Administrator commands:__**\n");
+	public void addAdminHelpToBuilder(MessageBuilder builder) {
+		builder.appendContent("**__Administrator commands:__**\n");
 		builder.appendContent("%exit/quit - Logs off and quits the bot\n");
 		builder.appendContent(
 				"%setpermissions <uuid> <level> - Sets the user's permission level\n");
@@ -162,6 +162,16 @@ public class CommandHandler {
 				String page = args.length < 1 ? "" : args[0].toLowerCase();
 
 				switch (page) {
+				case "mod":
+				case "moderator":
+					addModHelpToBuilder(builder);
+					break;
+				case "trusted":
+					addTrustedHelpToBuilder(builder);
+					break;
+				case "admin":
+					addAdminHelpToBuilder(builder);
+					break;
 				case "music":
 					builder.appendContent("Here are the commands for music actions.\n");
 					addMusicHelpToBuilder(builder);
@@ -171,9 +181,7 @@ public class CommandHandler {
 					addTriviaHelpToBuilder(builder);
 					break;
 				default:
-					builder.appendContent("Here's your commands for your permission level ("
-							+ permLevel + ").\n");
-					addHelpToBuilder(builder, permLevel);
+					addNormalHelpToBuilder(builder);
 					break;
 				}
 
@@ -453,6 +461,17 @@ public class CommandHandler {
 
 							+ "More Shitpost\n" + "Controlled Shitpost (now)"));
 			return null;
+		case "tokana":
+			if (permLevel < PermissionTier.NORMAL) {
+				return CommandResponse.insufficientPermission(permLevel, PermissionTier.NORMAL);
+			} else if (args.length < 1) {
+				return "Requires romaji argument! Use lowercase for Hiragana, and uppercase for Katakana.";
+			} else {
+				String content = Utils.getContent(args, 0);
+
+				bot.sendMessage(bot.getNewBuilder(channel).appendContent(
+						user.mention() + " " + WanaKanaJava.globalInstance.toKana(content)));
+			}
 		}
 
 		// music
