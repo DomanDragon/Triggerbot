@@ -527,6 +527,7 @@ public class CommandHandler {
 
 		// music
 		switch (caseCommand) {
+		case "\u25B6":
 		case "play":
 		case "queue":
 			if (permLevel < PermissionTier.NORMAL)
@@ -570,6 +571,7 @@ public class CommandHandler {
 			}
 
 			return null;
+		case "\u23E9":
 		case "skip":
 			if (permLevel < PermissionTier.NORMAL)
 				return CommandResponse.insufficientPermission(permLevel, PermissionTier.NORMAL);
@@ -578,6 +580,7 @@ public class CommandHandler {
 			} else {
 				return bot.voteToSkipTrackAndAct(user, channel);
 			}
+		case "\u1F500":
 		case "random":
 			if (permLevel < PermissionTier.NORMAL)
 				return CommandResponse.insufficientPermission(permLevel, PermissionTier.NORMAL);
