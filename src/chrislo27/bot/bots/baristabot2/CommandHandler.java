@@ -575,12 +575,16 @@ public class CommandHandler {
 					File output = new File("resources/giraffe/tmp.png");
 					ImageIO.write(combined, "png", output);
 
-					channel.sendFile(output, user.mention());
+					RequestBuffer.request(() -> {
+						try {
+							channel.sendFile(output, user.mention());
+						} catch (IOException | MissingPermissionsException | DiscordException e) {
+							e.printStackTrace();
+						}
 
-					output.delete();
-
-				} catch (IOException | RateLimitException | MissingPermissionsException
-						| DiscordException e) {
+						output.delete();
+					});
+				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
