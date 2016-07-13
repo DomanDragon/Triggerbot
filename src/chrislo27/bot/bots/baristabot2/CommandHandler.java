@@ -53,7 +53,7 @@ public class CommandHandler {
 		builder.appendContent("%rps <rock/paper/scissors/r/p/s> - Play rock paper scissors\n");
 		builder.appendContent("@" + bot.client.getOurUser().getName()
 				+ " <text> - Talk to the barista (Uses Cleverbot)\n");
-		builder.appendContent("%timeline - Server's timeline\n");
+		builder.appendContent("%timeline - View the server's timeline\n");
 		//		builder.appendContent(
 		//				"%japaneseify <romaji> - Converts Romaji to Katakana, use for English loanwords and such");
 		//		builder.appendContent(
