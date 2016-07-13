@@ -1,13 +1,20 @@
 package chrislo27.bot.bots.baristabot2;
 
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
+
+import javax.imageio.ImageIO;
 
 import chrislo27.bot.Main;
 import chrislo27.bot.MusicDatabase;
@@ -18,6 +25,7 @@ import chrislo27.bot.util.Utils;
 import chrislo27.bot.util.WanaKanaJava;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IMessage;
+import sx.blah.discord.handle.obj.IMessage.Attachment;
 import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.handle.obj.Presences;
 import sx.blah.discord.util.DiscordException;
@@ -520,6 +528,61 @@ public class CommandHandler {
 				}
 
 				bot.sendMessage(builder);
+			}
+
+			return null;
+		case "girafferator":
+			if (permLevel < PermissionTier.NORMAL) {
+				return CommandResponse.insufficientPermission(permLevel, PermissionTier.NORMAL);
+			} else if (message.getAttachments().size() == 0) {
+				return "No attachment found!";
+			} else {
+				String toUse = "giraffe";
+				if (args.length > 0 && args[0].equalsIgnoreCase("troger")) toUse = "troger";
+				// TODO finish giraffing
+
+				Attachment attachment = message.getAttachments().get(0);
+
+				if (!(attachment.getFilename().toLowerCase().endsWith(".jpg")
+						|| attachment.getFilename().toLowerCase().endsWith(".png"))) {
+					return "File must be png or jpg!";
+				}
+
+				if (attachment.getFilesize() > (2 * 1024 * 1024)) {
+					return "File must be at most 2 MB!";
+				}
+
+				// TODO remove
+				if (toUse.equals("troger") == false) return "Only troger is working right now.";
+
+				try {
+					final HttpURLConnection connection = (HttpURLConnection) new URL(
+							attachment.getUrl()).openConnection();
+					connection.setRequestProperty("User-Agent",
+							"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.65 Safari/537.31");
+					BufferedImage sentIn = ImageIO.read(connection.getInputStream());
+					BufferedImage paste = ImageIO
+							.read(new File("resources/giraffe/" + toUse + ".png"));
+
+					BufferedImage combined = new BufferedImage(sentIn.getWidth(),
+							sentIn.getHeight(), BufferedImage.TYPE_INT_ARGB);
+
+					Graphics g = combined.getGraphics();
+					int size = Math.min(combined.getWidth(), combined.getHeight()) / 3;
+					g.drawImage(sentIn, 0, 0, null);
+					g.drawImage(paste, 0, combined.getHeight() / 2 - size / 2, size, size, null);
+
+					File output = new File("resources/giraffe/tmp.png");
+					ImageIO.write(combined, "png", output);
+
+					channel.sendFile(output, user.mention());
+
+					output.delete();
+
+				} catch (IOException | RateLimitException | MissingPermissionsException
+						| DiscordException e) {
+					e.printStackTrace();
+				}
 			}
 
 			return null;
