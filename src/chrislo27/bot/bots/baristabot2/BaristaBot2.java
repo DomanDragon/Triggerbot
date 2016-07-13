@@ -211,6 +211,10 @@ public class BaristaBot2 extends Bot {
 			}
 		}
 
+		if (message.contains("%%%")) {
+			int i = message.indexOf("%%%");
+			message = message.substring(i + 2);
+		}
 		if (!message.startsWith("%") || message.length() <= 1) return;
 		if (author.isBot() && author != client.getOurUser()) return;
 
