@@ -1,15 +1,13 @@
 package chrislo27.bot.bots.baristabot2;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
-
-import javax.sound.sampled.UnsupportedAudioFileException;
 
 import chrislo27.bot.Main;
 import chrislo27.bot.MusicDatabase;
@@ -56,9 +54,13 @@ public class CommandHandler {
 		builder.appendContent("@" + bot.client.getOurUser().getName()
 				+ " <text> - Talk to the barista (Uses Cleverbot)\n");
 		builder.appendContent("%timeline - Server's timeline\n");
-		builder.appendContent("%toKana <romaji> - Converts Romaji to Japanese Kana - "
-				+ "Use lowercase for Hiragana (ひらがな), and capitals for Katakana (カタカナ) - "
-				+ "Powered by `https://github.com/MasterKale/WanaKanaJava`\n");
+		//		builder.appendContent(
+		//				"%japaneseify <romaji> - Converts Romaji to Katakana, use for English loanwords and such");
+		//		builder.appendContent(
+		//				"%toKana <romaji> - Converts Romaji to Japanese Kana (use only if you know what you're doing!) - "
+		//						+ "Use lowercase for Hiragana (ひらがな), and capitals for Katakana (カタカナ) - "
+		//						+ "Powered by `https://github.com/MasterKale/WanaKanaJava`\n");
+		//		builder.appendContent("%shippingforecast - Gets the shipping forecast\n");
 	}
 
 	public void addTrustedHelpToBuilder(MessageBuilder builder) {
@@ -222,7 +224,8 @@ public class CommandHandler {
 				builder.appendContent("273rdcontact, ");
 				builder.appendContent("ohyes|justright|*justright*, ");
 				builder.appendContent("ilovetap, ");
-				builder.appendContent("splendidanswers");
+				builder.appendContent("splendidanswers, ");
+				builder.appendContent("ilovetap.jpg");
 
 				bot.sendMessage(builder.appendContent("`"));
 				return null;
@@ -274,6 +277,9 @@ public class CommandHandler {
 					break;
 				case "splendidanswers":
 					builder.appendContent("http://i.imgur.com/UoAFy1c.png");
+					break;
+				case "ilovetap.jpg":
+					builder.appendContent("http://i.imgur.com/ZLPRZJz.jpg");
 					break;
 				default:
 					send = false;
@@ -472,6 +478,51 @@ public class CommandHandler {
 				bot.sendMessage(bot.getNewBuilder(channel).appendContent(
 						user.mention() + " " + WanaKanaJava.globalInstance.toKana(content)));
 			}
+			return null;
+		case "japaneseify":
+			if (permLevel < PermissionTier.NORMAL) {
+				return CommandResponse.insufficientPermission(permLevel, PermissionTier.NORMAL);
+			} else if (args.length < 1) {
+				return "Requires romaji argument!";
+			} else {
+				String content = Utils.getContent(args, 0);
+
+				bot.sendMessage(bot.getNewBuilder(channel).appendContent(
+						user.mention() + " " + WanaKanaJava.globalInstance.toKatakana(content)));
+			}
+			return null;
+		case "shippingforecast":
+			if (permLevel < PermissionTier.NORMAL) {
+				return CommandResponse.insufficientPermission(permLevel, PermissionTier.NORMAL);
+			} else {
+				MessageBuilder builder = bot.getNewBuilder(channel);
+
+				builder.appendContent("__Shipping Forecast Predictions (7-day):__\n");
+
+				List<IUser> guildUsers = bot.radioChannel.getGuild().getUsers();
+				ArrayList<IUser> onlineUsers = new ArrayList<>();
+
+				for (IUser u : guildUsers) {
+					if (u.getPresence() != Presences.OFFLINE) {
+						onlineUsers.add(u);
+					}
+				}
+
+				builder.appendContent("Day 1: KamekSans x Whistler_420\n");
+				for (int i = 1; i < 7; i++) {
+					long time = System.currentTimeMillis() / (1000 * 60 * 60 * 24) + i;
+
+					int one = (int) (time % onlineUsers.size());
+					int two = (int) ((time + 24353) % onlineUsers.size());
+
+					builder.appendContent("Day " + (i + 1) + ": " + onlineUsers.get(one).getName()
+							+ " x " + onlineUsers.get(two).getName() + "\n");
+				}
+
+				bot.sendMessage(builder);
+			}
+
+			return null;
 		}
 
 		// music
