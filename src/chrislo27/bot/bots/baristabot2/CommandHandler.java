@@ -223,6 +223,7 @@ public class CommandHandler {
 				builder.appendContent("wot, ");
 				builder.appendContent("wotdraw, ");
 				builder.appendContent("wotserver, ");
+				builder.appendContent("wotservernew, ");
 				builder.appendContent("salt, ");
 				builder.appendContent("donk, ");
 				builder.appendContent("zodiackiller, ");
@@ -254,6 +255,9 @@ public class CommandHandler {
 					break;
 				case "wotserver":
 					builder.appendContent("http://i.imgur.com/ed56Odd.png");
+					break;
+				case "wotservernew":
+					builder.appendContent("http://i.imgur.com/1BI56qJ.png");
 					break;
 				case "salt":
 					builder.appendContent("http://i.imgur.com/43ibnvL.jpg");
