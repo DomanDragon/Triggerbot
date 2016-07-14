@@ -46,6 +46,7 @@ public class CommandHandler {
 
 	public void addNormalHelpToBuilder(MessageBuilder builder) {
 		builder.appendContent("**__Normal commands:__**\n");
+		builder.appendContent("*Use three percents %%% to embed a command to be ran*\n");
 		builder.appendContent(
 				"%help/? [trusted/mod/moderator/admin/music/trivia] - Shows this message or the desired help page\n");
 		builder.appendContent("%woof - woof\n");
