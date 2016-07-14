@@ -23,6 +23,7 @@ import chrislo27.bot.bots.baristabot2.trivia.TriviaGame;
 import chrislo27.bot.util.EightBall;
 import chrislo27.bot.util.Utils;
 import chrislo27.bot.util.WanaKanaJava;
+import sx.blah.discord.Discord4J;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IMessage.Attachment;
@@ -408,6 +409,7 @@ public class CommandHandler {
 					stats.appendContent("People actively (not deafened) listening in the radio: "
 							+ peopleListening + (peopleListening == 0 ? " :(" : "") + "\n");
 				}
+				stats.appendContent("Current Discord4J version: " + Discord4J.VERSION + "\n");
 
 				bot.sendMessage(stats);
 			}
