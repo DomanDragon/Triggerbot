@@ -244,6 +244,12 @@ public class CommandHandler {
 				builder.appendContent("gramps, ");
 				builder.appendContent("kameksansbad");
 
+				if (permLevel >= PermissionTier.MODERATOR) {
+					builder.appendContent("`\n__Mod+-only:__\n`");
+					builder.appendContent("we didn't ask you, ");
+					builder.appendContent("personality");
+				}
+
 				bot.sendMessage(builder.appendContent("`"));
 				return null;
 			} else {
@@ -324,6 +330,10 @@ public class CommandHandler {
 					builder.appendContent("http://i.imgur.com/z0PFkCo.png");
 					break;
 				case "personality":
+					if (permLevel < PermissionTier.MODERATOR) {
+						send = false;
+						break;
+					}
 					builder.appendContent("http://i.imgur.com/9kq4Wes.png");
 					break;
 				default:
