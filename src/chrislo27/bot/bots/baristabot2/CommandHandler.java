@@ -315,6 +315,13 @@ public class CommandHandler {
 				case "kameksansbad":
 					builder.appendContent("http://i.imgur.com/AFAkqAC.jpg");
 					break;
+				case "we didn't ask you":
+					if (permLevel < PermissionTier.MODERATOR) {
+						send = false;
+						break;
+					}
+					builder.appendContent("http://i.imgur.com/z0PFkCo.png");
+					break;
 				default:
 					send = false;
 					break;
