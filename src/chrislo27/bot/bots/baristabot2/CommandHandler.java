@@ -1146,23 +1146,28 @@ public class CommandHandler {
 				return CommandResponse.insufficientPermission(permLevel, PermissionTier.ADMIN);
 			if (args.length < 2) {
 				return "Requires at least two arguments! <uuid> <level>";
-			}
+			} else {
+				if (args[0].equals("188789412426022914")) {
+					return "You cannot set the permissions of the owner of the bot!";
+				}
 
-			if (args[0].equals("188789412426022914")) {
-				return "You cannot set the permissions of the owner of the bot!";
-			}
+				try {
+					PermPrefs.setPermissionsLevel(args[0], Integer.parseInt(args[1]));
+					PermPrefs.instance().save();
+				} catch (Exception e) {
+					e.printStackTrace();
+					return "An exception occurred.\n```" + e.toString() + "```";
+				}
 
-			try {
-				PermPrefs.setPermissionsLevel(args[0], Integer.parseInt(args[1]));
-			} catch (Exception e) {
-				e.printStackTrace();
-				return "An exception occurred.\n```" + e.toString() + "```";
-			}
+				IUser u = bot.client.getUserByID(args[0]);
 
-			PermPrefs.instance().save();
-			bot.sendMessage(bot.getNewBuilder(channel).appendContent(
-					"Set permissions of user UUID \"" + args[0] + "\" to: " + args[1]));
-			return null;
+				bot.sendMessage(
+						bot.getNewBuilder(channel)
+								.appendContent("Set permissions of user UUID \"" + args[0] + "\""
+										+ (u != null ? " (" + u.getName() + ")" : "") + " to: "
+										+ args[1]));
+				return null;
+			}
 		case "refreshdatabase":
 		case "refreshdb":
 			if (permLevel < PermissionTier.ADMIN)
