@@ -244,7 +244,7 @@ public class CommandHandler {
 				builder.appendContent("gramps, ");
 				builder.appendContent("kameksansbad");
 
-				if (permLevel >= PermissionTier.MODERATOR) {
+				if (permLevel >= PermissionTier.ADMIN) {
 					builder.appendContent("`\n\n__Mod+ only:__\n\n`");
 					builder.appendContent("we didn't ask you, ");
 					builder.appendContent("personality");
