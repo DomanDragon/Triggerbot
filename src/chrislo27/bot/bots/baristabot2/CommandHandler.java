@@ -1188,9 +1188,12 @@ public class CommandHandler {
 
 				PermPrefs.setPermissionsLevel(args[0], -banEndTime);
 
+				IUser u = bot.client.getUserByID(args[0]);
+
 				bot.sendMessage(bot.getNewBuilder(channel)
 						.appendContent((caseCommand.equals("arrest") ? "Arrested" : "Tempbanned")
-								+ " " + args[0] + " for " + duration + " seconds"));
+								+ " " + args[0] + (u != null ? " " + u.getName() : "") + " for "
+								+ duration + " seconds"));
 			}
 			return null;
 		case "bitrate":
