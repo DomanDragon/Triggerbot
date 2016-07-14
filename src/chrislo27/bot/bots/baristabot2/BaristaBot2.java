@@ -441,7 +441,7 @@ public class BaristaBot2 extends Bot {
 
 		for (String s : RESTRICTED_CHANNELS) {
 			if (channel.getName().equalsIgnoreCase(s)) {
-				return "All BaristaBot music actions should be done in <#" + IDEAL_CHANNEL
+				return "All bot music actions should be done in <#" + IDEAL_CHANNEL
 						+ ">, please. (Restricted in this current channel \"" + channel.getName()
 						+ "\")";
 			}
