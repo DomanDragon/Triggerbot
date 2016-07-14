@@ -238,7 +238,8 @@ public class CommandHandler {
 				builder.appendContent("ilovetap.jpg, ");
 				builder.appendContent("bluebear, ");
 				builder.appendContent("X_X, ");
-				builder.appendContent("275thcontact");
+				builder.appendContent("275thcontact, ");
+				builder.appendContent("gramps");
 
 				bot.sendMessage(builder.appendContent("`"));
 				return null;
@@ -305,6 +306,9 @@ public class CommandHandler {
 					break;
 				case "275thcontact":
 					builder.appendContent("http://i.imgur.com/nCvliS9.png");
+					break;
+				case "gramps":
+					builder.appendContent("http://i.imgur.com/hGxqSDD.png");
 					break;
 				default:
 					send = false;
