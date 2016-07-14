@@ -257,7 +257,7 @@ public class CommandHandler {
 					builder.appendContent("http://i.imgur.com/ed56Odd.png");
 					break;
 				case "wotservernew":
-					builder.appendContent("http://i.imgur.com/1BI56qJ.png");
+					builder.appendContent("http://i.imgur.com/XfyO9ZI.png");
 					break;
 				case "salt":
 					builder.appendContent("http://i.imgur.com/43ibnvL.jpg");
