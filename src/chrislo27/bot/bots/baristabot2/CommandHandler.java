@@ -228,7 +228,7 @@ public class CommandHandler {
 				builder.appendContent("donk, ");
 				builder.appendContent("zodiackiller, ");
 				builder.appendContent("sickbeats, ");
-				builder.appendContent("blame");
+				builder.appendContent("blame, ");
 				builder.appendContent("uncle, ");
 				builder.appendContent("pgj, ");
 				builder.appendContent("273rdcontact, ");
@@ -532,7 +532,7 @@ public class CommandHandler {
 
 				builder.appendContent("__Shipping Forecast Predictions (7-day):__\n");
 
-				List<IUser> guildUsers = bot.radioChannel.getGuild().getUsers();
+				List<IUser> guildUsers = channel.getGuild().getUsers();
 				ArrayList<IUser> onlineUsers = new ArrayList<>();
 
 				for (IUser u : guildUsers) {
@@ -1319,8 +1319,8 @@ public class CommandHandler {
 		public static String insufficientPermission(long perm, long required) {
 			// best practice indicates that it should fail silently
 			return null;
-			//			return "You have insufficient permissions. (Required " + required + ", you have " + perm
-			//					+ ")";
+			//						return "You have insufficient permissions. (Required " + required + ", you have " + perm
+			//								+ ")";
 		}
 
 	}
