@@ -323,6 +323,9 @@ public class CommandHandler {
 					}
 					builder.appendContent("http://i.imgur.com/z0PFkCo.png");
 					break;
+				case "personality":
+					builder.appendContent("http://i.imgur.com/9kq4Wes.png");
+					break;
 				default:
 					send = false;
 					break;
@@ -574,7 +577,6 @@ public class CommandHandler {
 			} else {
 				String toUse = "giraffe";
 				if (args.length > 0 && args[0].equalsIgnoreCase("troger")) toUse = "troger";
-				// TODO finish giraffing
 
 				Attachment attachment = message.getAttachments().get(0);
 
