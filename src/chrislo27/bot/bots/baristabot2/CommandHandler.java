@@ -234,7 +234,10 @@ public class CommandHandler {
 				builder.appendContent("ohyes|justright|*justright*, ");
 				builder.appendContent("ilovetap, ");
 				builder.appendContent("splendidanswers, ");
-				builder.appendContent("ilovetap.jpg");
+				builder.appendContent("ilovetap.jpg, ");
+				builder.appendContent("bluebear, ");
+				builder.appendContent("X_X, ");
+				builder.appendContent("275thcontact");
 
 				bot.sendMessage(builder.appendContent("`"));
 				return null;
@@ -250,7 +253,7 @@ public class CommandHandler {
 					builder.appendContent("http://i.imgur.com/9M2XmwE.png");
 					break;
 				case "wotserver":
-					builder.appendContent("http://i.imgur.com/rIcYC60.png");
+					builder.appendContent("http://i.imgur.com/ed56Odd.png");
 					break;
 				case "salt":
 					builder.appendContent("http://i.imgur.com/43ibnvL.jpg");
@@ -289,6 +292,15 @@ public class CommandHandler {
 					break;
 				case "ilovetap.jpg":
 					builder.appendContent("http://i.imgur.com/ZLPRZJz.jpg");
+					break;
+				case "bluebear":
+					builder.appendContent("http://i.imgur.com/pHXyBvL.gif");
+					break;
+				case "x_x":
+					builder.appendContent("http://i.imgur.com/jPCB6tx.png");
+					break;
+				case "275thcontact":
+					builder.appendContent("http://i.imgur.com/nCvliS9.png");
 					break;
 				default:
 					send = false;
