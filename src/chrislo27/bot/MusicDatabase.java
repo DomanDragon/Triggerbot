@@ -350,7 +350,7 @@ public class MusicDatabase {
 		add(new File("music/Badges Menu.mp3"), "Badges Menu", "Badge Menu");
 		add(new File("music/Barbershop Remix.mp3"), "Barbershop Remix");
 		add(new File("music/Big Rock Finish.mp3"), "Big Rock Finish");
-		add(new File("music/Blue Bear.mp3"), "Blue Bear", "Sad Bear", ":o|");
+		add(new File("music/Blue Bear.mp3"), "Blue Bear", "Sad Bear", ":o|", "Miner's life");
 		add(new File("music/Bouncy Road.mp3"), "Bouncy Road", "Hopping Road");
 		add(new File("music/Catchy Tune.mp3"), "Catchy Tune", "Bouncing Road");
 		add(new File("music/Catchy Tune 2.mp3"), "Catchy Tune 2", "Bouncing Road 2");
