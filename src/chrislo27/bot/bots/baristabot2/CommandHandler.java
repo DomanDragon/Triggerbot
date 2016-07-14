@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import javax.imageio.ImageIO;
@@ -84,7 +85,7 @@ public class CommandHandler {
 		builder.appendContent("%getuuid <name> - Gets the UUID of users containing the name");
 		builder.appendContent(
 				"%getusername <uuid> - Gets the name and discriminator from their UUID\n");
-		builder.appendContent("%permissiontiers - Displays all permission tiers\n");
+		builder.appendContent("%listpermissions - Lists people's permissions, along with tiers\n");
 		builder.appendContent(
 				"%insertsong <index> <song> - Inserts the song at the place number, bypasses queue limit\n");
 		builder.appendContent("%removesong <index> - Removes the song at the place number\n");
@@ -952,13 +953,13 @@ public class CommandHandler {
 
 				return "Couldn't find the user " + args[0];
 			}
-		case "permissiontiers":
+		case "listpermissions":
 			if (permLevel < PermissionTier.MODERATOR) {
 				return CommandResponse.insufficientPermission(permLevel, PermissionTier.MODERATOR);
 			} else {
 				MessageBuilder builder = bot.getNewBuilder(channel);
 
-				builder.appendContent("__Permission tiers:__ \n");
+				builder.appendContent(user.mention() + " __Permission tiers:__ \n");
 
 				Field[] fields = PermissionTier.class.getFields();
 				for (Field f : fields) {
@@ -969,6 +970,27 @@ public class CommandHandler {
 							e.printStackTrace();
 						}
 					}
+				}
+
+				builder.appendContent("\n__Listing non-NORMAL permissions:__\n");
+
+				Properties pr = PermPrefs.getProperties();
+				for (Entry<Object, Object> entry : pr.entrySet()) {
+					String key = (String) entry.getKey();
+					String value = (String) entry.getValue();
+					IUser u = bot.client.getUserByID(key);
+
+					// used to update overdue bans
+					long l = PermPrefs.getPermissionsLevel(key);
+
+					if (l == 1) continue;
+					builder.appendContent((u == null ? "`" + key + "` (user not found!)"
+							: u.getName() + "#" + u.getDiscriminator())
+							+ ": "
+							+ (l < 0 ? ("tempbanned for "
+									+ ((Math.abs(l) - System.currentTimeMillis()) / 1000)
+									+ " more seconds") : "`" + l + "`")
+							+ "\n");
 				}
 
 				bot.sendMessage(builder);
