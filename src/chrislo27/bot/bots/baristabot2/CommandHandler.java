@@ -979,8 +979,8 @@ public class CommandHandler {
 					}
 
 					Track removed = bot.audioPlayer.getPlaylist().remove(index - 1);
-					String info = "Removed number " + index + ", track " + Utils
-							.stripExtension(((File) removed.getMetadata().get("file")).getName());
+					String info = "Removed number " + index + ", track " + MusicDatabase
+							.getDisguisedName(((File) removed.getMetadata().get("file")));
 
 					Main.info(info);
 					bot.sendMessage(bot.getNewBuilder(channel).appendContent(info));
