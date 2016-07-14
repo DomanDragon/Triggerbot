@@ -300,8 +300,12 @@ public class BaristaBot2 extends Bot {
 
 	@EventSubscriber
 	public void onAudioFinish(TrackFinishEvent event) {
-		Main.info("Finished playing " + Utils
-				.stripExtension(((File) event.getOldTrack().getMetadata().get("file")).getName()));
+		if (event.getOldTrack() == null) {
+			Main.info("Audio finished, old track is null");
+		} else {
+			Main.info("Finished playing " + Utils.stripExtension(
+					((File) event.getOldTrack().getMetadata().get("file")).getName()));
+		}
 
 		if (!event.getNewTrack().isPresent() || audioPlayer.getPlaylist().size() == 0) {
 			setStatus(null);
