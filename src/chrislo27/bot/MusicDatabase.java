@@ -98,6 +98,8 @@ public class MusicDatabase {
 		add(new File("music/special/ok.mp3"), "!ok2#");
 		add(new File("music/special/clapping.wav"), "!clapping#");
 		add(new File("music/special/bonodoririp.mp3"), "!bonodoririp#");
+		add(new File("music/special/soldier scream.mp3"), "!soldierscream#");
+		add(new File("music/special/bonodori.mp3"), "!bonodori#");
 
 		// add(new File("music/practice/Practice.mp3"), "Practice");
 		for (File f : new File("music/practice/").listFiles()) {
