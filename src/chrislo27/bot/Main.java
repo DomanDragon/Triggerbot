@@ -252,6 +252,7 @@ public class Main {
 	public static IDiscordClient getClient(String token, boolean login) throws DiscordException { //Returns an instance of the discord client
 		ClientBuilder clientBuilder = new ClientBuilder(); //Creates the ClientBuilder instance
 		clientBuilder.withToken(token);
+		clientBuilder.withReconnects();
 		if (login) {
 			return clientBuilder.login(); //Creates the client instance and logs the client in
 		} else {
