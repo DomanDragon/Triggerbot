@@ -63,27 +63,27 @@ public class PermPrefs {
 		}
 	}
 
-	public static long getPermissionsLevel(String uuid) {
-		if (instance().properties.containsKey(uuid) == false) {
-			setPermissionsLevel(uuid,
-					instance().defaultPermissions.getOrDefault(uuid, PermissionTier.NORMAL));
+	public static long getPermissionsLevel(String id) {
+		if (instance().properties.containsKey(id) == false) {
+			setPermissionsLevel(id,
+					instance().defaultPermissions.getOrDefault(id, PermissionTier.NORMAL));
 			instance().save();
 		}
 
-		long perm = Long.parseLong((String) instance().properties.get(uuid));
+		long perm = Long.parseLong((String) instance().properties.get(id));
 
 		if (perm < 0) {
 			if (Math.abs(perm) <= System.currentTimeMillis()) {
 				perm = PermissionTier.NORMAL;
-				setPermissionsLevel(uuid, perm);
+				setPermissionsLevel(id, perm);
 			}
 		}
 
 		return perm;
 	}
 
-	public static void setPermissionsLevel(String uuid, long level) {
-		instance().properties.put(uuid, level + "");
+	public static void setPermissionsLevel(String id, long level) {
+		instance().properties.put(id, level + "");
 	}
 
 	public void load() {

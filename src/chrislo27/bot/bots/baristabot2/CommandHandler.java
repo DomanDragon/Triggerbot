@@ -58,7 +58,7 @@ public class CommandHandler {
 				"%reaction/react/img [image] - Posts a reaction picture or displays the list, if no image provided\n");
 		builder.appendContent("%8ball/8-ball - Ask the magic 8-ball\n");
 		builder.appendContent(
-				"%perms [uuid] - Gets the UUID of either you, or the UUID provided\n");
+				"%perms [id] - Gets the ID of either you, or the ID provided\n");
 		builder.appendContent("%uptime - View how long the bot has been up\n");
 		builder.appendContent("%stats - View miscellaneous statistics\n");
 		builder.appendContent("%incidents - View past incidents\n");
@@ -83,9 +83,9 @@ public class CommandHandler {
 
 	public void addModHelpToBuilder(MessageBuilder builder) {
 		builder.appendContent("**__Moderator commands:__**\n");
-		builder.appendContent("%getuuid <name> - Gets the UUID of users containing the name");
+		builder.appendContent("%getid <name> - Gets the ID of users containing the name");
 		builder.appendContent(
-				"%getusername <uuid> - Gets the name and discriminator from their UUID\n");
+				"%getusername <id> - Gets the name and discriminator from their ID\n");
 		builder.appendContent("%listpermissions - Lists people's permissions, along with tiers\n");
 		builder.appendContent(
 				"%insertsong <index> <song> - Inserts the song at the place number, bypasses queue limit\n");
@@ -99,11 +99,11 @@ public class CommandHandler {
 		builder.appendContent("**__Administrator commands:__**\n");
 		builder.appendContent("%exit/quit - Logs off and quits the bot\n");
 		builder.appendContent(
-				"%setpermissions <uuid> <level> - Sets the user's permission level\n");
+				"%setpermissions <id> <level> - Sets the user's permission level\n");
 		builder.appendContent("%refreshdb/refreshdatabase - Refreshes song database\n");
 		builder.appendContent("%togglequeue - Toggles queuing\n");
 		builder.appendContent(
-				"%tempban/arrest <uuid> <seconds> - Temporarily bans someone for the duration\n");
+				"%tempban/arrest <id> <seconds> - Temporarily bans someone for the duration\n");
 		builder.appendContent("%username <name> - Sets the bot's username\n");
 		builder.appendContent("%bitrate [value] - Gets or sets the bitrate of the radio channel\n");
 		builder.appendContent(
@@ -113,7 +113,7 @@ public class CommandHandler {
 		builder.appendContent("%idle - Toggles idle status light\n");
 		builder.appendContent("%senddistress - Sends a test distress signal\n");
 		builder.appendContent("%say <channelID> <message> - Say a thing\n");
-		builder.appendContent("%senddm <uuid> <message> - Send a DM");
+		builder.appendContent("%senddm <id> <message> - Send a DM");
 	}
 
 	public void addMusicHelpToBuilder(MessageBuilder builder) {
@@ -912,17 +912,17 @@ public class CommandHandler {
 		// -----------------------------------------------------------------------------
 		// mod commands
 		switch (caseCommand) {
-		case "getuuid":
+		case "getid":
 			if (permLevel < PermissionTier.MODERATOR)
 				return CommandResponse.insufficientPermission(permLevel, PermissionTier.MODERATOR);
 			if (args.length < 1) {
 				return "Requires at least one argument!";
 			} else {
 				String part = args[0].toLowerCase();
-				MessageBuilder getUuidBuilder = bot.getNewBuilder(channel);
+				MessageBuilder getIdBuilder = bot.getNewBuilder(channel);
 
-				getUuidBuilder.appendContent(
-						"This server's UUID is " + channel.getGuild().getID() + "\n");
+				getIdBuilder.appendContent(
+						"This server's ID is " + channel.getGuild().getID() + "\n");
 
 				boolean found = false;
 				for (IUser u : channel.getUsersHere()) {
@@ -930,7 +930,7 @@ public class CommandHandler {
 							|| (u.getNicknameForGuild(channel.getGuild()).isPresent()
 									&& u.getNicknameForGuild(channel.getGuild()).get().toLowerCase()
 											.contains(part))) {
-						getUuidBuilder.appendContent("The UUID for " + u.getName() + "#"
+						getIdBuilder.appendContent("The ID for " + u.getName() + "#"
 								+ u.getDiscriminator() + " is " + u.getID() + "\n");
 
 						found = true;
@@ -938,7 +938,7 @@ public class CommandHandler {
 				}
 
 				if (found) {
-					bot.sendMessage(getUuidBuilder);
+					bot.sendMessage(getIdBuilder);
 
 					return null;
 				} else {
@@ -950,14 +950,14 @@ public class CommandHandler {
 			if (permLevel < PermissionTier.MODERATOR)
 				return CommandResponse.insufficientPermission(permLevel, PermissionTier.MODERATOR);
 			if (args.length < 1) {
-				return "Requires at least one argument! <uuid>";
+				return "Requires at least one argument! <id>";
 			} else {
 				String part = args[0].toLowerCase();
 				MessageBuilder builder = bot.getNewBuilder(channel);
 
 				for (IUser u : channel.getUsersHere()) {
 					if (u.getID().equals(args[0])) {
-						builder.appendContent("The name of the user with UUID " + args[0] + " is "
+						builder.appendContent("The name of the user with ID " + args[0] + " is "
 								+ u.getName() + "#" + u.getDiscriminator());
 
 						bot.sendMessage(builder);
@@ -1182,7 +1182,7 @@ public class CommandHandler {
 			if (permLevel < PermissionTier.ADMIN)
 				return CommandResponse.insufficientPermission(permLevel, PermissionTier.ADMIN);
 			if (args.length < 2) {
-				return "Requires at least two arguments! <uuid> <level>";
+				return "Requires at least two arguments! <id> <level>";
 			} else {
 				if (args[0].equals("188789412426022914")) {
 					return "You cannot set the permissions of the owner of the bot!";
@@ -1200,7 +1200,7 @@ public class CommandHandler {
 
 				bot.sendMessage(
 						bot.getNewBuilder(channel)
-								.appendContent("Set permissions of user UUID \"" + args[0] + "\""
+								.appendContent("Set permissions of user ID \"" + args[0] + "\""
 										+ (u != null ? " (" + u.getName() + ")" : "") + " to: "
 										+ args[1]));
 				return null;
@@ -1331,7 +1331,7 @@ public class CommandHandler {
 			if (permLevel < PermissionTier.ADMIN) {
 				return CommandResponse.insufficientPermission(permLevel, PermissionTier.ADMIN);
 			} else if (args.length < 1) {
-				return "Requires at least two arguments! <uuid> <message>";
+				return "Requires at least two arguments! <id> <message>";
 			} else {
 				IUser u = bot.client.getUserByID(args[0]);
 
