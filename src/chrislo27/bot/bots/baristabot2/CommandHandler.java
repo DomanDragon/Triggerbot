@@ -25,6 +25,7 @@ import chrislo27.bot.util.EightBall;
 import chrislo27.bot.util.Utils;
 import chrislo27.bot.util.WanaKanaJava;
 import sx.blah.discord.Discord4J;
+import sx.blah.discord.handle.impl.obj.User;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IMessage.Attachment;
@@ -112,6 +113,7 @@ public class CommandHandler {
 		builder.appendContent("%idle - Toggles idle status light\n");
 		builder.appendContent("%senddistress - Sends a test distress signal\n");
 		builder.appendContent("%say <channelID> <message> - Say a thing\n");
+		builder.appendContent("%senddm <uuid> <message> - Send a DM");
 	}
 
 	public void addMusicHelpToBuilder(MessageBuilder builder) {
@@ -1325,6 +1327,27 @@ public class CommandHandler {
 
 				return null;
 			}
+		case "senddm":
+			if (permLevel < PermissionTier.ADMIN) {
+				return CommandResponse.insufficientPermission(permLevel, PermissionTier.ADMIN);
+			} else if (args.length < 1) {
+				return "Requires at least two arguments! <uuid> <message>";
+			} else {
+				IUser u = bot.client.getUserByID(args[0]);
+
+				if (u == null) return "Couldn't find that user! `" + args[0] + "`";
+
+				try {
+					bot.sendMessage(bot.getNewBuilder(bot.client.getOrCreatePMChannel(u))
+							.withContent("*Sent by bot admin:* " + args[1]));
+					bot.sendMessage(bot.getNewBuilder(channel).appendContent(
+							"Sent a DM to " + u.getName() + " (" + u.getID() + "): " + args[1]));
+					Main.info("Sent DM to " + u.getName());
+				} catch (RateLimitException | DiscordException e) {
+					e.printStackTrace();
+				}
+			}
+			return null;
 		}
 
 		return CommandResponse.doesNotExist();
