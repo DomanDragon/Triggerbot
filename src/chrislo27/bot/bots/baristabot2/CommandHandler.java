@@ -658,7 +658,7 @@ public class CommandHandler {
 				if (entire.startsWith("!") && entire.endsWith("#")) file = null;
 
 				if (file != null) {
-					if (bot.emptyQueueIfAllGone(channel)) {
+					if (bot.emptyQueueIfAllGone(channel, bot.getNewBuilder(channel))) {
 
 					} else {
 						MessageBuilder builder = bot.getNewBuilder(channel);
@@ -701,7 +701,7 @@ public class CommandHandler {
 			if ((musicRestricted = bot.checkMusicRestricted(channel, user)) != null) {
 				return musicRestricted;
 			} else {
-				if (bot.emptyQueueIfAllGone(channel)) return null;
+				if (bot.emptyQueueIfAllGone(channel, null)) return null;
 
 				String criteria = args.length < 2 ? null : Utils.getContent(args, 1).toLowerCase();
 
