@@ -265,7 +265,7 @@ public class BaristaBot2 extends Bot {
 		}
 	}
 
-	public boolean emptyQueueIfAllGone(IChannel channel) {
+	public boolean emptyQueueIfAllGone(IChannel channel, MessageBuilder builder) {
 		for (IUser user : radioChannel.getConnectedUsers()) {
 			if (user == client.getOurUser()) continue;
 			if (user.isBot()) continue;
@@ -281,8 +281,8 @@ public class BaristaBot2 extends Bot {
 		setStatus(null);
 
 		Main.info("Cleared queue due to no one/all deaf in the radio channel");
-		if (channel != null) sendMessage(getNewBuilder(channel)
-				.appendContent("Cleared queue because everyone is all gone, or all deafened."));
+		if (channel != null && builder != null)
+			builder.appendContent("Cleared queue because everyone is all gone, or all deafened.");
 		return true;
 	}
 
@@ -314,7 +314,7 @@ public class BaristaBot2 extends Bot {
 
 		secondsPlaying += Math.abs(System.currentTimeMillis() - playingStartTime) / 1000.0D;
 
-		emptyQueueIfAllGone(null);
+		emptyQueueIfAllGone(null, null);
 	}
 
 	public void warnUserIfNotMuted(IUser user) {
@@ -353,12 +353,12 @@ public class BaristaBot2 extends Bot {
 
 	@EventSubscriber
 	public void onUserDisconnectVoice(UserVoiceChannelLeaveEvent event) {
-		emptyQueueIfAllGone(null);
+		emptyQueueIfAllGone(null, null);
 	}
 
 	@EventSubscriber
 	public void onUserMoveVoice(UserVoiceChannelMoveEvent event) {
-		emptyQueueIfAllGone(null);
+		emptyQueueIfAllGone(null, null);
 		if (event.getNewChannel().getID().equals(radioChannel.getID())) {
 			warnUserIfNotMuted(event.getUser());
 		}
@@ -610,7 +610,7 @@ public class BaristaBot2 extends Bot {
 			e.printStackTrace();
 		}
 
-		emptyQueueIfAllGone(channel);
+		emptyQueueIfAllGone(channel, builder);
 	}
 
 	public void skipTrack(IChannel channel, boolean showSkippedMessage) {
