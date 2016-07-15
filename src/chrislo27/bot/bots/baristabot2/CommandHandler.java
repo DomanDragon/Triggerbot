@@ -1296,7 +1296,7 @@ public class CommandHandler {
 			if (permLevel < PermissionTier.ADMIN) {
 				return CommandResponse.insufficientPermission(permLevel, PermissionTier.ADMIN);
 			} else {
-				bot.setStatus(args.length < 0 ? null : Utils.getContent(args, 0));
+				bot.setStatus(args.length < 1 ? null : Utils.getContent(args, 0));
 			}
 			return null;
 		case "senddistress":
