@@ -163,8 +163,6 @@ public class MessageLogListener {
 	public synchronized void onMessagePinned(MessagePinEvent event) {
 		printStart("PIN", event.getMessage());
 
-		writer.println("Fired from channel #" + event.getChannel().getName() + " ("
-				+ event.getChannel().getID() + ")");
 		printMessageContent(event.getMessage());
 	}
 
@@ -172,8 +170,6 @@ public class MessageLogListener {
 	public synchronized void onMessageUnpinned(MessageUnpinEvent event) {
 		printStart("UNPIN", event.getMessage());
 
-		writer.println("Fired from channel #" + event.getChannel().getName() + " ("
-				+ event.getChannel().getID() + ")");
 		printMessageContent(event.getMessage());
 	}
 
