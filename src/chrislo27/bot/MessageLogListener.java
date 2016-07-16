@@ -140,7 +140,7 @@ public class MessageLogListener {
 
 		writer.println("Old message:");
 		printMessageContent(event.getOldMessage());
-		writer.println("\n" + getIndent() + "changed to\n");
+		writer.println("" + getIndent() + "changed to");
 		printMessageContent(event.getNewMessage(), false);
 	}
 
