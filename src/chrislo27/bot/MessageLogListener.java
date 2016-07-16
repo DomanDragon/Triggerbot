@@ -29,7 +29,7 @@ import sx.blah.discord.handle.obj.Presences;
 public class MessageLogListener {
 
 	public final File logFile;
-	private volatile PrintWriter writer;
+	private final PrintWriter writer;
 
 	public MessageLogListener(File logFile) throws IOException {
 		this.logFile = logFile;
@@ -38,10 +38,14 @@ public class MessageLogListener {
 	}
 
 	public void dispose() {
-		if (writer != null) writer.close();
+		if (writer != null) {
+			synchronized (writer) {
+				writer.close();
+			}
+		}
 	}
 
-	private void printStart(String code, IUser user, IGuild guild) {
+	private synchronized void printStart(String code, IUser user, IGuild guild) {
 		writer.print(Main.getTimestamp() + " [" + code + "] ");
 		writer.print("[User: " + (guild == null ? user.getName() : user.getDisplayName(guild)) + "#"
 				+ user.getDiscriminator() + " (" + user.getID() + ")] ");
@@ -51,7 +55,7 @@ public class MessageLogListener {
 		return "        ";
 	}
 
-	private void printMessageContent(IMessage message) {
+	private synchronized void printMessageContent(IMessage message) {
 		writer.println("[" + message.getContent() + "]");
 
 		List<Attachment> attachments = message.getAttachments();
@@ -67,7 +71,7 @@ public class MessageLogListener {
 	}
 
 	@EventSubscriber
-	public void onReady(ReadyEvent event) {
+	public synchronized void onReady(ReadyEvent event) {
 		writer.println("> Start ready event info\n");
 
 		writer.println("User presences by guild:");
@@ -106,14 +110,14 @@ public class MessageLogListener {
 	}
 
 	@EventSubscriber
-	public void onMessageGet(MessageReceivedEvent event) {
+	public synchronized void onMessageGet(MessageReceivedEvent event) {
 		printStart("MSG_GET", event.getMessage().getAuthor(), event.getMessage().getGuild());
 
 		printMessageContent(event.getMessage());
 	}
 
 	@EventSubscriber
-	public void onMessageEdited(MessageUpdateEvent event) {
+	public synchronized void onMessageEdited(MessageUpdateEvent event) {
 		printStart("MSG_EDIT", event.getNewMessage().getAuthor(), event.getNewMessage().getGuild());
 
 		writer.println("Old message:");
@@ -123,14 +127,14 @@ public class MessageLogListener {
 	}
 
 	@EventSubscriber
-	public void onMessageDeleted(MessageDeleteEvent event) {
+	public synchronized void onMessageDeleted(MessageDeleteEvent event) {
 		printStart("MSG_DELETE", event.getMessage().getAuthor(), event.getMessage().getGuild());
 
 		printMessageContent(event.getMessage());
 	}
 
 	@EventSubscriber
-	public void onMessagePinned(MessagePinEvent event) {
+	public synchronized void onMessagePinned(MessagePinEvent event) {
 		printStart("PIN", event.getMessage().getAuthor(), event.getMessage().getGuild());
 
 		writer.println("Fired from channel #" + event.getChannel().getName() + " ("
@@ -139,7 +143,7 @@ public class MessageLogListener {
 	}
 
 	@EventSubscriber
-	public void onMessageUnpinned(MessageUnpinEvent event) {
+	public synchronized void onMessageUnpinned(MessageUnpinEvent event) {
 		printStart("UNPIN", event.getMessage().getAuthor(), event.getMessage().getGuild());
 
 		writer.println("Fired from channel #" + event.getChannel().getName() + " ("
@@ -148,29 +152,29 @@ public class MessageLogListener {
 	}
 
 	@EventSubscriber
-	public void onUserBanned(UserBanEvent event) {
+	public synchronized void onUserBanned(UserBanEvent event) {
 		printStart("BAN", event.getUser(), event.getGuild());
 	}
 
 	@EventSubscriber
-	public void onUserPardoned(UserPardonEvent event) {
+	public synchronized void onUserPardoned(UserPardonEvent event) {
 		printStart("PARDON", event.getUser(), event.getGuild());
 	}
 
 	@EventSubscriber
-	public void onPresenceChange(PresenceUpdateEvent event) {
+	public synchronized void onPresenceChange(PresenceUpdateEvent event) {
 		printStart("PRESENCE", event.getUser(), null);
 		writer.println("Presence changed to " + event.getNewPresence().toString() + " (was "
 				+ event.getOldPresence().toString() + ")");
 	}
 
 	@EventSubscriber
-	public void onUserJoin(UserJoinEvent event) {
+	public synchronized void onUserJoin(UserJoinEvent event) {
 		printStart("USER_JOIN", event.getUser(), event.getGuild());
 	}
 
 	@EventSubscriber
-	public void onUserLeave(UserLeaveEvent event) {
+	public synchronized void onUserLeave(UserLeaveEvent event) {
 		printStart("USER_LEAVE", event.getUser(), event.getGuild());
 	}
 
