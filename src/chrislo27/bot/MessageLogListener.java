@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.Comparator;
 import java.util.List;
 
@@ -38,13 +40,17 @@ public class MessageLogListener {
 		writer = new PrintWriter(new FileWriter(this.logFile, true), true);
 	}
 
-	public void dispose() {
+	public synchronized void dispose() throws IOException {
 		if (writer != null) {
-			synchronized (writer) {
-				writer.print("\n\n" + Main.getTimestamp() + " -------- END OF LOGGING --------");
-				writer.close();
-			}
+			writer.print("\n\n" + Main.getTimestamp() + " -------- END OF LOGGING --------");
+			writer.close();
 		}
+
+		new File("chatLogs/old/").mkdirs();
+		Files.copy(logFile.toPath(), new File("chatLogs/old/" + logFile.getName()).toPath(),
+				StandardCopyOption.REPLACE_EXISTING);
+
+		logFile.delete();
 	}
 
 	private synchronized void printStart(String code, IMessage message) {

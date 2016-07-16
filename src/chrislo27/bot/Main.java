@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -113,15 +115,17 @@ public class Main {
 
 		new File("consoleLogs/").mkdir();
 		new File("chatLogs/").mkdir();
+		File consoleLog = null;
+		File chatLog = null;
 		try {
 			String date = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss")
 					.format(new Date(System.currentTimeMillis()));
 
-			File consoleLog = new File("consoleLogs/" + date + ".txt");
+			consoleLog = new File("consoleLogs/" + date + ".txt");
 			consoleLog.createNewFile();
 			consoleOutput = new PrintWriter(new FileWriter(consoleLog, true), true);
 
-			File chatLog = new File("chatLogs/" + date + ".txt");
+			chatLog = new File("chatLogs/" + date + ".txt");
 			chatLog.createNewFile();
 			messageLogger = new MessageLogListener(chatLog);
 		} catch (IOException e1) {
@@ -254,8 +258,19 @@ public class Main {
 
 		info("Goodbye!");
 
-		messageLogger.dispose();
-		consoleOutput.close();
+		try {
+			messageLogger.dispose();
+			consoleOutput.close();
+			new File("consoleLogs/old/").mkdirs();
+			Files.copy(consoleLog.toPath(),
+					new File("consoleLogs/old/" + consoleLog.getName()).toPath(),
+					StandardCopyOption.REPLACE_EXISTING);
+			
+			consoleLog.delete();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 		consoleOutput = null;
 		System.exit(0);
 	}
