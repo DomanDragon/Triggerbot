@@ -56,9 +56,11 @@ public class MessageLogListener {
 		return "        ";
 	}
 
-	private synchronized void printMessageContent(IMessage message) {
-		writer.println(
-				"[#" + message.getChannel().getName() + " (" + message.getChannel().getID() + ")]");
+	private synchronized void printMessageContent(IMessage message, boolean showChannel) {
+		if (showChannel) {
+			writer.println("[#" + message.getChannel().getName() + " ("
+					+ message.getChannel().getID() + ")]");
+		}
 		writer.println("[\n" + message.getContent() + "\n]");
 
 		List<Attachment> attachments = message.getAttachments();
@@ -71,6 +73,10 @@ public class MessageLogListener {
 			writer.println(getIndent() + "[" + a.getFilename() + ", " + a.getFilesize() / 1024
 					+ " KB, " + a.getUrl() + "]");
 		}
+	}
+
+	private synchronized void printMessageContent(IMessage message) {
+		printMessageContent(message, true);
 	}
 
 	@EventSubscriber
@@ -134,7 +140,7 @@ public class MessageLogListener {
 		writer.println("Old message:");
 		printMessageContent(event.getOldMessage());
 		writer.println("\nchanged to\n");
-		printMessageContent(event.getNewMessage());
+		printMessageContent(event.getNewMessage(), false);
 	}
 
 	@EventSubscriber
