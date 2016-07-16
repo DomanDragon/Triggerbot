@@ -12,6 +12,7 @@ import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.MessageDeleteEvent;
 import sx.blah.discord.handle.impl.events.MessagePinEvent;
 import sx.blah.discord.handle.impl.events.MessageReceivedEvent;
+import sx.blah.discord.handle.impl.events.MessageSendEvent;
 import sx.blah.discord.handle.impl.events.MessageUnpinEvent;
 import sx.blah.discord.handle.impl.events.MessageUpdateEvent;
 import sx.blah.discord.handle.impl.events.PresenceUpdateEvent;
@@ -58,7 +59,7 @@ public class MessageLogListener {
 	private synchronized void printMessageContent(IMessage message) {
 		writer.println(
 				"[" + message.getChannel().getName() + " (" + message.getChannel().getID() + ")]");
-		writer.println("[" + message.getContent() + "]");
+		writer.println("[\n" + message.getContent() + "\n]");
 
 		List<Attachment> attachments = message.getAttachments();
 
@@ -119,6 +120,11 @@ public class MessageLogListener {
 		printStart("MSG_GET", event.getMessage().getAuthor(), event.getMessage().getGuild());
 
 		printMessageContent(event.getMessage());
+	}
+
+	@EventSubscriber
+	public synchronized void onMessageSend(MessageSendEvent event) {
+		onMessageGet(new MessageReceivedEvent(event.getMessage()));
 	}
 
 	@EventSubscriber
