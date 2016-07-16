@@ -161,7 +161,7 @@ public class MessageLogListener {
 	public void onPresenceChange(PresenceUpdateEvent event) {
 		printStart("PRESENCE", event.getUser(), null);
 		writer.println("Presence changed from " + event.getOldPresence().toString() + " to "
-				+ event.getOldPresence().toString());
+				+ event.getNewPresence().toString());
 	}
 
 	@EventSubscriber
