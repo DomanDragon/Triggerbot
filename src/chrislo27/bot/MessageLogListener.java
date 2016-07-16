@@ -47,6 +47,13 @@ public class MessageLogListener {
 		}
 	}
 
+	private synchronized void printStart(String code, IMessage message) {
+		IGuild guild = message.getChannel().isPrivate() ? null : message.getGuild();
+		IUser user = message.getAuthor();
+
+		printStart(code, user, guild);
+	}
+
 	private synchronized void printStart(String code, IUser user, IGuild guild) {
 		writer.print(Main.getTimestamp() + " [" + code + "] ");
 		writer.print("[User: " + (guild == null ? user.getName() : user.getDisplayName(guild)) + "#"
@@ -125,7 +132,7 @@ public class MessageLogListener {
 
 	@EventSubscriber
 	public synchronized void onMessageGet(MessageReceivedEvent event) {
-		printStart("MSG_GET", event.getMessage().getAuthor(), event.getMessage().getGuild());
+		printStart("MSG_GET", event.getMessage());
 
 		printMessageContent(event.getMessage());
 	}
@@ -137,7 +144,7 @@ public class MessageLogListener {
 
 	@EventSubscriber
 	public synchronized void onMessageEdited(MessageUpdateEvent event) {
-		printStart("MSG_EDIT", event.getNewMessage().getAuthor(), event.getNewMessage().getGuild());
+		printStart("MSG_EDIT", event.getNewMessage());
 
 		writer.println("Old message:");
 		printMessageContent(event.getOldMessage());
@@ -147,14 +154,14 @@ public class MessageLogListener {
 
 	@EventSubscriber
 	public synchronized void onMessageDeleted(MessageDeleteEvent event) {
-		printStart("MSG_DELETE", event.getMessage().getAuthor(), event.getMessage().getGuild());
+		printStart("MSG_DELETE", event.getMessage());
 
 		printMessageContent(event.getMessage());
 	}
 
 	@EventSubscriber
 	public synchronized void onMessagePinned(MessagePinEvent event) {
-		printStart("PIN", event.getMessage().getAuthor(), event.getMessage().getGuild());
+		printStart("PIN", event.getMessage());
 
 		writer.println("Fired from channel #" + event.getChannel().getName() + " ("
 				+ event.getChannel().getID() + ")");
@@ -163,7 +170,7 @@ public class MessageLogListener {
 
 	@EventSubscriber
 	public synchronized void onMessageUnpinned(MessageUnpinEvent event) {
-		printStart("UNPIN", event.getMessage().getAuthor(), event.getMessage().getGuild());
+		printStart("UNPIN", event.getMessage());
 
 		writer.println("Fired from channel #" + event.getChannel().getName() + " ("
 				+ event.getChannel().getID() + ")");
