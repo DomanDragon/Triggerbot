@@ -28,7 +28,7 @@
 		<dependency>
 			<groupId>com.github.austinv11</groupId>
 			<artifactId>Discord4J</artifactId>
-			<version>51600fd</version>
+			<version>dev-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jgrapht</groupId>
