@@ -77,10 +77,11 @@ public class MessageLogListener {
 		writer.println("User presences by guild:");
 		IDiscordClient client = event.getClient();
 
+		writer.println();
 		for (IGuild guild : client.getGuilds()) {
-			writer.println("\nGuild " + guild.getName() + " (" + guild.getID() + ") owned by "
+			writer.println("Guild " + guild.getName() + " (" + guild.getID() + ") owned by "
 					+ guild.getOwner().getName() + "#" + guild.getOwner().getDiscriminator() + " ("
-					+ guild.getOwnerID() + ")\n");
+					+ guild.getOwnerID() + ")");
 
 			List<IUser> users = guild.getUsers();
 			users.sort(new Comparator<IUser>() {
@@ -100,9 +101,11 @@ public class MessageLogListener {
 			for (IUser u : users) {
 				if (u.getPresence() == Presences.OFFLINE) continue;
 
-				writer.println(u.getDisplayName(guild) + "#" + u.getDiscriminator() + " ("
-						+ u.getID() + "): " + u.getPresence());
+				writer.print(u.getDisplayName(guild) + "#" + u.getDiscriminator() + " (" + u.getID()
+						+ "): " + u.getPresence() + ", ");
 			}
+
+			writer.println();
 		}
 
 		writer.println("\n> End ready event info");
