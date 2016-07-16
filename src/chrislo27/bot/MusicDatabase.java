@@ -603,6 +603,7 @@ public class MusicDatabase {
 
 			if (file.getName().contains("Spying Road 2")) disguise = "Bouncy Road";
 			if (file.getName().contains("Air Batter Story")) disguise = "Spaceball";
+			if (file.getName().contains("Bon-Odori high quality rip")) disguise = "Bon-Odori";
 
 			return Utils.stripExtension(disguise);
 		} else {
