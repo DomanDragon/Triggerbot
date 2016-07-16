@@ -1,8 +1,13 @@
 package chrislo27.bot;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
@@ -259,14 +264,57 @@ public class Main {
 		info("Goodbye!");
 
 		try {
+			// dispose and close
 			messageLogger.dispose();
 			consoleOutput.close();
-			new File("consoleLogs/old/").mkdirs();
+
+			// copy console log to old folder
+			File oldConsoleLogs = new File("consoleLogs/old/");
+			oldConsoleLogs.mkdirs();
 			Files.copy(consoleLog.toPath(),
 					new File("consoleLogs/old/" + consoleLog.getName()).toPath(),
 					StandardCopyOption.REPLACE_EXISTING);
-			
+
 			consoleLog.delete();
+
+			// copy chat log to old folder
+			File oldChatLogs = new File("chatLogs/old/");
+			oldChatLogs.mkdirs();
+			Files.copy(chatLog.toPath(), new File("chatLogs/old/" + chatLog.getName()).toPath(),
+					StandardCopyOption.REPLACE_EXISTING);
+
+			chatLog.delete();
+
+			FilenameFilter txtFilter = new FilenameFilter() {
+
+				@Override
+				public boolean accept(File dir, String name) {
+					if (name.endsWith(".txt")) return true;
+
+					return false;
+				}
+
+			};
+
+			{
+				// build mega chat log
+				File[] allChatLogs = oldChatLogs.listFiles(txtFilter);
+				File txt = new File("chatLogs/total.txt");
+				txt.createNewFile();
+				OutputStream out = new FileOutputStream(txt);
+				byte[] buf = new byte[2048];
+				for (File f : allChatLogs) {
+					InputStream in = new FileInputStream(f);
+					int b = 0;
+					while ((b = in.read(buf)) >= 0) {
+						out.write(buf, 0, b);
+						out.flush();
+					}
+
+					in.close();
+				}
+				out.close();
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
