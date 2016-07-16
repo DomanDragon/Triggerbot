@@ -38,6 +38,7 @@ public class MessageLogListener {
 		this.logFile = logFile;
 
 		writer = new PrintWriter(new FileWriter(this.logFile, true), true);
+		writer.println(Main.getTimestamp() + " -------- START OF LOGGING --------\n\n");
 	}
 
 	public synchronized void dispose() throws IOException {
@@ -45,12 +46,6 @@ public class MessageLogListener {
 			writer.print("\n\n" + Main.getTimestamp() + " -------- END OF LOGGING --------");
 			writer.close();
 		}
-
-		new File("chatLogs/old/").mkdirs();
-		Files.copy(logFile.toPath(), new File("chatLogs/old/" + logFile.getName()).toPath(),
-				StandardCopyOption.REPLACE_EXISTING);
-
-		logFile.delete();
 	}
 
 	private synchronized void printStart(String code, IMessage message) {
