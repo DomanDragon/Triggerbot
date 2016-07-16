@@ -160,8 +160,8 @@ public class MessageLogListener {
 	@EventSubscriber
 	public void onPresenceChange(PresenceUpdateEvent event) {
 		printStart("PRESENCE", event.getUser(), null);
-		writer.println("Presence changed from " + event.getOldPresence().toString() + " to "
-				+ event.getNewPresence().toString());
+		writer.println("Presence changed to " + event.getNewPresence().toString() + " (was "
+				+ event.getOldPresence().toString() + ")");
 	}
 
 	@EventSubscriber
