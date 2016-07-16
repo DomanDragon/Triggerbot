@@ -15,16 +15,20 @@ public class Utils {
 		}
 	}
 
-	public static String getContent(String[] args, int start) {
+	public static String getContent(String[] args, int start, int end) {
 		String content = "";
-		for (int i = start; i < args.length; i++) {
+		for (int i = start; i < Math.min(end, args.length); i++) {
 			content += args[i];
-			if (i != args.length - 1) {
+			if (i != Math.min(end, args.length) - 1) {
 				content += " ";
 			}
 		}
 
 		return content;
+	}
+
+	public static String getContent(String[] args, int start) {
+		return getContent(args, start, args.length);
 	}
 
 	public static String stripExtension(String fileName) {

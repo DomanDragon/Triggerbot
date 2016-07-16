@@ -17,15 +17,19 @@ import java.util.concurrent.TimeUnit;
 
 import javax.imageio.ImageIO;
 
+import org.jgrapht.GraphPath;
+import org.jgrapht.alg.DijkstraShortestPath;
+
 import chrislo27.bot.Main;
 import chrislo27.bot.MusicDatabase;
+import chrislo27.bot.bots.baristabot2.transit.TransitSystems;
+import chrislo27.bot.bots.baristabot2.transit.TransitSystems.LineEdge;
 import chrislo27.bot.bots.baristabot2.trivia.Questions;
 import chrislo27.bot.bots.baristabot2.trivia.TriviaGame;
 import chrislo27.bot.util.EightBall;
 import chrislo27.bot.util.Utils;
 import chrislo27.bot.util.WanaKanaJava;
 import sx.blah.discord.Discord4J;
-import sx.blah.discord.handle.impl.obj.User;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IMessage.Attachment;
@@ -57,8 +61,7 @@ public class CommandHandler {
 		builder.appendContent(
 				"%reaction/react/img [image] - Posts a reaction picture or displays the list, if no image provided\n");
 		builder.appendContent("%8ball/8-ball - Ask the magic 8-ball\n");
-		builder.appendContent(
-				"%perms [id] - Gets the ID of either you, or the ID provided\n");
+		builder.appendContent("%perms [id] - Gets the ID of either you, or the ID provided\n");
 		builder.appendContent("%uptime - View how long the bot has been up\n");
 		builder.appendContent("%stats - View miscellaneous statistics\n");
 		builder.appendContent("%incidents - View past incidents\n");
@@ -98,8 +101,7 @@ public class CommandHandler {
 	public void addAdminHelpToBuilder(MessageBuilder builder) {
 		builder.appendContent("**__Administrator commands:__**\n");
 		builder.appendContent("%exit/quit - Logs off and quits the bot\n");
-		builder.appendContent(
-				"%setpermissions <id> <level> - Sets the user's permission level\n");
+		builder.appendContent("%setpermissions <id> <level> - Sets the user's permission level\n");
 		builder.appendContent("%refreshdb/refreshdatabase - Refreshes song database\n");
 		builder.appendContent("%togglequeue - Toggles queuing\n");
 		builder.appendContent(
@@ -640,6 +642,75 @@ public class CommandHandler {
 			}
 
 			return null;
+		case "transit":
+			if (permLevel < PermissionTier.NORMAL) {
+				return CommandResponse.insufficientPermission(permLevel, PermissionTier.NORMAL);
+			} else if (args.length < 1) {
+				return "Requires start -> end arguments!";
+			} else {
+				int arrowIndex = -1;
+				for (int i = 0; i < args.length; i++) {
+					if (args[i].equals("->")) {
+						arrowIndex = i;
+						break;
+					}
+				}
+
+				if (arrowIndex == -1) return "No arrow found!";
+
+				String startStation = Utils.getContent(args, 0, arrowIndex);
+				String endStation = Utils.getContent(args, arrowIndex + 1);
+
+				TransitSystems systems = TransitSystems.instance();
+
+				if (!systems.system.containsVertex(startStation))
+					return "Start station not found! `" + startStation + "`";
+				if (!systems.system.containsVertex(endStation))
+					return "End station not found! `" + endStation + "`";
+
+				DijkstraShortestPath<String, LineEdge> path = systems.getPath(startStation,
+						endStation);
+
+				if (path.getPathLength() == Double.POSITIVE_INFINITY) return "No path found!";
+
+				List<LineEdge> edges = path.getPathEdgeList();
+				MessageBuilder builder = bot.getNewBuilder(channel);
+
+				builder.appendContent(user.mention() + " Route from __" + startStation + "__ to __"
+						+ endStation + "__:\n");
+				builder.appendContent("Start at station __" + startStation + "__ on line **"
+						+ edges.get(0).getLine() + "**\n");
+
+				LineEdge<String> lastEdge = edges.get(0);
+				String currentLine = edges.get(0).getLine();
+				for (int i = 0; i < edges.size(); i++) {
+					LineEdge<String> edge = edges.get(i);
+
+					if (!currentLine.equalsIgnoreCase(edge.getLine())) {
+						String sharedStation = null;
+						if (lastEdge.getV1().equals(edge.getV1())) {
+							sharedStation = edge.getV1();
+						} else if (lastEdge.getV2().equals(edge.getV1())) {
+							sharedStation = edge.getV1();
+						} else if (lastEdge.getV2().equals(edge.getV2())) {
+							sharedStation = edge.getV2();
+						} else if (lastEdge.getV1().equals(edge.getV2())) {
+							sharedStation = edge.getV2();
+						}
+
+						builder.appendContent("Change lines to **" + edge.getLine() + "** at __"
+								+ sharedStation + "__\n");
+					}
+
+					currentLine = edge.getLine();
+					lastEdge = edge;
+				}
+
+				builder.appendContent("Finish journey at __" + endStation + "__\n");
+
+				bot.sendMessage(builder);
+			}
+			return null;
 		}
 
 		// music
@@ -921,8 +992,8 @@ public class CommandHandler {
 				String part = args[0].toLowerCase();
 				MessageBuilder getIdBuilder = bot.getNewBuilder(channel);
 
-				getIdBuilder.appendContent(
-						"This server's ID is " + channel.getGuild().getID() + "\n");
+				getIdBuilder
+						.appendContent("This server's ID is " + channel.getGuild().getID() + "\n");
 
 				boolean found = false;
 				for (IUser u : channel.getUsersHere()) {
@@ -1215,6 +1286,7 @@ public class CommandHandler {
 			Incidents.refresh();
 			Questions.instance().forceReload();
 			Questions.instance();
+			TransitSystems.instance().refresh();
 
 			bot.sendMessage(bot.getNewBuilder(channel).appendContent("Refreshed databases."));
 			return null;
