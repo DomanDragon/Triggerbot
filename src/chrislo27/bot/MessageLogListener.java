@@ -48,9 +48,9 @@ public class MessageLogListener {
 
 	private synchronized void printStart(String code, IUser user, IGuild guild) {
 		writer.print(Main.getTimestamp() + " [" + code + "] ");
-		if (guild != null) writer.print("[Guild " + guild.getName() + " (" + guild.getID() + ")] ");
 		writer.print("[User: " + (guild == null ? user.getName() : user.getDisplayName(guild)) + "#"
 				+ user.getDiscriminator() + " (" + user.getID() + ")] ");
+		if (guild != null) writer.print("[Guild " + guild.getName() + " (" + guild.getID() + ")] ");
 	}
 
 	private String getIndent() {
