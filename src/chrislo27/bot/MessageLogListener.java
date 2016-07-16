@@ -58,7 +58,7 @@ public class MessageLogListener {
 
 	private synchronized void printMessageContent(IMessage message) {
 		writer.println(
-				"[" + message.getChannel().getName() + " (" + message.getChannel().getID() + ")]");
+				"[#" + message.getChannel().getName() + " (" + message.getChannel().getID() + ")]");
 		writer.println("[\n" + message.getContent() + "\n]");
 
 		List<Attachment> attachments = message.getAttachments();
