@@ -211,7 +211,7 @@ public class BaristaBot2 extends Bot {
 			}
 		}
 
-		if (message.contains("%%%")) {
+		if (message.contains("%%%") && !message.startsWith("%")) {
 			int i = message.indexOf("%%%");
 			message = message.substring(i + 2);
 		}
