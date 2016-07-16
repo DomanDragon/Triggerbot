@@ -920,6 +920,8 @@ public class CommandHandler {
 				return CommandResponse.insufficientPermission(permLevel, PermissionTier.NORMAL);
 			if (args.length < 1) {
 				return "Requires at least one argument!";
+			} else if ((musicRestricted = bot.checkMusicRestricted(channel, user)) != null) {
+				return musicRestricted;
 			} else {
 				try {
 					String content = Utils.getContent(args, 0).trim();
@@ -955,6 +957,8 @@ public class CommandHandler {
 				return "Requires at least one argument!";
 			} else if (args.length > BaristaBot2.QUEUE_LIMIT) {
 				return "Cannot add more than random limit! (" + BaristaBot2.RANDOM_LIMIT + ")";
+			} else if ((musicRestricted = bot.checkMusicRestricted(channel, user)) != null) {
+				return musicRestricted;
 			} else {
 				int lastSfxSlot = 0;
 
@@ -987,6 +991,8 @@ public class CommandHandler {
 		case "sfxlist":
 			if (permLevel < PermissionTier.TRUSTED) {
 				return CommandResponse.insufficientPermission(permLevel, PermissionTier.TRUSTED);
+			} else if ((musicRestricted = bot.checkMusicRestricted(channel, user)) != null) {
+				return musicRestricted;
 			} else {
 				bot.sendMessage(bot.getNewBuilder(channel).appendContent("*SFX Database*\n")
 						.appendContent(MusicDatabase.instance().sfxList));
