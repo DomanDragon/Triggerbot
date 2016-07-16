@@ -109,15 +109,24 @@ public class Main {
 			return;
 		}
 
+		MessageLogListener messageLogger = null;
+
 		new File("consoleLogs/").mkdir();
+		new File("chatLogs/").mkdir();
 		try {
 			String date = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss")
 					.format(new Date(System.currentTimeMillis()));
-			String fileName = "consoleLogs/" + date + ".txt";
-			new File(fileName).createNewFile();
-			consoleOutput = new PrintWriter(new FileWriter(fileName, true), true);
+
+			File consoleLog = new File("consoleLogs/" + date + ".txt");
+			consoleLog.createNewFile();
+			consoleOutput = new PrintWriter(new FileWriter(consoleLog, true), true);
+
+			File chatLog = new File("chatLogs/" + date + ".txt");
+			chatLog.createNewFile();
+			messageLogger = new MessageLogListener(chatLog);
 		} catch (IOException e1) {
 			e1.printStackTrace();
+			System.exit(1);
 		}
 
 		info("Starting with " + clzz.getSimpleName() + "...");
@@ -125,11 +134,12 @@ public class Main {
 		((Discord4J.Discord4JLogger) Discord4J.LOGGER).setLevel(Discord4JLogger.Level.INFO);
 
 		Bot bot = clzz.newInstance();
-		IDiscordClient discordClient = getClient(args[1], true);
-		bot.setClient(discordClient);
+		IDiscordClient client = getClient(args[1], true);
+		bot.setClient(client);
 
-		EventDispatcher dispatcher = discordClient.getDispatcher();
+		EventDispatcher dispatcher = client.getDispatcher();
 		dispatcher.registerListener(bot);
+		dispatcher.registerListener(messageLogger);
 
 		int permission = 0;
 		permission |= BotServerPermissions.CREATE_INSTANT_INVITE;
@@ -143,7 +153,7 @@ public class Main {
 		permission |= BotServerPermissions.CHANGE_NICKNAME;
 
 		info("Bot invite link: " + "https://discordapp.com/oauth2/authorize?client_id="
-				+ discordClient.getApplicationClientID() + "&scope=bot&permissions=" + permission);
+				+ client.getApplicationClientID() + "&scope=bot&permissions=" + permission);
 
 		Thread tickUpdate = new Thread("Tick Update") {
 
@@ -180,7 +190,7 @@ public class Main {
 		};
 		tickUpdate.setDaemon(true);
 
-		while (!discordClient.isReady()) {
+		while (!client.isReady()) {
 
 		}
 
@@ -218,14 +228,14 @@ public class Main {
 		shouldKillThreads = true;
 		dispatcher.unregisterListener(bot);
 
-		if (discordClient.isReady()) {
+		if (client.isReady()) {
 			info("Logging out...");
 
 			boolean loggedOut = false;
 
 			while (!loggedOut) {
 				try {
-					discordClient.logout();
+					client.logout();
 
 					loggedOut = true;
 				} catch (RateLimitException e) {
@@ -244,6 +254,7 @@ public class Main {
 
 		info("Goodbye!");
 
+		messageLogger.dispose();
 		consoleOutput.close();
 		consoleOutput = null;
 		System.exit(0);
