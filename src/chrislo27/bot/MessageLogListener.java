@@ -22,6 +22,7 @@ import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IMessage.Attachment;
 import sx.blah.discord.handle.obj.IUser;
+import sx.blah.discord.handle.obj.Presences;
 
 public class MessageLogListener {
 
@@ -91,6 +92,8 @@ public class MessageLogListener {
 			});
 
 			for (IUser u : users) {
+				if (u.getPresence() == Presences.OFFLINE) continue;
+
 				writer.println(u.getDisplayName(guild) + "#" + u.getDiscriminator() + " ("
 						+ u.getID() + "): " + u.getPresence());
 			}
