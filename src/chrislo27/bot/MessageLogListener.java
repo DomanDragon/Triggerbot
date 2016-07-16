@@ -17,6 +17,8 @@ import sx.blah.discord.handle.impl.events.MessageUpdateEvent;
 import sx.blah.discord.handle.impl.events.PresenceUpdateEvent;
 import sx.blah.discord.handle.impl.events.ReadyEvent;
 import sx.blah.discord.handle.impl.events.UserBanEvent;
+import sx.blah.discord.handle.impl.events.UserJoinEvent;
+import sx.blah.discord.handle.impl.events.UserLeaveEvent;
 import sx.blah.discord.handle.impl.events.UserPardonEvent;
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IMessage;
@@ -160,6 +162,16 @@ public class MessageLogListener {
 		printStart("PRESENCE", event.getUser(), null);
 		writer.println("Presence changed from " + event.getOldPresence().toString() + " to "
 				+ event.getOldPresence().toString());
+	}
+
+	@EventSubscriber
+	public void onUserJoin(UserJoinEvent event) {
+		printStart("USER_JOIN", event.getUser(), event.getGuild());
+	}
+
+	@EventSubscriber
+	public void onUserLeave(UserLeaveEvent event) {
+		printStart("USER_LEAVE", event.getUser(), event.getGuild());
 	}
 
 }
