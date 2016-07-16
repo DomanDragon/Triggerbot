@@ -29,7 +29,7 @@ import sx.blah.discord.handle.obj.Presences;
 public class MessageLogListener {
 
 	public final File logFile;
-	private final PrintWriter writer;
+	private volatile PrintWriter writer;
 
 	public MessageLogListener(File logFile) throws IOException {
 		this.logFile = logFile;
