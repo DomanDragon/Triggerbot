@@ -72,7 +72,6 @@ public class MessageLogListener {
 		IDiscordClient client = event.getClient();
 
 		for (IGuild guild : client.getGuilds()) {
-			writer.println();
 			writer.println("\nGuild " + guild.getName() + " (" + guild.getID() + ") owned by "
 					+ guild.getOwner().getName() + "#" + guild.getOwner().getDiscriminator() + " ("
 					+ guild.getOwnerID() + ")\n");
@@ -89,6 +88,8 @@ public class MessageLogListener {
 				writer.println(u.getDisplayName(guild) + "#" + u.getDiscriminator() + " ("
 						+ u.getID() + "): " + u.getPresence());
 			}
+
+			writer.println();
 		}
 
 		writer.println("\n> End ready event info");
