@@ -442,7 +442,8 @@ public class BaristaBot2 extends Bot {
 			return ":wrench: The bot is in debug mode, so you can't do any music actions for right now.";
 		}
 
-		if (!channel.getGuild().getID().equals(radioChannel.getGuild().getID())) {
+		if (!channel.isPrivate()
+				&& !channel.getGuild().getID().equals(radioChannel.getGuild().getID())) {
 			return "The bot's radio channel isn't in this server!";
 		}
 
