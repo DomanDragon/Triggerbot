@@ -65,7 +65,6 @@ public class MessageLogListener {
 
 	@EventSubscriber
 	public void onReady(ReadyEvent event) {
-		writer.println("-------- START OF FILE --------\n");
 		writer.println("> Start ready event info\n");
 
 		writer.println("User presences by guild:");
@@ -81,15 +80,20 @@ public class MessageLogListener {
 
 				@Override
 				public int compare(IUser o1, IUser o2) {
-					return o1.getPresence().compareTo(o2.getPresence());
+					int c = o1.getPresence().compareTo(o2.getPresence());
+
+					if (c == 0) {
+						return o1.getDisplayName(guild).compareTo(o2.getDisplayName(guild));
+					}
+
+					return c;
 				}
 			});
+
 			for (IUser u : users) {
 				writer.println(u.getDisplayName(guild) + "#" + u.getDiscriminator() + " ("
 						+ u.getID() + "): " + u.getPresence());
 			}
-
-			writer.println();
 		}
 
 		writer.println("\n> End ready event info");
