@@ -41,6 +41,7 @@ public class MessageLogListener {
 	public void dispose() {
 		if (writer != null) {
 			synchronized (writer) {
+				writer.print("\n\n" + Main.getTimestamp() + " -------- END OF LOGGING --------");
 				writer.close();
 			}
 		}
