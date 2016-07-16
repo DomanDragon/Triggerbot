@@ -318,7 +318,8 @@ public class BaristaBot2 extends Bot {
 	}
 
 	public void warnUserIfNotMuted(IUser user) {
-		if (!user.isMutedLocally() && !user.isMuted(radioChannel.getGuild())) {
+		if (!user.isMutedLocally() && !user.isMuted(radioChannel.getGuild())
+				&& radioChannel.getUsersHere().contains(user)) {
 			try {
 				sendMessage(getNewBuilder(client.getOrCreatePMChannel(user)).appendContent(
 						"Please mute yourself if you're in the radio channel. Thank you."));
