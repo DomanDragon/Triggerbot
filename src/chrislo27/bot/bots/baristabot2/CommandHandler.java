@@ -576,7 +576,7 @@ public class CommandHandler {
 				ArrayList<IUser> onlineUsers = new ArrayList<>();
 
 				for (IUser u : guildUsers) {
-					if (u.getPresence() != Presences.OFFLINE) {
+					if (u.getPresence() == Presences.ONLINE) {
 						onlineUsers.add(u);
 					}
 				}
