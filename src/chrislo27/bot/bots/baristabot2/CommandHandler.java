@@ -540,6 +540,18 @@ public class CommandHandler {
 						user.mention() + " " + WanaKanaJava.globalInstance.toKana(content)));
 			}
 			return null;
+		case "toromaji":
+			if (permLevel < PermissionTier.NORMAL) {
+				return CommandResponse.insufficientPermission(permLevel, PermissionTier.NORMAL);
+			} else if (args.length < 1) {
+				return "Requires Japanese argument!";
+			} else {
+				String content = Utils.getContent(args, 0);
+
+				bot.sendMessage(bot.getNewBuilder(channel).appendContent(
+						user.mention() + " " + WanaKanaJava.globalInstance.toRomaji(content)));
+			}
+			return null;
 		case "japaneseify":
 			if (permLevel < PermissionTier.NORMAL) {
 				return CommandResponse.insufficientPermission(permLevel, PermissionTier.NORMAL);
