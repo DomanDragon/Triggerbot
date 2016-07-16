@@ -30,6 +30,11 @@
 			<artifactId>Discord4J</artifactId>
 			<version>682072d</version>
 		</dependency>
+<!-- 		<dependency> -->
+<!--             <groupId>sx.blah</groupId> -->
+<!--             <artifactId>Discord4J</artifactId> -->
+<!--             <version>mytestversion</version> -->
+<!--         </dependency> -->
 		<dependency>
 			<groupId>org.jgrapht</groupId>
 			<artifactId>jgrapht-core</artifactId>
