@@ -43,7 +43,7 @@ public class MessageLogListener {
 
 	public synchronized void dispose() throws IOException {
 		if (writer != null) {
-			writer.print("\n\n" + Main.getTimestamp() + " -------- END OF LOGGING --------");
+			writer.println("\n\n" + Main.getTimestamp() + " -------- END OF LOGGING --------");
 			writer.close();
 		}
 	}
