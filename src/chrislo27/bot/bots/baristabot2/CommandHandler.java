@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -208,7 +209,9 @@ public class CommandHandler {
 		case "woof":
 			if (permLevel < PermissionTier.NORMAL)
 				return CommandResponse.insufficientPermission(permLevel, PermissionTier.NORMAL);
-			bot.sendMessage(bot.getNewBuilder(channel).appendContent("wœuf"));
+
+			bot.sendMessage(bot.getNewBuilder(channel).appendContent(
+					"wœuf (Response time: " + message.getClient().getResponseTime() + " ms)"));
 			return null;
 		case "hi":
 		case "hello":
