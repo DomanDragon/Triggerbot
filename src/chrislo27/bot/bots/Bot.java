@@ -1,19 +1,29 @@
 package chrislo27.bot.bots;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import chrislo27.bot.Main;
+import chrislo27.bot.util.TickTask;
 import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.DiscordDisconnectedEvent;
 import sx.blah.discord.handle.impl.events.ReadyEvent;
-import sx.blah.discord.util.RateLimitException;
 
 public abstract class Bot {
 
 	public IDiscordClient client;
 	private boolean isReady = false;
 
+	private List<TickTask> tickTasks = new ArrayList<>();
+
 	public Bot() {
 
+	}
+
+	public void scheduleTickTask(int ticksLater, TickTask tt) {
+		tt.tickToExecute = Main.ticks + ticksLater;
+		tickTasks.add(tt);
 	}
 
 	public void setClient(IDiscordClient c) {
@@ -25,7 +35,15 @@ public abstract class Bot {
 	}
 
 	public void tickUpdate(float delta) {
+		for (int i = tickTasks.size() - 1; i >= 0; i--) {
+			TickTask tt = tickTasks.get(i);
 
+			if (Main.ticks >= tt.tickToExecute) {
+				tt.run();
+
+				tickTasks.remove(i);
+			}
+		}
 	}
 
 	public void onProgramExit() {

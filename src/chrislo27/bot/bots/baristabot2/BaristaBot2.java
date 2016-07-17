@@ -20,6 +20,7 @@ import chrislo27.bot.Main;
 import chrislo27.bot.MusicDatabase;
 import chrislo27.bot.bots.Bot;
 import chrislo27.bot.bots.baristabot2.trivia.TriviaGame;
+import chrislo27.bot.util.TickTask;
 import chrislo27.bot.util.Utils;
 import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.api.events.EventSubscriber;
@@ -334,21 +335,16 @@ public class BaristaBot2 extends Bot {
 		IUser user = event.getUser();
 
 		if (!user.isMutedLocally() && !user.isMuted(radioChannel.getGuild())) {
-			Thread daemon = new Thread("User should be muted warning") {
+			TickTask tt = new TickTask() {
 
 				@Override
 				public void run() {
-					try {
-						sleep(1000 * 30);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
 					warnUserIfNotMuted(event.getUser());
 					Main.info("Warned " + event.getUser().getID() + " about muting themselves");
 				}
 			};
-			daemon.setDaemon(true);
-			daemon.start();
+
+			this.scheduleTickTask(30 * Main.TICK_RATE, tt);
 		}
 	}
 
