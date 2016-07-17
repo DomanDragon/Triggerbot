@@ -7,10 +7,11 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.time.ZoneId;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -18,7 +19,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.imageio.ImageIO;
 
-import org.jgrapht.GraphPath;
 import org.jgrapht.alg.DijkstraShortestPath;
 
 import chrislo27.bot.Main;
@@ -77,6 +77,7 @@ public class CommandHandler {
 		//						+ "Use lowercase for Hiragana (ひらがな), and capitals for Katakana (カタカナ) - "
 		//						+ "Powered by `https://github.com/MasterKale/WanaKanaJava`\n");
 		builder.appendContent("%shippingforecast - Gets the shipping forecast\n");
+		builder.appendContent("%timetravel [ms time] - Time travel\n");
 	}
 
 	public void addTrustedHelpToBuilder(MessageBuilder builder) {
@@ -726,6 +727,32 @@ public class CommandHandler {
 				bot.sendMessage(builder);
 			}
 			return null;
+		case "timetravel":
+			if (permLevel < PermissionTier.NORMAL) {
+				return CommandResponse.insufficientPermission(permLevel, PermissionTier.NORMAL);
+			} else {
+				long randTime = (long) (System.currentTimeMillis()
+						+ (Utils.lerp(-1, 1, Utils.random.nextDouble()) * 1000 * 60 * 60 * 24 * 365
+								* 100));
+
+				if (args.length >= 1) {
+					try {
+						long l = Long.parseLong(args[0]);
+
+						randTime = l;
+					} catch (NumberFormatException e) {
+
+					}
+				}
+
+				bot.sendMessage(bot.getNewBuilder(channel)
+						.appendContent(user.mention() + " Travelling to `"
+								+ new SimpleDateFormat("EEEE, MMMM d, yyyy HH:mm:ss")
+										.format(new Date(randTime))
+								+ "`"));
+
+				return null;
+			}
 		}
 
 		// music
