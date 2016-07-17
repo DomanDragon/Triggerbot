@@ -31,12 +31,12 @@ public class MusicDatabase {
 
 	private boolean shouldReupdate = false;
 	private ArrayList<String> allMusic = new ArrayList<>();
-	public HashMap<String, File> files = new HashMap<>();
+	public HashMap<String, Song> files = new HashMap<>();
 	public ArrayList<String> allKeys = new ArrayList<>();
 	private ArrayList<String> keySets = new ArrayList<>();
 	public String sfxList = "";
-	private ArrayList<Entry<String, File>> tempCriteria = new ArrayList<>();
-	public ArrayList<File> allVisibleSongs = new ArrayList<>();
+	private ArrayList<Entry<String, Song>> tempCriteria = new ArrayList<>();
+	public ArrayList<Song> allVisibleSongs = new ArrayList<>();
 
 	private void loadResources() {
 		allMusic.clear();
@@ -100,6 +100,7 @@ public class MusicDatabase {
 		add(new File("music/special/bonodoririp.mp3"), "!bonodoririp#");
 		add(new File("music/special/soldier scream.mp3"), "!soldierscream#");
 		add(new File("music/special/bonodori.mp3"), "!bonodori#");
+		add(new File("music/special/wakame.mp3"), "!wakame#");
 
 		// add(new File("music/practice/Practice.mp3"), "Practice");
 		for (File f : new File("music/practice/").listFiles()) {
@@ -114,6 +115,9 @@ public class MusicDatabase {
 				add(f, "?" + Utils.stripExtension(f.getName()));
 			}
 		}
+		files.get("?Bon-Odori high quality rip".toLowerCase()).disguise = "Bon-Odori";
+		files.get("?Spying Road 2".toLowerCase()).disguise = "Bouncy Road";
+		files.get("?Air Batter Story".toLowerCase()).disguise = "Spaceball";
 
 		// add(new File("music/.mp3"), "");
 		add(new File("music/Karate Man Returns.mp3"), "Karate Man Returns", "hey baby",
@@ -464,15 +468,21 @@ public class MusicDatabase {
 		shouldReupdate = true;
 	}
 
-	public void add(File file, String... aliases) {
+	public Song add(File file, String... aliases) {
+		return add(new Song(file, aliases));
+	}
+
+	public Song add(Song song) {
 		String mus = "";
 
 		boolean isSfx = false;
 		boolean dontPut = false;
 
+		String[] aliases = song.aliases;
+
 		for (int i = 0; i < aliases.length; i++) {
 			String s = aliases[i];
-			files.put(s.toLowerCase(), file);
+			files.put(s.toLowerCase(), song);
 
 			allKeys.add(s);
 
@@ -489,14 +499,16 @@ public class MusicDatabase {
 			}
 		}
 
-		if (dontPut) return;
+		if (dontPut) return song;
 
 		if (!isSfx) {
 			keySets.add(mus);
-			allVisibleSongs.add(file);
+			allVisibleSongs.add(song);
 		} else {
 			sfxList += mus + "\n";
 		}
+
+		return song;
 	}
 
 	public String underlineWords(String line, String section) {
@@ -507,13 +519,13 @@ public class MusicDatabase {
 				+ line.substring(lastIndex + section.length());
 	}
 
-	public List<Entry<String, File>> getSearch(String search) {
+	public List<Entry<String, Song>> getSearch(String search) {
 		tempCriteria.clear();
 
 		if (search != null) search = search.toLowerCase();
 
-		for (Entry<String, File> e : files.entrySet()) {
-			String key = Utils.stripExtension(e.getValue().getName());
+		for (Entry<String, Song> e : files.entrySet()) {
+			String key = Utils.stripExtension(e.getValue().file.getName());
 
 			if (search != null && key.toLowerCase().contains(search) == false) continue;
 			tempCriteria.add(e);
@@ -596,19 +608,36 @@ public class MusicDatabase {
 		return instance().allMusic.size();
 	}
 
-	public static String getDisguisedName(File file) {
-		if (file.getParentFile().getName().contains("hidden")) {
-			ArrayList<File> visible = instance().allVisibleSongs;
-			String disguise = visible.get(Math.abs(file.hashCode()) % visible.size()).getName();
+	public static String getDisguisedName(Song song) {
+		if (song.file.getParentFile().getName().contains("hidden")) {
+			ArrayList<Song> visible = instance().allVisibleSongs;
+			Song fake = visible.get(Math.abs(song.hashCode()) % visible.size());
 
-			if (file.getName().contains("Spying Road 2")) disguise = "Bouncy Road";
-			if (file.getName().contains("Air Batter Story")) disguise = "Spaceball";
-			if (file.getName().contains("Bon-Odori high quality rip")) disguise = "Bon-Odori";
+			if (song.disguise != null) return song.disguise;
 
-			return Utils.stripExtension(disguise);
+			return Utils.stripExtension(fake.file.getName());
 		} else {
-			return Utils.stripExtension(file.getName());
+			return Utils.stripExtension(song.file.getName());
 		}
+	}
+
+	public static class Song {
+
+		public final File file;
+		public final String[] aliases;
+
+		public String disguise = null;
+
+		public Song(File f, String... aliases) {
+			file = f;
+			this.aliases = aliases;
+		}
+
+		public Song disguised(String disguise) {
+			this.disguise = disguise;
+			return this;
+		}
+
 	}
 
 }

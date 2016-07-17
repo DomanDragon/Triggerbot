@@ -23,6 +23,7 @@ import org.jgrapht.alg.DijkstraShortestPath;
 
 import chrislo27.bot.Main;
 import chrislo27.bot.MusicDatabase;
+import chrislo27.bot.MusicDatabase.Song;
 import chrislo27.bot.bots.baristabot2.transit.TransitSystems;
 import chrislo27.bot.bots.baristabot2.transit.TransitSystems.LineEdge;
 import chrislo27.bot.bots.baristabot2.trivia.Questions;
@@ -769,16 +770,16 @@ public class CommandHandler {
 			} else {
 				String entire = Utils.getContent(args, 0);
 				//entire = "Bouncy Road";
-				File file = MusicDatabase.instance().files.get(entire.toLowerCase());
+				Song song = MusicDatabase.instance().files.get(entire.toLowerCase());
 
-				if (entire.startsWith("!") && entire.endsWith("#")) file = null;
+				if (entire.startsWith("!") && entire.endsWith("#")) song = null;
 
-				if (file != null) {
+				if (song != null) {
 					if (bot.emptyQueueIfAllGone(channel, bot.getNewBuilder(channel))) {
 
 					} else {
 						MessageBuilder builder = bot.getNewBuilder(channel);
-						bot.queueAudio(channel, file, builder);
+						bot.queueAudio(channel, song, builder);
 						bot.sendMessage(builder);
 						bot.showQueue(channel);
 					}
@@ -839,7 +840,7 @@ public class CommandHandler {
 						1, number);
 
 				//criteria = "Bouncy Road";
-				List<Entry<String, File>> bound = MusicDatabase.instance().getSearch(criteria);
+				List<Entry<String, Song>> bound = MusicDatabase.instance().getSearch(criteria);
 				Collections.shuffle(bound);
 
 				number = Math.min(bound.size(), number);
@@ -857,8 +858,8 @@ public class CommandHandler {
 				int totalQueued = 0;
 				outer: for (int i = 0, n = number, boundIndex = 0; i < n
 						&& boundIndex < bound.size(); boundIndex++) {
-					Entry<String, File> e = bound.get(boundIndex);
-					File file = e.getValue();
+					Entry<String, Song> e = bound.get(boundIndex);
+					File file = e.getValue().file;
 					String fileName = Utils.stripExtension(file.getName());
 
 					if (e.getKey().startsWith("!") && e.getKey().endsWith("#")) continue;
@@ -872,7 +873,7 @@ public class CommandHandler {
 						}
 					}
 
-					bot.queueAudio(channel, file, builder);
+					bot.queueAudio(channel, e.getValue(), builder);
 					builder.appendContent("\n");
 					i++;
 					totalQueued++;
@@ -1000,12 +1001,12 @@ public class CommandHandler {
 
 				for (int i = 0; i < args.length; i++) {
 					String text = args[i];
-					File f = MusicDatabase.instance().files.get("!" + text.toLowerCase() + "#");
+					Song song = MusicDatabase.instance().files.get("!" + text.toLowerCase() + "#");
 
-					if (f == null) {
+					if (song == null) {
 						return "Couldn't find SFX " + text;
 					} else {
-						if (!bot.insertTrack(f, Math.max(0,
+						if (!bot.insertTrack(song, Math.max(0,
 								Math.min(bot.audioPlayer.getPlaylist().size(), lastSfxSlot + i)))) {
 							return "Failed to add SFX " + text;
 						}
@@ -1149,7 +1150,7 @@ public class CommandHandler {
 
 					Track removed = bot.audioPlayer.getPlaylist().remove(index - 1);
 					String info = "Removed number " + index + ", track " + MusicDatabase
-							.getDisguisedName(((File) removed.getMetadata().get("file")));
+							.getDisguisedName(((Song) removed.getMetadata().get("song")));
 
 					Main.info(info);
 					bot.sendMessage(bot.getNewBuilder(channel).appendContent(info));
@@ -1187,17 +1188,17 @@ public class CommandHandler {
 			} else {
 				try {
 					String text = Utils.getContent(args, 1);
-					File f = MusicDatabase.instance().files.get(text.toLowerCase());
+					Song song = MusicDatabase.instance().files.get(text.toLowerCase());
 					int index = Integer.parseInt(args[0]);
 
 					if (index < 1 || index > bot.audioPlayer.playlistSize()) {
 						return "The index " + index + " is out of range!";
 					}
 
-					if (f == null) {
+					if (song == null) {
 						return "Couldn't find song in database: " + text;
 					} else {
-						boolean b = bot.insertTrack(f, index - 1);
+						boolean b = bot.insertTrack(song, index - 1);
 
 						if (b) {
 							bot.sendMessage(bot.getNewBuilder(channel)

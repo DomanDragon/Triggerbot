@@ -18,6 +18,7 @@ import com.google.code.chatterbotapi.ChatterBotType;
 
 import chrislo27.bot.Main;
 import chrislo27.bot.MusicDatabase;
+import chrislo27.bot.MusicDatabase.Song;
 import chrislo27.bot.bots.Bot;
 import chrislo27.bot.bots.baristabot2.trivia.TriviaGame;
 import chrislo27.bot.util.TickTask;
@@ -292,7 +293,8 @@ public class BaristaBot2 extends Bot {
 		File f = ((File) event.getTrack().getMetadata().get("file"));
 
 		if (f != null) {
-			setStatus("♫ " + MusicDatabase.getDisguisedName(f) + " ♫");
+			setStatus("♫ " + MusicDatabase
+					.getDisguisedName((Song) event.getTrack().getMetadata().get("song")) + " ♫");
 			Main.info("Starting to play " + Utils.stripExtension(f.getName()));
 
 			playingStartTime = System.currentTimeMillis();
@@ -510,7 +512,7 @@ public class BaristaBot2 extends Bot {
 			long total = track.getTotalTrackTime();
 
 			builder.appendContent((i == 0 ? "**" : "") + (i + 1) + ". "
-					+ MusicDatabase.getDisguisedName(((File) track.getMetadata().get("file")))
+					+ MusicDatabase.getDisguisedName(((Song) track.getMetadata().get("song")))
 					+ (i == 0 ? "**" : ""));
 
 			if (i == 0) {
@@ -546,9 +548,9 @@ public class BaristaBot2 extends Bot {
 
 	}
 
-	public void queueAudio(IChannel channel, File file, MessageBuilder builder) {
+	public void queueAudio(IChannel channel, Song song, MessageBuilder builder) {
 		if (!canPlayMusic(channel)) return;
-		if (file == null) {
+		if (song == null) {
 			builder.appendContent("The file to be queued is null!");
 			Main.warn("File for queuing was null");
 
@@ -571,7 +573,8 @@ public class BaristaBot2 extends Bot {
 		}
 
 		try {
-			Track newTrack = audioPlayer.queue(file);
+			Track newTrack = audioPlayer.queue(song.file);
+			newTrack.getMetadata().put("song", song);
 			boolean alreadyIn = false;
 
 			for (Track track : audioPlayer.getPlaylist()) {
@@ -582,8 +585,8 @@ public class BaristaBot2 extends Bot {
 				}
 			}
 
-			String extensionless = Utils.stripExtension(file.getName());
-			String disguisedName = MusicDatabase.getDisguisedName(file);
+			String extensionless = Utils.stripExtension(song.file.getName());
+			String disguisedName = MusicDatabase.getDisguisedName(song);
 
 			if (!alreadyIn) {
 				String th = "th";
@@ -756,10 +759,11 @@ public class BaristaBot2 extends Bot {
 
 	}
 
-	public boolean insertTrack(File file, int index) {
+	public boolean insertTrack(Song song, int index) {
 		Track t = null;
 		try {
-			t = audioPlayer.queue(file);
+			t = audioPlayer.queue(song.file);
+			t.getMetadata().put("song", song);
 			audioPlayer.getPlaylist().remove(t);
 			audioPlayer.getPlaylist().add(index, t);
 
