@@ -76,7 +76,7 @@ public class CommandHandler {
 		//				"%toKana <romaji> - Converts Romaji to Japanese Kana (use only if you know what you're doing!) - "
 		//						+ "Use lowercase for Hiragana (ひらがな), and capitals for Katakana (カタカナ) - "
 		//						+ "Powered by `https://github.com/MasterKale/WanaKanaJava`\n");
-		//		builder.appendContent("%shippingforecast - Gets the shipping forecast\n");
+		builder.appendContent("%shippingforecast - Gets the shipping forecast\n");
 	}
 
 	public void addTrustedHelpToBuilder(MessageBuilder builder) {
