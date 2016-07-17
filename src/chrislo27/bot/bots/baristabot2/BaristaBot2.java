@@ -673,7 +673,8 @@ public class BaristaBot2 extends Bot {
 
 		if (shouldStop) {
 			return "Cannot vote if you're not in the radio channel.";
-		} else if (user.isDeaf(channel.getGuild()) || user.isDeafLocally()) {
+		} else if ((!channel.isPrivate() && user.isDeaf(channel.getGuild()))
+				|| user.isDeafLocally()) {
 			return "Cannot vote if you're deafened.";
 		}
 
