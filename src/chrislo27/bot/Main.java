@@ -259,14 +259,17 @@ public class Main {
 			info("Logged out successfully.");
 		}
 
+		info("Calling bot onProgramExit()...");
 		bot.onProgramExit();
 
-		info("Goodbye!");
+		info("Cleaning up loggers...");
 
 		try {
 			// dispose and close
 			messageLogger.dispose();
 			consoleOutput.close();
+
+			info("Moving log files...");
 
 			// copy console log to old folder
 			File oldConsoleLogs = new File("consoleLogs/old/");
@@ -297,6 +300,8 @@ public class Main {
 			};
 
 			{
+				info("Building large chat log...");
+
 				// build mega chat log
 				File[] allChatLogs = oldChatLogs.listFiles(txtFilter);
 				File txt = new File("chatLogs/total.txt");
@@ -319,6 +324,7 @@ public class Main {
 			e.printStackTrace();
 		}
 
+		info("Goodbye!");
 		consoleOutput = null;
 		System.exit(0);
 	}
