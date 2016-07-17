@@ -79,6 +79,7 @@ public class CommandHandler {
 		//						+ "Powered by `https://github.com/MasterKale/WanaKanaJava`\n");
 		builder.appendContent("%shippingforecast - Gets the shipping forecast\n");
 		builder.appendContent("%timetravel [ms time] - Time travel\n");
+		builder.appendContent("%popcorn - Purchase popcorn");
 	}
 
 	public void addTrustedHelpToBuilder(MessageBuilder builder) {
@@ -752,6 +753,18 @@ public class CommandHandler {
 										.format(new Date(randTime))
 								+ "`"));
 
+				return null;
+			}
+		case "popcorn":
+			if (permLevel < PermissionTier.NORMAL) {
+				return CommandResponse.insufficientPermission(permLevel, PermissionTier.NORMAL);
+			} else {
+				bot.sendMessage(bot.getNewBuilder(channel).withContent("__Selling popcorn!__\n"
+						+ ":popcorn: :popcorn: :popcorn: :popcorn:\n"
+						+ "*Get additive (stacking) discounts/undiscounts for the following:*\n"
+						+ "**-10%** - if chrislo27 or ahemtoday is involved\n"
+						+ "**+10%** - if megaminerzero is actively attempting to quell the situation\n"
+						+ "**-50%** - if bluemurderguitarbunny is selling popcorn at the same time"));
 				return null;
 			}
 		}
