@@ -18,6 +18,7 @@ import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import javax.imageio.ImageIO;
+import javax.sound.sampled.UnsupportedAudioFileException;
 
 import org.jgrapht.alg.DijkstraShortestPath;
 
@@ -428,8 +429,9 @@ public class CommandHandler {
 				MessageBuilder stats = bot.getNewBuilder(channel);
 
 				stats.appendContent("__Stats:__\n");
+				stats.appendContent("Current Discord4J version: " + Discord4J.VERSION + "\n");
 
-				// TODO
+				// TODO add more
 				{
 					int peopleListening = 0;
 					for (IUser u : bot.radioChannel.getUsersHere()) {
@@ -441,7 +443,9 @@ public class CommandHandler {
 					stats.appendContent("People actively (not deafened) listening in the radio: "
 							+ peopleListening + (peopleListening == 0 ? " :(" : "") + "\n");
 				}
-				stats.appendContent("Current Discord4J version: " + Discord4J.VERSION + "\n");
+				{
+
+				}
 
 				bot.sendMessage(stats);
 			}
@@ -759,12 +763,13 @@ public class CommandHandler {
 			if (permLevel < PermissionTier.NORMAL) {
 				return CommandResponse.insufficientPermission(permLevel, PermissionTier.NORMAL);
 			} else {
-				bot.sendMessage(bot.getNewBuilder(channel).withContent("__Selling popcorn!__\n"
-						+ ":popcorn: :popcorn: :popcorn: :popcorn:\n"
-						+ "*Get additive (stacking) discounts/undiscounts for the following:*\n"
-						+ "**-10%** - if chrislo27 or ahemtoday is involved\n"
-						+ "**+10%** - if megaminerzero is actively attempting to quell the situation\n"
-						+ "**-50%** - if bluemurderguitarbunny is selling popcorn at the same time"));
+				bot.sendMessage(bot.getNewBuilder(channel)
+						.withContent("__Selling ***FREE*** popcorn! (with purchase)__\n"
+								+ ":popcorn: :popcorn: :popcorn: :popcorn: :popcorn: :popcorn: :popcorn:\n"
+								+ "*Get additive (stacking) discounts/undiscounts for the following:*\n"
+								+ "**10% DISCOUNT!** - if chrislo27 or ahemtoday is involved\n"
+								+ "**10% MORE!** - if megaminerzero is actively attempting to quell the situation\n"
+								+ "**50% MORE!** - if bluemurderguitarbunny is selling popcorn at the same time"));
 				return null;
 			}
 		}
