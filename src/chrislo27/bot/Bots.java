@@ -2,7 +2,6 @@ package chrislo27.bot;
 
 import java.util.HashMap;
 
-import chrislo27.bot.bots.BaristaBot;
 import chrislo27.bot.bots.Bot;
 import chrislo27.bot.bots.baristabot2.BaristaBot2;
 
@@ -24,7 +23,6 @@ public class Bots {
 	public final HashMap<String, Class<? extends Bot>> classes = new HashMap<>();
 
 	private void loadResources() {
-		classes.put("BaristaBot1", BaristaBot.class);
 		classes.put("BaristaBot", BaristaBot2.class);
 	}
 
