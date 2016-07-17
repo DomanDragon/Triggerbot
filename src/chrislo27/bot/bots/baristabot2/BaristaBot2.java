@@ -157,6 +157,7 @@ public class BaristaBot2 extends Bot {
 				Main.error("Failed to send message!");
 				e.printStackTrace();
 
+				// TODO change to "CloudFlare" after my PR gets merged
 				if (e.getErrorMessage().contains("502")) {
 					Main.info(
 							"Exception was a 502, throwing RateLimitException to trick request buffer");
@@ -338,7 +339,8 @@ public class BaristaBot2 extends Bot {
 	public void onUserConnectVoice(UserVoiceChannelJoinEvent event) {
 		IUser user = event.getUser();
 
-		if (!user.isMutedLocally() && !user.isMuted(radioChannel.getGuild())) {
+		if (!user.isMutedLocally() && !user.isMuted(radioChannel.getGuild())
+				&& event.getChannel().getID().equals(radioChannel.getID())) {
 			TickTask tt = new TickTask() {
 
 				@Override
