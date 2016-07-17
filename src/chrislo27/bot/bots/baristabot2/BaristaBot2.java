@@ -324,6 +324,8 @@ public class BaristaBot2 extends Bot {
 			try {
 				sendMessage(getNewBuilder(client.getOrCreatePMChannel(user)).appendContent(
 						"Please mute yourself if you're in the radio channel. Thank you."));
+				Main.info("Warned " + user.getName() + "#" + user.getDiscriminator() + " ("
+						+ user.getID() + ") about muting themselves");
 			} catch (RateLimitException | DiscordException e) {
 				e.printStackTrace();
 			}
@@ -340,11 +342,12 @@ public class BaristaBot2 extends Bot {
 				@Override
 				public void run() {
 					warnUserIfNotMuted(event.getUser());
-					Main.info("Warned " + event.getUser().getID() + " about muting themselves");
 				}
 			};
 
 			this.scheduleTickTask(30 * Main.TICK_RATE, tt);
+			Main.info("Scheduled a TickTask to warn " + user.getName() + "#"
+					+ user.getDiscriminator() + " (" + user.getID() + ") to muting themselves");
 		}
 	}
 
