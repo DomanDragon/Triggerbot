@@ -157,8 +157,7 @@ public class BaristaBot2 extends Bot {
 				Main.error("Failed to send message!");
 				e.printStackTrace();
 
-				if (e.getErrorMessage().contains("502")
-						&& e.getErrorMessage().contains("CloudFlare")) {
+				if (e.getErrorMessage().contains("502")) {
 					Main.info(
 							"Exception was a 502, throwing RateLimitException to trick request buffer: "
 									+ e.getErrorMessage());
