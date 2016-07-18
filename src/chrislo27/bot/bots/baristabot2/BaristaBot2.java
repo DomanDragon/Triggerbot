@@ -215,7 +215,9 @@ public class BaristaBot2 extends Bot {
 			}
 		}
 
-		if (message.toLowerCase().contains("kill") && message.toLowerCase().contains("myself")) {
+		if ((message.toLowerCase().contains("kill") && message.toLowerCase().contains("myself"))
+				|| (message.toLowerCase().contains("commit")
+						&& message.toLowerCase().contains("suicide"))) {
 			MessageBuilder builder = getNewBuilder(channel);
 
 			builder.appendContent(author.mention() + "\n");
