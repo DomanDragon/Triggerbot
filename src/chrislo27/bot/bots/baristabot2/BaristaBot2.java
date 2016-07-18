@@ -179,6 +179,25 @@ public class BaristaBot2 extends Bot {
 		String message = messageObj.getContent();
 		IUser author = messageObj.getAuthor();
 
+		if ((message.toLowerCase().contains("kill") && message.toLowerCase().contains("myself"))
+				|| (message.toLowerCase().contains("commit")
+						&& message.toLowerCase().contains("suicide"))) {
+			MessageBuilder builder = getNewBuilder(channel);
+
+			if (!channel.isPrivate()) builder.appendContent(author.mention() + "\n");
+			builder.appendContent("__United States__: 1-800-273-8255\n");
+			builder.appendContent("__Canada__: 221, or 1-800-668-6868 for youth\n");
+			builder.appendContent("__EU__: 116 123\n");
+			builder.appendContent("__UK__: 116 123, or 0800-11-11 for youth\n");
+			builder.appendContent(
+					"__For other countries/numbers__: https://www.reddit.com/r/SuicideWatch/wiki/hotlines\n");
+			builder.appendContent("\n**Please be safe.**");
+
+			sendMessage(builder);
+
+			return;
+		}
+
 		for (IUser mention : messageObj.getMentions()) {
 			if (messageObj.mentionsEveryone()) break;
 			if (mention.getID().equals(client.getOurUser().getID())) {
@@ -213,25 +232,6 @@ public class BaristaBot2 extends Bot {
 
 				return;
 			}
-		}
-
-		if ((message.toLowerCase().contains("kill") && message.toLowerCase().contains("myself"))
-				|| (message.toLowerCase().contains("commit")
-						&& message.toLowerCase().contains("suicide"))) {
-			MessageBuilder builder = getNewBuilder(channel);
-
-			if (!channel.isPrivate()) builder.appendContent(author.mention() + "\n");
-			builder.appendContent("__United States__: 1-800-273-8255\n");
-			builder.appendContent("__Canada__: 221, or 1-800-668-6868 for youth\n");
-			builder.appendContent("__EU__: 116 123\n");
-			builder.appendContent("__UK__: 116 123, or 0800-11-11 for youth\n");
-			builder.appendContent(
-					"__For other countries/numbers__: https://www.reddit.com/r/SuicideWatch/wiki/hotlines\n");
-			builder.appendContent("\n**Please be safe.**");
-
-			sendMessage(builder);
-
-			return;
 		}
 
 		if (message.contains("%%%") && !message.startsWith("%")) {
