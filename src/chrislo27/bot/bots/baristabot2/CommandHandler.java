@@ -1511,6 +1511,11 @@ public class CommandHandler {
 
 				bot.sendMessage(bot.getNewBuilder(channel).withContent(
 						"Attempting to connect to " + v.getName() + " (" + v.getID() + ")"));
+
+				if (bot.radioChannel != null) {
+					bot.radioChannel.leave();
+				}
+
 				bot.attemptConnectToRadioChannel(v);
 
 				if (bot.radioChannel.equals(v)) {
