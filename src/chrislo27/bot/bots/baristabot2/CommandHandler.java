@@ -58,7 +58,8 @@ public class CommandHandler {
 		builder.appendContent("**__Normal commands:__**\n");
 		builder.appendContent("*Use three percents %%% to embed a command to be ran*\n");
 		builder.appendContent(
-				"%help/? [trusted/mod/moderator/admin/music/trivia] - Shows this message or the desired help page\n");
+				"%help/? [trusted/mod/moderator/admin/radio/music/trivia] - Shows this message or the desired help page\n");
+		builder.appendContent("%info - What does this bot do?\n");
 		builder.appendContent("%woof - woof\n");
 		builder.appendContent("%hi/hello - Hello!\n");
 		builder.appendContent(
@@ -196,6 +197,7 @@ public class CommandHandler {
 						case "admin":
 							addAdminHelpToBuilder(builder);
 							break;
+						case "radio":
 						case "music":
 							builder.appendContent("Here are the commands for music actions.\n");
 							addMusicHelpToBuilder(builder);
@@ -1002,6 +1004,21 @@ public class CommandHandler {
 					}
 				}
 				return null;
+			case "info":
+				if (permLevel < PermissionTier.NORMAL) {
+					return CommandResponse.insufficientPermission(permLevel, PermissionTier.NORMAL);
+				} else {
+					MessageBuilder builder = bot.getNewBuilder(channel);
+
+					builder.appendContent(user.mention() + " __What does this bot do?__\n");
+					builder.appendContent("It is a utility bot for the Rhythm Heaven Discord server.\n");
+					builder.appendContent("It can play RH soundtracks in the Radio voice channel (`%help radio`) among other things.\n");
+					builder.appendContent("It is made and maintained by chrislo27.");
+
+					bot.sendMessage(builder);
+
+					return null;
+				}
 		}
 
 		// -----------------------------------------------------------------------------
