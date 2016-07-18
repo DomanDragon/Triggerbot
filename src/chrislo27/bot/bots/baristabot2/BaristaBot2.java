@@ -215,6 +215,22 @@ public class BaristaBot2 extends Bot {
 			}
 		}
 
+		if (message.toLowerCase().contains("kill myself")) {
+			MessageBuilder builder = getNewBuilder(channel);
+
+			builder.appendContent("__United States__: 1-800-273-8255\n");
+			builder.appendContent("__Canada__: 221, or 1-800-668-6868 for youth\n");
+			builder.appendContent("__EU__: 116 123\n");
+			builder.appendContent("__UK__: 116 123, or 0800-11-11 for youth\n");
+			builder.appendContent(
+					"For other countries/numbers: https://www.reddit.com/r/SuicideWatch/wiki/hotlines\n");
+			builder.appendContent("**Please be safe.**");
+
+			sendMessage(builder);
+
+			return;
+		}
+
 		if (message.contains("%%%") && !message.startsWith("%")) {
 			int i = message.indexOf("%%%");
 			message = message.substring(i + 2);
