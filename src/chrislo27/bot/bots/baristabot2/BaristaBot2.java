@@ -220,7 +220,7 @@ public class BaristaBot2 extends Bot {
 						&& message.toLowerCase().contains("suicide"))) {
 			MessageBuilder builder = getNewBuilder(channel);
 
-			builder.appendContent(author.mention() + "\n");
+			if (!channel.isPrivate()) builder.appendContent(author.mention() + "\n");
 			builder.appendContent("__United States__: 1-800-273-8255\n");
 			builder.appendContent("__Canada__: 221, or 1-800-668-6868 for youth\n");
 			builder.appendContent("__EU__: 116 123\n");
