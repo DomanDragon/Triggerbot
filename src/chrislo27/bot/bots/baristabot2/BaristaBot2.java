@@ -150,6 +150,11 @@ public class BaristaBot2 extends Bot {
 	}
 
 	@EventSubscriber
+	public void onReconnect(DiscordReconnectedEvent event) {
+		attemptConnectToRadioChannel(radioChannel);
+	}
+
+	@EventSubscriber
 	public void onMessageGet(MessageReceivedEvent event) {
 		IMessage messageObj = event.getMessage();
 		IChannel channel = messageObj.getChannel();
@@ -396,7 +401,7 @@ public class BaristaBot2 extends Bot {
 
 	@EventSubscriber
 	public void onMeConnect(ReadyEvent event) {
-		attemptConnectToRadioChannel(getRadioChannel());
+		attemptConnectToRadioChannel(getDefaultRadioChannel());
 	}
 
 	@Override
@@ -409,6 +414,9 @@ public class BaristaBot2 extends Bot {
 	public void attemptConnectToRadioChannel(IVoiceChannel radioChannel) {
 		Main.info("Attempting to connect to audio channel "
 				+ (radioChannel == null ? null : radioChannel.getName()) + "...");
+
+		if (this.radioChannel != null && this.radioChannel.isConnected())
+			this.radioChannel.leave();
 
 		if (radioChannel == null) {
 			Main.warn("Radio channel not found!");
@@ -437,7 +445,7 @@ public class BaristaBot2 extends Bot {
 		setStatus(null);
 	}
 
-	public IVoiceChannel getRadioChannel() {
+	public IVoiceChannel getDefaultRadioChannel() {
 		for (IVoiceChannel channel : client.getVoiceChannels()) {
 			// whitelisted servers:
 			// Rhythm Heaven, BaristaBotTest
@@ -486,7 +494,7 @@ public class BaristaBot2 extends Bot {
 			sendMessage(getNewBuilder(channel).appendContent(
 					"I'm not connected to the \"Radio\" channel, so I can't play music/do audio-related things."));
 
-			attemptConnectToRadioChannel(getRadioChannel());
+			attemptConnectToRadioChannel(getDefaultRadioChannel());
 
 			return false;
 		}
@@ -496,7 +504,7 @@ public class BaristaBot2 extends Bot {
 			sendMessage(getNewBuilder(channel).appendContent(
 					"The AudioPlayer instance is null, ask a dev to reconnect it (reconnectaudio)"));
 
-			attemptConnectToRadioChannel(getRadioChannel());
+			attemptConnectToRadioChannel(getDefaultRadioChannel());
 
 			return false;
 		}

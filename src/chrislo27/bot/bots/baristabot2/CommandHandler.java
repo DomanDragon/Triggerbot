@@ -1,26 +1,5 @@
 package chrislo27.bot.bots.baristabot2;
 
-import java.awt.Graphics;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Properties;
-import java.util.concurrent.TimeUnit;
-
-import javax.imageio.ImageIO;
-
-import org.jgrapht.alg.DijkstraShortestPath;
-
 import chrislo27.bot.Main;
 import chrislo27.bot.MusicDatabase;
 import chrislo27.bot.MusicDatabase.Song;
@@ -31,20 +10,27 @@ import chrislo27.bot.bots.baristabot2.trivia.TriviaGame;
 import chrislo27.bot.util.EightBall;
 import chrislo27.bot.util.Utils;
 import chrislo27.bot.util.WanaKanaJava;
+import org.jgrapht.alg.DijkstraShortestPath;
 import sx.blah.discord.Discord4J;
-import sx.blah.discord.handle.obj.IChannel;
-import sx.blah.discord.handle.obj.IMessage;
+import sx.blah.discord.handle.obj.*;
 import sx.blah.discord.handle.obj.IMessage.Attachment;
-import sx.blah.discord.handle.obj.IUser;
-import sx.blah.discord.handle.obj.IVoiceChannel;
-import sx.blah.discord.handle.obj.Presences;
-import sx.blah.discord.util.DiscordException;
-import sx.blah.discord.util.MessageBuilder;
+import sx.blah.discord.util.*;
 import sx.blah.discord.util.MessageBuilder.Styles;
-import sx.blah.discord.util.MissingPermissionsException;
-import sx.blah.discord.util.RateLimitException;
-import sx.blah.discord.util.RequestBuffer;
 import sx.blah.discord.util.audio.AudioPlayer.Track;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 
 public class CommandHandler {
 
@@ -780,6 +766,21 @@ public class CommandHandler {
 									+ "**50% MORE!** - if bluemurderguitarbunny is selling popcorn at the same time"));
 					return null;
 				}
+			case "info":
+				if (permLevel < PermissionTier.NORMAL) {
+					return CommandResponse.insufficientPermission(permLevel, PermissionTier.NORMAL);
+				} else {
+					MessageBuilder builder = bot.getNewBuilder(channel);
+
+					builder.appendContent(user.mention() + " __What does this bot do?__\n");
+					builder.appendContent("It is a utility bot for the Rhythm Heaven Discord server.\n");
+					builder.appendContent("It can play RH soundtracks in the Radio voice channel (`%help radio`) among other things.\n");
+					builder.appendContent("It is made and maintained by chrislo27.");
+
+					bot.sendMessage(builder);
+
+					return null;
+				}
 		}
 
 		// music
@@ -1004,21 +1005,7 @@ public class CommandHandler {
 					}
 				}
 				return null;
-			case "info":
-				if (permLevel < PermissionTier.NORMAL) {
-					return CommandResponse.insufficientPermission(permLevel, PermissionTier.NORMAL);
-				} else {
-					MessageBuilder builder = bot.getNewBuilder(channel);
 
-					builder.appendContent(user.mention() + " __What does this bot do?__\n");
-					builder.appendContent("It is a utility bot for the Rhythm Heaven Discord server.\n");
-					builder.appendContent("It can play RH soundtracks in the Radio voice channel (`%help radio`) among other things.\n");
-					builder.appendContent("It is made and maintained by chrislo27.");
-
-					bot.sendMessage(builder);
-
-					return null;
-				}
 		}
 
 		// -----------------------------------------------------------------------------
@@ -1219,7 +1206,7 @@ public class CommandHandler {
 
 				bot.sendMessage(
 						bot.getNewBuilder(channel).appendContent("Attempting to reconnect audio..."));
-				bot.attemptConnectToRadioChannel(bot.getRadioChannel());
+				bot.attemptConnectToRadioChannel(bot.getDefaultRadioChannel());
 				if (bot.audioPlayer == null) {
 					bot.sendMessage(bot.getNewBuilder(channel).appendContent("Failed to reconnect!",
 							Styles.BOLD));
