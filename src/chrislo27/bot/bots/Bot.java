@@ -1,14 +1,15 @@
 package chrislo27.bot.bots;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import chrislo27.bot.Main;
 import chrislo27.bot.util.TickTask;
 import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.DiscordDisconnectedEvent;
+import sx.blah.discord.handle.impl.events.DiscordReconnectedEvent;
 import sx.blah.discord.handle.impl.events.ReadyEvent;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class Bot {
 
@@ -63,6 +64,12 @@ public abstract class Bot {
 		Main.info("This bot " + event.getClient().getOurUser().getName() + "#"
 				+ event.getClient().getOurUser().getDiscriminator() + " was disconnected for "
 				+ event.getReason());
+	}
+
+	@EventSubscriber
+	public void onReconnected(DiscordReconnectedEvent event) {
+		Main.info("This bot " + event.getClient().getOurUser().getName() + "#"
+				+ event.getClient().getOurUser().getDiscriminator() + " reconnected successfully.");
 	}
 
 }

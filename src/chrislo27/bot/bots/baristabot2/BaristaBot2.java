@@ -150,7 +150,9 @@ public class BaristaBot2 extends Bot {
 	}
 
 	@EventSubscriber
-	public void onReconnect(DiscordReconnectedEvent event) {
+	@Override
+	public void onReconnected(DiscordReconnectedEvent event) {
+		super.onReconnected(event);
 		attemptConnectToRadioChannel(radioChannel);
 	}
 
