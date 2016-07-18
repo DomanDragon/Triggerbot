@@ -836,7 +836,7 @@ public class CommandHandler {
 				} else {
 					return bot.voteToSkipTrackAndAct(user, channel);
 				}
-			case "\u1F500":
+			case "\u1F50":
 			case "random":
 				if (permLevel < PermissionTier.NORMAL)
 					return CommandResponse.insufficientPermission(permLevel, PermissionTier.NORMAL);
