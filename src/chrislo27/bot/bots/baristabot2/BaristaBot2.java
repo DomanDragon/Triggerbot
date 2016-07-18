@@ -323,7 +323,8 @@ public class BaristaBot2 extends Bot {
 
 	public void warnUserIfNotMuted(IUser user) {
 		if (!user.isMutedLocally() && !user.isMuted(radioChannel.getGuild())
-				&& radioChannel.getUsersHere().contains(user)) {
+				&& radioChannel.getUsersHere().contains(user)
+				&& !user.equals(client.getOurUser())) {
 			try {
 				sendMessage(getNewBuilder(client.getOrCreatePMChannel(user)).appendContent(
 						"Please mute yourself if you're in the radio channel. Thank you."));
@@ -381,7 +382,7 @@ public class BaristaBot2 extends Bot {
 
 	@EventSubscriber
 	public void onMeConnect(ReadyEvent event) {
-		attemptConnectToRadioChannel();
+		attemptConnectToRadioChannel(getRadioChannel());
 	}
 
 	@Override
@@ -391,10 +392,9 @@ public class BaristaBot2 extends Bot {
 		PermPrefs.instance().save();
 	}
 
-	public void attemptConnectToRadioChannel() {
-		Main.info("Attempting to connect to radio audio channel...");
-
-		IVoiceChannel radioChannel = getRadioChannel();
+	public void attemptConnectToRadioChannel(IVoiceChannel radioChannel) {
+		Main.info("Attempting to connect to audio channel "
+				+ (radioChannel == null ? null : radioChannel.getName()) + "...");
 
 		if (radioChannel == null) {
 			Main.warn("Radio channel not found!");
@@ -470,7 +470,7 @@ public class BaristaBot2 extends Bot {
 			sendMessage(getNewBuilder(channel).appendContent(
 					"I'm not connected to the \"Radio\" channel, so I can't play music/do audio-related things."));
 
-			attemptConnectToRadioChannel();
+			attemptConnectToRadioChannel(getRadioChannel());
 
 			return false;
 		}
@@ -480,7 +480,7 @@ public class BaristaBot2 extends Bot {
 			sendMessage(getNewBuilder(channel).appendContent(
 					"The AudioPlayer instance is null, ask a dev to reconnect it (reconnectaudio)"));
 
-			attemptConnectToRadioChannel();
+			attemptConnectToRadioChannel(getRadioChannel());
 
 			return false;
 		}

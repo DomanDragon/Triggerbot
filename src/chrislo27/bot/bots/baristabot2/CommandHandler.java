@@ -18,7 +18,6 @@ import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import javax.imageio.ImageIO;
-import javax.sound.sampled.UnsupportedAudioFileException;
 
 import org.jgrapht.alg.DijkstraShortestPath;
 
@@ -37,6 +36,7 @@ import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IMessage.Attachment;
 import sx.blah.discord.handle.obj.IUser;
+import sx.blah.discord.handle.obj.IVoiceChannel;
 import sx.blah.discord.handle.obj.Presences;
 import sx.blah.discord.util.DiscordException;
 import sx.blah.discord.util.MessageBuilder;
@@ -121,6 +121,8 @@ public class CommandHandler {
 		builder.appendContent("%senddistress - Sends a test distress signal\n");
 		builder.appendContent("%say <channelID> <message> - Say a thing\n");
 		builder.appendContent("%senddm <id> <message> - Send a DM");
+		builder.appendContent(
+				"%movetovoicechannel [id] - Move to your first-connected or specified voice channel");
 	}
 
 	public void addMusicHelpToBuilder(MessageBuilder builder) {
@@ -1190,7 +1192,7 @@ public class CommandHandler {
 
 			bot.sendMessage(
 					bot.getNewBuilder(channel).appendContent("Attempting to reconnect audio..."));
-			bot.attemptConnectToRadioChannel();
+			bot.attemptConnectToRadioChannel(bot.getRadioChannel());
 			if (bot.audioPlayer == null) {
 				bot.sendMessage(bot.getNewBuilder(channel).appendContent("Failed to reconnect!",
 						Styles.BOLD));
@@ -1487,6 +1489,40 @@ public class CommandHandler {
 				}
 			}
 			return null;
+		case "movetovoicechannel":
+			if (permLevel < PermissionTier.ADMIN) {
+				return CommandResponse.insufficientPermission(permLevel, PermissionTier.ADMIN);
+			} else {
+				int index = 0;
+				String id = null;
+
+				if (args.length >= 1) {
+					id = args[0];
+				}
+
+				IVoiceChannel v = bot.client.getVoiceChannelByID(id);
+
+				if (v == null) {
+					if (user.getConnectedVoiceChannels().size() == 0)
+						return "You aren't connected to any voice channels!";
+
+					v = user.getConnectedVoiceChannels().get(0);
+				}
+
+				bot.sendMessage(bot.getNewBuilder(channel).withContent(
+						"Attempting to connect to " + v.getName() + " (" + v.getID() + ")"));
+				bot.attemptConnectToRadioChannel(v);
+
+				if (bot.radioChannel.equals(v)) {
+					bot.sendMessage(bot.getNewBuilder(channel).withContent("Success!"));
+				} else {
+					bot.sendMessage(
+							bot.getNewBuilder(channel).withContent("Failed, check console!F"));
+				}
+
+				return null;
+			}
+
 		}
 
 		return CommandResponse.doesNotExist();
