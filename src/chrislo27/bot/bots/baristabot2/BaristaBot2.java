@@ -224,7 +224,7 @@ public class BaristaBot2 extends Bot {
 			builder.appendContent("__EU__: 116 123\n");
 			builder.appendContent("__UK__: 116 123, or 0800-11-11 for youth\n");
 			builder.appendContent(
-					"For other countries/numbers: https://www.reddit.com/r/SuicideWatch/wiki/hotlines\n");
+					"__For other countries/numbers__: https://www.reddit.com/r/SuicideWatch/wiki/hotlines\n");
 			builder.appendContent("\n**Please be safe.**");
 
 			sendMessage(builder);
