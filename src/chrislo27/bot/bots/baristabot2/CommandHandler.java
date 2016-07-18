@@ -67,7 +67,6 @@ public class CommandHandler {
 		//						+ "Powered by `https://github.com/MasterKale/WanaKanaJava`\n");
 		builder.appendContent("%shippingforecast - Gets the shipping forecast\n");
 		builder.appendContent("%timetravel [ms time] - Time travel\n");
-		builder.appendContent("%popcorn - Purchase popcorn");
 	}
 
 	public void addTrustedHelpToBuilder(MessageBuilder builder) {
@@ -110,6 +109,7 @@ public class CommandHandler {
 		builder.appendContent("%senddm <id> <message> - Send a DM");
 		builder.appendContent(
 				"%movetovoicechannel [id] - Move to your first-connected or specified voice channel");
+		builder.appendContent("%popcorn - Purchase popcorn");
 	}
 
 	public void addMusicHelpToBuilder(MessageBuilder builder) {
@@ -751,19 +751,6 @@ public class CommandHandler {
 									.format(new Date(randTime))
 									+ "`"));
 
-					return null;
-				}
-			case "popcorn":
-				if (permLevel < PermissionTier.NORMAL) {
-					return CommandResponse.insufficientPermission(permLevel, PermissionTier.NORMAL);
-				} else {
-					bot.sendMessage(bot.getNewBuilder(channel)
-							.withContent("__Selling ***FREE*** popcorn! (with purchase)__\n"
-									+ ":popcorn: :popcorn: :popcorn: :popcorn: :popcorn: :popcorn: :popcorn:\n"
-									+ "*Get additive (stacking) discounts/undiscounts for the following:*\n"
-									+ "**10% DISCOUNT!** - if chrislo27 or ahemtoday is involved\n"
-									+ "**10% MORE!** - if megaminerzero is actively attempting to quell the situation\n"
-									+ "**50% MORE!** - if bluemurderguitarbunny is selling popcorn at the same time"));
 					return null;
 				}
 			case "info":
@@ -1546,7 +1533,19 @@ public class CommandHandler {
 
 					return null;
 				}
-
+			case "popcorn":
+				if (permLevel < PermissionTier.ADMIN) {
+					return CommandResponse.insufficientPermission(permLevel, PermissionTier.ADMIN);
+				} else {
+					bot.sendMessage(bot.getNewBuilder(channel)
+							.withContent("__Selling ***FREE*** popcorn! (with purchase)__\n"
+									+ ":popcorn: :popcorn: :popcorn: :popcorn: :popcorn: :popcorn: :popcorn:\n"
+									+ "*Get additive (stacking) discounts/undiscounts for the following:*\n"
+									+ "**10% DISCOUNT!** - if chrislo27 or ahemtoday is involved\n"
+									+ "**10% MORE!** - if megaminerzero is actively attempting to quell the situation\n"
+									+ "**50% MORE!** - if bluemurderguitarbunny is selling popcorn at the same time"));
+					return null;
+				}
 		}
 
 		return CommandResponse.doesNotExist();
