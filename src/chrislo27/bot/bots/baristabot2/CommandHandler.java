@@ -250,7 +250,7 @@ public class CommandHandler {
 				builder.appendContent("splendidanswers, ");
 				builder.appendContent("ilovetap.jpg, ");
 				builder.appendContent("bluebear, ");
-				builder.appendContent("X_X, ");
+				builder.appendContent("x_x, ");
 				builder.appendContent("275thcontact, ");
 				builder.appendContent("gramps, ");
 				builder.appendContent("kameksansbad");
