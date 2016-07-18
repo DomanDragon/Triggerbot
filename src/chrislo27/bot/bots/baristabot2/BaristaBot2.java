@@ -160,7 +160,8 @@ public class BaristaBot2 extends Bot {
 				if (e.getErrorMessage().contains("502")
 						&& e.getErrorMessage().contains("CloudFlare")) {
 					Main.info(
-							"Exception was a 502, throwing RateLimitException to trick request buffer");
+							"Exception was a 502, throwing RateLimitException to trick request buffer: "
+									+ e.getErrorMessage());
 					throw new RateLimitException("Fake exception thrown because of HTTP 502", 3500,
 							"HTTP 502");
 				}
