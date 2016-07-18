@@ -215,7 +215,7 @@ public class BaristaBot2 extends Bot {
 			}
 		}
 
-		if (message.toLowerCase().contains("kill myself")) {
+		if (message.toLowerCase().contains("kill") && message.toLowerCase().contains("myself")) {
 			MessageBuilder builder = getNewBuilder(channel);
 
 			builder.appendContent("__United States__: 1-800-273-8255\n");
