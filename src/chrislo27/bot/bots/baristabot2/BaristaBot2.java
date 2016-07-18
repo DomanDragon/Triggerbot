@@ -56,7 +56,7 @@ public class BaristaBot2 extends Bot {
 	public static final int RANDOM_LIMIT = 10;
 	public static final float VOTE_SKIP_RATIO = 0.5f;
 	public static final String SONG_METADATA_VOTE_SKIP = "voteSkip_";
-	public static final String[] RESTRICTED_CHANNELS = { "general", "botgeneralandmemes", "rhino" };
+	public static final String[] RESTRICTED_CHANNELS = {"general", "botgeneralandmemes", "rhino"};
 	public static final String IDEAL_CHANNEL = "201511701345075200";
 	public IVoiceChannel radioChannel = null;
 	public AudioPlayer audioPlayer;
@@ -126,9 +126,9 @@ public class BaristaBot2 extends Bot {
 		try {
 			sendMessage(getNewBuilder(
 					client.getOrCreatePMChannel(client.getUserByID("188789412426022914")))
-							.appendContent(":warning: **Sending distress signal; please help!**\n")
-							.appendContent("Currently "
-									+ new Date(System.currentTimeMillis()).toString() + "\n"));
+					.appendContent(":warning: **Sending distress signal; please help!**\n")
+					.appendContent("Currently "
+							+ new Date(System.currentTimeMillis()).toString() + "\n"));
 		} catch (RateLimitException | DiscordException e) {
 			e.printStackTrace();
 		}
@@ -181,10 +181,11 @@ public class BaristaBot2 extends Bot {
 
 		if ((message.toLowerCase().contains("kill") && message.toLowerCase().contains("myself"))
 				|| (message.toLowerCase().contains("commit")
-						&& message.toLowerCase().contains("suicide"))) {
+				&& message.toLowerCase().contains("suicide"))) {
 			MessageBuilder builder = getNewBuilder(channel);
 
-			if (!channel.isPrivate()) builder.appendContent(author.mention() + "\n");
+			if (!channel.isPrivate())
+				builder.appendContent(author.mention() + "\n");
 			builder.appendContent("__United States__: 1-800-273-8255\n");
 			builder.appendContent("__Canada__: 221, or 1-800-668-6868 for youth\n");
 			builder.appendContent("__EU__: 116 123\n");
@@ -199,7 +200,8 @@ public class BaristaBot2 extends Bot {
 		}
 
 		for (IUser mention : messageObj.getMentions()) {
-			if (messageObj.mentionsEveryone()) break;
+			if (messageObj.mentionsEveryone())
+				break;
 			if (mention.getID().equals(client.getOurUser().getID())) {
 				long permLevel = PermPrefs.getPermissionsLevel(author.getID());
 
@@ -238,8 +240,10 @@ public class BaristaBot2 extends Bot {
 			int i = message.indexOf("%%%");
 			message = message.substring(i + 2);
 		}
-		if (!message.startsWith("%") || message.length() <= 1) return;
-		if (author.isBot() && author != client.getOurUser()) return;
+		if (!message.startsWith("%") || message.length() <= 1)
+			return;
+		if (author.isBot() && author != client.getOurUser())
+			return;
 
 		String[] args = message.substring(1).split("\\s+");
 		String command = args[0].toLowerCase();
@@ -290,15 +294,20 @@ public class BaristaBot2 extends Bot {
 
 	public boolean emptyQueueIfAllGone(IChannel channel, MessageBuilder builder) {
 		for (IUser user : radioChannel.getConnectedUsers()) {
-			if (user == client.getOurUser()) continue;
-			if (user.isBot()) continue;
-			if (user.isDeafLocally() || user.isDeaf(radioChannel.getGuild())) continue;
-			if (PermPrefs.getPermissionsLevel(user.getID()) <= PermissionTier.DUNGEON) continue;
+			if (user == client.getOurUser())
+				continue;
+			if (user.isBot())
+				continue;
+			if (user.isDeafLocally() || user.isDeaf(radioChannel.getGuild()))
+				continue;
+			if (PermPrefs.getPermissionsLevel(user.getID()) <= PermissionTier.DUNGEON)
+				continue;
 
 			return false;
 		}
 
-		if (audioPlayer.playlistSize() == 0) return false;
+		if (audioPlayer.playlistSize() == 0)
+			return false;
 
 		audioPlayer.skipTo(audioPlayer.playlistSize());
 		setStatus(null);
@@ -451,7 +460,8 @@ public class BaristaBot2 extends Bot {
 					&& !channel.getGuild().getID().equals("199604421955420160"))
 				continue;
 
-			if (channel.getName().equalsIgnoreCase("radio")) return channel;
+			if (channel.getName().equalsIgnoreCase("radio"))
+				return channel;
 		}
 
 		return null;
@@ -471,7 +481,8 @@ public class BaristaBot2 extends Bot {
 			return "The bot's radio channel isn't in this server!";
 		}
 
-		if (PermPrefs.getPermissionsLevel(author.getID()) >= PermissionTier.ADMIN) return null;
+		if (PermPrefs.getPermissionsLevel(author.getID()) >= PermissionTier.ADMIN)
+			return null;
 
 		for (String s : RESTRICTED_CHANNELS) {
 			if (channel.getName().equalsIgnoreCase(s)) {
@@ -509,7 +520,8 @@ public class BaristaBot2 extends Bot {
 	}
 
 	public void showQueue(IChannel channel) {
-		if (!canPlayMusic(channel)) return;
+		if (!canPlayMusic(channel))
+			return;
 
 		boolean shouldBoldLimit = audioPlayer.playlistSize() >= (QUEUE_LIMIT - 5);
 		String limitMsg = (shouldBoldLimit ? "**" : "") + audioPlayer.playlistSize()
@@ -541,8 +553,8 @@ public class BaristaBot2 extends Bot {
 			if (i == 0) {
 				builder.appendContent(" - "
 						+ String.format("%02d:%02d", TimeUnit.MILLISECONDS.toMinutes(elapsed),
-								TimeUnit.MILLISECONDS.toSeconds(elapsed) - TimeUnit.MINUTES
-										.toSeconds(TimeUnit.MILLISECONDS.toMinutes(elapsed)))
+						TimeUnit.MILLISECONDS.toSeconds(elapsed) - TimeUnit.MINUTES
+								.toSeconds(TimeUnit.MILLISECONDS.toMinutes(elapsed)))
 						+ " elapsed");
 			}
 
@@ -557,8 +569,10 @@ public class BaristaBot2 extends Bot {
 	}
 
 	public void shuffle(IChannel channel) {
-		if (!canPlayMusic(channel)) return;
-		if (audioPlayer.playlistSize() == 0) return;
+		if (!canPlayMusic(channel))
+			return;
+		if (audioPlayer.playlistSize() == 0)
+			return;
 
 		Track first = audioPlayer.getCurrentTrack();
 		Collections.shuffle(audioPlayer.getPlaylist());
@@ -572,7 +586,8 @@ public class BaristaBot2 extends Bot {
 	}
 
 	public void queueAudio(IChannel channel, Song song, MessageBuilder builder) {
-		if (!canPlayMusic(channel)) return;
+		if (!canPlayMusic(channel))
+			return;
 		if (song == null) {
 			builder.appendContent("The file to be queued is null!");
 			Main.warn("File for queuing was null");
@@ -645,7 +660,8 @@ public class BaristaBot2 extends Bot {
 	}
 
 	public void skipTrack(IChannel channel, boolean showSkippedMessage) {
-		if (!canPlayMusic(channel)) return;
+		if (!canPlayMusic(channel))
+			return;
 
 		List<Track> playlist = audioPlayer.getPlaylist();
 		MessageBuilder builder = getNewBuilder(channel);
@@ -674,13 +690,16 @@ public class BaristaBot2 extends Bot {
 
 	/**
 	 * Votes/unvotes the user, then checks if skipping is available, then skips if it's possible.
+	 *
 	 * @param user
 	 * @param channel
 	 * @return
 	 */
 	public String voteToSkipTrackAndAct(IUser user, IChannel channel) {
-		if (!canPlayMusic(channel)) return null;
-		if (audioPlayer.getCurrentTrack() == null) return "There isn't a song to skip.";
+		if (!canPlayMusic(channel))
+			return null;
+		if (audioPlayer.getCurrentTrack() == null)
+			return "There isn't a song to skip.";
 		if (channel.isPrivate()
 				&& PermPrefs.getPermissionsLevel(user.getID()) < PermissionTier.ADMIN)
 			return "Cannot vote to skip in a private channel.";
