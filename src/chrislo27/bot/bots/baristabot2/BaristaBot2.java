@@ -157,8 +157,8 @@ public class BaristaBot2 extends Bot {
 				Main.error("Failed to send message!");
 				e.printStackTrace();
 
-				// TODO change to "CloudFlare" after my PR gets merged
-				if (e.getErrorMessage().contains("502")) {
+				if (e.getErrorMessage().contains("502")
+						&& e.getErrorMessage().contains("CloudFlare")) {
 					Main.info(
 							"Exception was a 502, throwing RateLimitException to trick request buffer");
 					throw new RateLimitException("Fake exception thrown because of HTTP 502", 3500,
