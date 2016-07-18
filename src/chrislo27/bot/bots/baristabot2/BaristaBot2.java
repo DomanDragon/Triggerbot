@@ -1,21 +1,5 @@
 package chrislo27.bot.bots.baristabot2;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
-import javax.sound.sampled.UnsupportedAudioFileException;
-
-import com.google.code.chatterbotapi.ChatterBot;
-import com.google.code.chatterbotapi.ChatterBotFactory;
-import com.google.code.chatterbotapi.ChatterBotSession;
-import com.google.code.chatterbotapi.ChatterBotType;
-
 import chrislo27.bot.Main;
 import chrislo27.bot.MusicDatabase;
 import chrislo27.bot.MusicDatabase.Song;
@@ -23,32 +7,26 @@ import chrislo27.bot.bots.Bot;
 import chrislo27.bot.bots.baristabot2.trivia.TriviaGame;
 import chrislo27.bot.util.TickTask;
 import chrislo27.bot.util.Utils;
+import com.google.code.chatterbotapi.ChatterBot;
+import com.google.code.chatterbotapi.ChatterBotFactory;
+import com.google.code.chatterbotapi.ChatterBotSession;
+import com.google.code.chatterbotapi.ChatterBotType;
 import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.api.events.EventSubscriber;
-import sx.blah.discord.handle.impl.events.MessageReceivedEvent;
-import sx.blah.discord.handle.impl.events.ReadyEvent;
-import sx.blah.discord.handle.impl.events.UserJoinEvent;
-import sx.blah.discord.handle.impl.events.UserLeaveEvent;
-import sx.blah.discord.handle.impl.events.UserVoiceChannelJoinEvent;
-import sx.blah.discord.handle.impl.events.UserVoiceChannelLeaveEvent;
-import sx.blah.discord.handle.impl.events.UserVoiceChannelMoveEvent;
-import sx.blah.discord.handle.obj.IChannel;
-import sx.blah.discord.handle.obj.IMessage;
-import sx.blah.discord.handle.obj.IPrivateChannel;
-import sx.blah.discord.handle.obj.IUser;
-import sx.blah.discord.handle.obj.IVoiceChannel;
-import sx.blah.discord.handle.obj.Presences;
-import sx.blah.discord.handle.obj.Status;
-import sx.blah.discord.util.DiscordException;
-import sx.blah.discord.util.MessageBuilder;
+import sx.blah.discord.handle.impl.events.*;
+import sx.blah.discord.handle.obj.*;
+import sx.blah.discord.util.*;
 import sx.blah.discord.util.MessageBuilder.Styles;
-import sx.blah.discord.util.MissingPermissionsException;
-import sx.blah.discord.util.RateLimitException;
-import sx.blah.discord.util.RequestBuffer;
 import sx.blah.discord.util.audio.AudioPlayer;
 import sx.blah.discord.util.audio.AudioPlayer.Track;
 import sx.blah.discord.util.audio.events.TrackFinishEvent;
 import sx.blah.discord.util.audio.events.TrackStartEvent;
+
+import javax.sound.sampled.UnsupportedAudioFileException;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class BaristaBot2 extends Bot {
 
@@ -288,6 +266,14 @@ public class BaristaBot2 extends Bot {
 
 		if (currentTrivia != null) {
 			currentTrivia.tickUpdate();
+		}
+
+		if (Main.ticks % Main.TICK_RATE * 2 == 0) {
+			Status st = client.getOurUser().getStatus();
+
+			if (audioPlayer != null && audioPlayer.playlistSize() == 0 && !st.isEmpty()) {
+				client.changeStatus(Status.empty());
+			}
 		}
 	}
 
