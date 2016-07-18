@@ -340,7 +340,8 @@ public class BaristaBot2 extends Bot {
 		IUser user = event.getUser();
 
 		if (!user.isMutedLocally() && !user.isMuted(radioChannel.getGuild())
-				&& event.getChannel().getID().equals(radioChannel.getID())) {
+				&& event.getChannel().getID().equals(radioChannel.getID())
+				&& !user.equals(client.getOurUser())) {
 			TickTask tt = new TickTask() {
 
 				@Override
