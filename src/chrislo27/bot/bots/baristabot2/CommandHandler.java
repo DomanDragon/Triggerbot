@@ -1538,11 +1538,12 @@ public class CommandHandler {
 					return CommandResponse.insufficientPermission(permLevel, PermissionTier.ADMIN);
 				} else {
 					bot.sendMessage(bot.getNewBuilder(channel)
-							.withContent("__Selling ***FREE*** popcorn! (with purchase)__\n"
+							.withContent("__Selling popcorn and alcohol!__\n"
 									+ ":popcorn: :popcorn: :popcorn: :popcorn: :popcorn: :popcorn: :popcorn:\n"
-									+ "*Get additive (stacking) discounts/undiscounts for the following:*\n"
+									+ ":beer: :beer: :beer: :beer: :beer: :beer: :beer:\n"
+									+ "*Get additive (stacking) discounts for the following:*\n"
 									+ "**10% DISCOUNT!** - if chrislo27 or ahemtoday is involved\n"
-									+ "**10% MORE!** - if megaminerzero is actively attempting to quell the situation\n"
+									+ "**10% MORE!** - if megaminerzero is involved\n"
 									+ "**50% MORE!** - if bluemurderguitarbunny is selling popcorn at the same time"));
 					return null;
 				}
