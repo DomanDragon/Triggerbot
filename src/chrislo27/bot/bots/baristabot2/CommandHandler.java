@@ -290,7 +290,7 @@ public class CommandHandler {
 							builder.appendContent("http://i.imgur.com/RBYEFE1.png");
 							break;
 						case "pgj":
-							builder.appendContent("http://i.imgur.com/EAOQz0a.png");
+							builder.appendContent("http://i.imgur.com/tUBkEbO.png");
 							break;
 						case "273rdcontact":
 							builder.appendContent("http://i.imgur.com/qKaXnoQ.png");
