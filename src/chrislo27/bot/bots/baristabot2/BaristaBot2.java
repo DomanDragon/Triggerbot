@@ -278,7 +278,7 @@ public class BaristaBot2 extends Bot {
 		if (Main.ticks % Main.TICK_RATE * 2 == 0) {
 			Status st = client.getOurUser().getStatus();
 
-			if (audioPlayer != null && audioPlayer.playlistSize() == 0 && !st.isEmpty()) {
+			if (audioPlayer != null && audioPlayer.getPlaylistSize() == 0 && !st.isEmpty()) {
 				client.changeStatus(Status.empty());
 			}
 		}
@@ -298,10 +298,10 @@ public class BaristaBot2 extends Bot {
 			return false;
 		}
 
-		if (audioPlayer.playlistSize() == 0)
+		if (audioPlayer.getPlaylistSize() == 0)
 			return false;
 
-		audioPlayer.skipTo(audioPlayer.playlistSize());
+		audioPlayer.skipTo(audioPlayer.getPlaylistSize());
 		setStatus(null);
 
 		Main.info("Cleared queue due to no one/all deaf in the radio channel");
@@ -518,17 +518,17 @@ public class BaristaBot2 extends Bot {
 		if (!canPlayMusic(channel))
 			return;
 
-		boolean shouldBoldLimit = audioPlayer.playlistSize() >= (QUEUE_LIMIT - 5);
-		String limitMsg = (shouldBoldLimit ? "**" : "") + audioPlayer.playlistSize()
+		boolean shouldBoldLimit = audioPlayer.getPlaylistSize() >= (QUEUE_LIMIT - 5);
+		String limitMsg = (shouldBoldLimit ? "**" : "") + audioPlayer.getPlaylistSize()
 				+ (shouldBoldLimit ? "**" : "") + " / " + QUEUE_LIMIT + " limit.";
 		MessageBuilder builder = getNewBuilder(channel)
 				.appendContent("Here's what's in the queue. ");
 		builder.appendContent(limitMsg);
 		if (shouldBoldLimit) {
 			builder.appendContent(" ");
-			if (audioPlayer.playlistSize() < QUEUE_LIMIT) {
+			if (audioPlayer.getPlaylistSize() < QUEUE_LIMIT) {
 				builder.appendContent("You're approaching the queue limit!", Styles.BOLD);
-			} else if (audioPlayer.playlistSize() == QUEUE_LIMIT) {
+			} else if (audioPlayer.getPlaylistSize() == QUEUE_LIMIT) {
 				builder.appendContent("Queue full!", Styles.BOLD);
 			} else {
 				builder.appendContent("You're __over__ the queue limit!", Styles.BOLD);
@@ -566,7 +566,7 @@ public class BaristaBot2 extends Bot {
 	public void shuffle(IChannel channel) {
 		if (!canPlayMusic(channel))
 			return;
-		if (audioPlayer.playlistSize() == 0)
+		if (audioPlayer.getPlaylistSize() == 0)
 			return;
 
 		Track first = audioPlayer.getCurrentTrack();
@@ -590,7 +590,7 @@ public class BaristaBot2 extends Bot {
 			return;
 		}
 
-		if (audioPlayer.playlistSize() >= QUEUE_LIMIT) {
+		if (audioPlayer.getPlaylistSize() >= QUEUE_LIMIT) {
 			builder.appendContent(
 					"You can't add any more songs to the playlist (maximum " + QUEUE_LIMIT + ").");
 			Main.info("Hit playlist limit when attempting to add more");
