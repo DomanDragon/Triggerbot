@@ -621,7 +621,8 @@ public class CommandHandler {
 					Attachment attachment = message.getAttachments().get(0);
 
 					if (!(attachment.getFilename().toLowerCase().endsWith(".jpg")
-							|| attachment.getFilename().toLowerCase().endsWith(".png"))) {
+							|| attachment.getFilename().toLowerCase().endsWith(".png") || attachment.getFilename()
+							.toLowerCase().endsWith(".jpeg"))) {
 						return "File must be png or jpg!";
 					}
 
@@ -1440,7 +1441,7 @@ public class CommandHandler {
 									+ " " + args[0] + (u != null ? " " + u.getName() : "") + " for " + (additive ?
 									"another " : "")
 									+ duration + " seconds (perm level now " + PermPrefs.getPermissionsLevel(args[0])
-							+ ")"));
+									+ ")"));
 				}
 				return null;
 			case "bitrate":
