@@ -52,7 +52,6 @@ public class CommandHandler {
 		builder.appendContent(
 				"%reaction/react/img [image] - Posts a reaction picture or displays the list, if no image provided\n");
 		builder.appendContent("%8ball/8-ball - Ask the magic 8-ball\n");
-		builder.appendContent("%perms [id] - Gets the ID of either you, or the ID provided\n");
 		builder.appendContent("%uptime - View how long the bot has been up\n");
 		builder.appendContent("%stats - View miscellaneous statistics\n");
 		builder.appendContent("%incidents - View past incidents\n");
@@ -69,7 +68,9 @@ public class CommandHandler {
 		//						+ "Powered by `https://github.com/MasterKale/WanaKanaJava`\n");
 		builder.appendContent("%shippingforecast - Gets the shipping forecast\n");
 		builder.appendContent("%timetravel [ms time] - Time travel\n");
-		builder.appendContent("%girafferator troger [size multiplier] [positionX offset in pixels] [positionY offset" +
+		builder.appendContent("%girafferator [troger/giraffe/judge] [size multiplier] [positionX offset in pixels] " +
+				"[positionY " +
+				"offset" +
 				" " +
 				"in pixels]\n");
 	}
@@ -115,6 +116,7 @@ public class CommandHandler {
 		builder.appendContent(
 				"%movetovoicechannel [id] - Move to your first-connected or specified voice channel\n");
 		builder.appendContent("%popcorn - Purchase popcorn\n");
+		builder.appendContent("%perms [id] - Gets the ID of either you, or the ID provided\n");
 	}
 
 	public void addMusicHelpToBuilder(MessageBuilder builder) {
@@ -361,20 +363,6 @@ public class CommandHandler {
 					return CommandResponse.insufficientPermission(permLevel, PermissionTier.NORMAL);
 				bot.sendMessage(bot.getNewBuilder(channel).appendContent(":8ball:  ")
 						.appendContent(EightBall.getResponse(), Styles.INLINE_CODE));
-				return null;
-			case "perms":
-				if (permLevel < PermissionTier.NORMAL)
-					return CommandResponse.insufficientPermission(permLevel, PermissionTier.NORMAL);
-
-				if (args.length < 1) {
-					bot.sendMessage(bot.getNewBuilder(channel)
-							.appendContent(user.mention() + " Your permission tier is "
-									+ PermPrefs.getPermissionsLevel(user.getID())));
-				} else {
-					bot.sendMessage(bot.getNewBuilder(channel).appendContent("The permission level of "
-							+ args[0] + " is " + PermPrefs.getPermissionsLevel(args[0])));
-				}
-
 				return null;
 			case "uptime":
 				if (permLevel < PermissionTier.NORMAL) {
@@ -1586,6 +1574,20 @@ public class CommandHandler {
 									+ "**50% MORE!** - if bluemurderguitarbunny is selling popcorn at the same time"));
 					return null;
 				}
+			case "perms":
+				if (permLevel < PermissionTier.ADMIN)
+					return CommandResponse.insufficientPermission(permLevel, PermissionTier.ADMIN);
+
+				if (args.length < 1) {
+					bot.sendMessage(bot.getNewBuilder(channel)
+							.appendContent(user.mention() + " Your permission tier is "
+									+ PermPrefs.getPermissionsLevel(user.getID())));
+				} else {
+					bot.sendMessage(bot.getNewBuilder(channel).appendContent("The permission level of "
+							+ args[0] + " is " + PermPrefs.getPermissionsLevel(args[0])));
+				}
+
+				return null;
 		}
 
 		return CommandResponse.doesNotExist();
