@@ -1537,7 +1537,6 @@ public class CommandHandler {
 				if (permLevel < PermissionTier.ADMIN) {
 					return CommandResponse.insufficientPermission(permLevel, PermissionTier.ADMIN);
 				} else {
-					int index = 0;
 					String id = null;
 
 					if (args.length >= 1) {
@@ -1606,7 +1605,7 @@ public class CommandHandler {
 				+ command + " in channel " + channel.getName() + " with arguments "
 				+ Arrays.toString(args));
 
-		String result = null;
+		String result;
 
 		try {
 			result = doCommand(command, message, channel, author, args);
