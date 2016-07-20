@@ -98,7 +98,7 @@ public class CommandHandler {
 		builder.appendContent("%refreshdb/refreshdatabase - Refreshes song database\n");
 		builder.appendContent("%togglequeue - Toggles queuing\n");
 		builder.appendContent(
-				"%tempban/arrest <id> <seconds> - Temporarily bans someone for the duration\n");
+				"%tempban/arrest <id> <seconds> [+] - Temporarily bans someone for the duration/additive\n");
 		builder.appendContent("%username <name> - Sets the bot's username\n");
 		builder.appendContent("%bitrate [value] - Gets or sets the bitrate of the radio channel\n");
 		builder.appendContent(
