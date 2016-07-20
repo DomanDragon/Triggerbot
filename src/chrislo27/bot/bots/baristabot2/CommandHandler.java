@@ -851,7 +851,6 @@ public class CommandHandler {
 				}
 
 				return null;
-			case "\u23E9":
 			case "skip":
 				if (permLevel < PermissionTier.NORMAL)
 					return CommandResponse.insufficientPermission(permLevel, PermissionTier.NORMAL);
@@ -946,7 +945,6 @@ public class CommandHandler {
 					bot.showQueue(channel);
 				}
 				return null;
-			case "\u1F50":
 			case "shuffle":
 				if (permLevel < PermissionTier.NORMAL)
 					return CommandResponse.insufficientPermission(permLevel, PermissionTier.NORMAL);
