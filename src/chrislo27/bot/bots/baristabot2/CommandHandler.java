@@ -1264,7 +1264,7 @@ public class CommandHandler {
 						return "AudioPlayer is null!";
 					}
 
-					bot.audioPlayer.skipTo(bot.audioPlayer.getPlaylistSize());
+					bot.audioPlayer.clear();
 					bot.sendMessage(bot.getNewBuilder(channel).appendContent("Cleared queue."));
 					bot.setStatus(null);
 

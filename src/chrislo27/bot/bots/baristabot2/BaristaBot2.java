@@ -299,7 +299,7 @@ public class BaristaBot2 extends Bot {
 		if (audioPlayer.getPlaylistSize() == 0)
 			return false;
 
-		audioPlayer.skipTo(audioPlayer.getPlaylistSize());
+		audioPlayer.clear();
 		setStatus(null);
 
 		Main.info("Cleared queue due to no one/all deaf in the radio channel");
