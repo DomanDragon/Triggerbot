@@ -44,7 +44,8 @@ public class CommandHandler {
 		builder.appendContent("**__Normal commands:__**\n");
 		builder.appendContent("*Use three percents %%% to embed a command to be ran*\n");
 		builder.appendContent(
-				"%help/? [trusted/mod/moderator/admin/radio/music/trivia] - Shows this message or the desired help page\n");
+				"%help/? [trusted/mod/moderator/admin/radio/music/trivia] - Shows this message or the desired help " +
+						"page\n");
 		builder.appendContent("%info - What does this bot do?\n");
 		builder.appendContent("%woof - woof\n");
 		builder.appendContent("%hi/hello - Hello!\n");
@@ -62,7 +63,8 @@ public class CommandHandler {
 		//		builder.appendContent(
 		//				"%japaneseify <romaji> - Converts Romaji to Katakana, use for English loanwords and such");
 		//		builder.appendContent(
-		//				"%toKana <romaji> - Converts Romaji to Japanese Kana (use only if you know what you're doing!) - "
+		//				"%toKana <romaji> - Converts Romaji to Japanese Kana (use only if you know what you're doing!)
+		// - "
 		//						+ "Use lowercase for Hiragana (ひらがな), and capitals for Katakana (カタカナ) - "
 		//						+ "Powered by `https://github.com/MasterKale/WanaKanaJava`\n");
 		builder.appendContent("%shippingforecast - Gets the shipping forecast\n");
@@ -625,7 +627,9 @@ public class CommandHandler {
 						final HttpURLConnection connection = (HttpURLConnection) new URL(
 								attachment.getUrl()).openConnection();
 						connection.setRequestProperty("User-Agent",
-								"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.65 Safari/537.31");
+								"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.31 (KHTML, like " +
+										"Gecko)" +
+										" Chrome/26.0.1410.65 Safari/537.31");
 						BufferedImage sentIn = ImageIO.read(connection.getInputStream());
 						BufferedImage paste = ImageIO
 								.read(new File("resources/giraffe/" + toUse + ".png"));
@@ -761,7 +765,9 @@ public class CommandHandler {
 
 					builder.appendContent(user.mention() + " __What does this bot do?__\n");
 					builder.appendContent("It is a utility bot for the Rhythm Heaven Discord server.\n");
-					builder.appendContent("It can play RH soundtracks in the Radio voice channel (`%help radio`) among other things.\n");
+					builder.appendContent("It can play RH soundtracks in the Radio voice channel (`%help radio`) " +
+							"among" +
+							" other things.\n");
 					builder.appendContent("It is made and maintained by chrislo27.");
 
 					bot.sendMessage(builder);
@@ -852,7 +858,7 @@ public class CommandHandler {
 					number = Utils.clamp(
 							bot.audioPlayer == null ? BaristaBot2.RANDOM_LIMIT
 									: Math.min(BaristaBot2.RANDOM_LIMIT,
-									BaristaBot2.QUEUE_LIMIT - bot.audioPlayer.playlistSize()),
+									BaristaBot2.QUEUE_LIMIT - bot.audioPlayer.getPlaylistSize()),
 							1, number);
 
 					//criteria = "Bouncy Road";
@@ -870,7 +876,8 @@ public class CommandHandler {
 
 					MessageBuilder builder = bot.getNewBuilder(channel);
 
-					// gets criteria list, shuffles, it, starts iterating through it until number is reached, or current index is out of range
+					// gets criteria list, shuffles, it, starts iterating through it until number is reached, or
+					// current index is out of range
 					int totalQueued = 0;
 					outer:
 					for (int i = 0, n = number, boundIndex = 0; i < n
@@ -1159,13 +1166,13 @@ public class CommandHandler {
 
 				if (args.length < 1) {
 					return "Requires at least one argument!";
-				} else if (bot.audioPlayer.playlistSize() == 0) {
+				} else if (bot.audioPlayer.getPlaylistSize() == 0) {
 					return "There's nothing in the queue!";
 				} else {
 					try {
 						int index = Integer.parseInt(args[0]);
 
-						if (index < 1 || index > bot.audioPlayer.playlistSize()) {
+						if (index < 1 || index > bot.audioPlayer.getPlaylistSize()) {
 							return "The index " + index + " is out of range!";
 						}
 
@@ -1212,7 +1219,7 @@ public class CommandHandler {
 						Song song = MusicDatabase.instance().files.get(text.toLowerCase());
 						int index = Integer.parseInt(args[0]);
 
-						if (index < 1 || index > bot.audioPlayer.playlistSize()) {
+						if (index < 1 || index > bot.audioPlayer.getPlaylistSize()) {
 							return "The index " + index + " is out of range!";
 						}
 
@@ -1242,7 +1249,7 @@ public class CommandHandler {
 						return "AudioPlayer is null!";
 					}
 
-					bot.audioPlayer.skipTo(bot.audioPlayer.playlistSize());
+					bot.audioPlayer.skipTo(bot.audioPlayer.getPlaylistSize());
 					bot.sendMessage(bot.getNewBuilder(channel).appendContent("Cleared queue."));
 					bot.setStatus(null);
 
@@ -1380,7 +1387,7 @@ public class CommandHandler {
 					return CommandResponse.insufficientPermission(permLevel, PermissionTier.ADMIN);
 
 				if (args.length < 2) {
-					return "Requires two arguments!";
+					return "Requires at least two arguments!";
 				} else {
 					int duration = Integer.parseInt(args[1]);
 
@@ -1388,11 +1395,15 @@ public class CommandHandler {
 						return "Duration cannot be less than 0!";
 					}
 
-					if (System.currentTimeMillis() < 0) {
-						return "Cannot be before January 1, 1970!";
+					if (System.currentTimeMillis() <= 0) {
+						return "Must be currently after epoch!";
 					}
 
-					long banEndTime = System.currentTimeMillis() + duration * 1000;
+					boolean additive = args.length >= 3 && args[2].equals("+");
+					long currentPermissions = PermPrefs.getPermissionsLevel(args[0]);
+					long banEndTime = (!additive && currentPermissions < 0 ? System.currentTimeMillis() : Math.abs
+							(currentPermissions)
+					) + duration * 1000;
 
 					PermPrefs.setPermissionsLevel(args[0], -banEndTime);
 
@@ -1400,7 +1411,8 @@ public class CommandHandler {
 
 					bot.sendMessage(bot.getNewBuilder(channel)
 							.appendContent((caseCommand.equals("arrest") ? "Arrested" : "Tempbanned")
-									+ " " + args[0] + (u != null ? " " + u.getName() : "") + " for "
+									+ " " + args[0] + (u != null ? " " + u.getName() : "") + " for " + (additive ?
+									"another " : "")
 									+ duration + " seconds"));
 				}
 				return null;
@@ -1591,7 +1603,8 @@ public class CommandHandler {
 		public static String insufficientPermission(long perm, long required) {
 			// best practice indicates that it should fail silently
 			return null;
-			//						return "You have insufficient permissions. (Required " + required + ", you have " + perm
+			//						return "You have insufficient permissions. (Required " + required + ", you have "
+			// + perm
 			//								+ ")";
 		}
 
