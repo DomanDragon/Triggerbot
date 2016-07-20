@@ -69,6 +69,9 @@ public class CommandHandler {
 		//						+ "Powered by `https://github.com/MasterKale/WanaKanaJava`\n");
 		builder.appendContent("%shippingforecast - Gets the shipping forecast\n");
 		builder.appendContent("%timetravel [ms time] - Time travel\n");
+		builder.appendContent("%girafferator troger [size multiplier] [positionX offset in pixels] [positionY offset" +
+				" " +
+				"in pixels\n");
 	}
 
 	public void addTrustedHelpToBuilder(MessageBuilder builder) {
@@ -108,10 +111,10 @@ public class CommandHandler {
 		builder.appendContent("%idle - Toggles idle status light\n");
 		builder.appendContent("%senddistress - Sends a test distress signal\n");
 		builder.appendContent("%say <channelID> <message> - Say a thing\n");
-		builder.appendContent("%senddm <id> <message> - Send a DM");
+		builder.appendContent("%senddm <id> <message> - Send a DM\n");
 		builder.appendContent(
-				"%movetovoicechannel [id] - Move to your first-connected or specified voice channel");
-		builder.appendContent("%popcorn - Purchase popcorn");
+				"%movetovoicechannel [id] - Move to your first-connected or specified voice channel\n");
+		builder.appendContent("%popcorn - Purchase popcorn\n");
 	}
 
 	public void addMusicHelpToBuilder(MessageBuilder builder) {
@@ -605,8 +608,15 @@ public class CommandHandler {
 					return "No attachment found!";
 				} else {
 					String toUse = "giraffe";
-					if (args.length > 0 && args[0].equalsIgnoreCase("troger"))
-						toUse = "troger";
+					if (args.length > 0) {
+						if (args[0].equalsIgnoreCase("troger")) {
+							toUse = "troger";
+						} else if (args[0].equalsIgnoreCase("judge")) {
+							toUse = "judge";
+						} else if (args[0].equalsIgnoreCase("giraffe")) {
+							toUse = "giraffe";
+						}
+					}
 
 					Attachment attachment = message.getAttachments().get(0);
 
@@ -618,10 +628,6 @@ public class CommandHandler {
 					if (attachment.getFilesize() > (2 * 1024 * 1024)) {
 						return "File must be at most 2 MB!";
 					}
-
-					// TODO remove
-					if (toUse.equals("troger") == false)
-						return "Only troger is working right now.";
 
 					try {
 						final HttpURLConnection connection = (HttpURLConnection) new URL(
@@ -638,9 +644,31 @@ public class CommandHandler {
 								sentIn.getHeight(), BufferedImage.TYPE_INT_ARGB);
 
 						Graphics g = combined.getGraphics();
-						int size = Math.min(combined.getWidth(), combined.getHeight()) / 3;
+
+						float x = 0;
+						float y = 0;
+						float size = Math.min(combined.getWidth(), combined.getHeight()) / 3;
+
+						if (args.length >= 2) {
+							try {
+								size *= Float.parseFloat(args[1]);
+
+								if (args.length >= 3)
+									x = Float.parseFloat(args[2]);
+								if (args.length >= 4)
+									y = Float.parseFloat(args[3]);
+							} catch (Exception e) {
+
+							}
+						}
+
+						float width = size;
+						float height = (paste.getHeight() * 1f / paste.getWidth()) * width;
+
 						g.drawImage(sentIn, 0, 0, null);
-						g.drawImage(paste, 0, combined.getHeight() / 2 - size / 2, size, size, null);
+						g.drawImage(paste, (int) (x), (int) ((combined.getHeight() / 2 - height / 2) + y), (int)
+										(width),
+								(int) (height), null);
 
 						File output = new File("resources/giraffe/tmp.png");
 						ImageIO.write(combined, "png", output);
@@ -832,7 +860,6 @@ public class CommandHandler {
 				} else {
 					return bot.voteToSkipTrackAndAct(user, channel);
 				}
-			case "\u1F50":
 			case "random":
 				if (permLevel < PermissionTier.NORMAL)
 					return CommandResponse.insufficientPermission(permLevel, PermissionTier.NORMAL);
@@ -919,6 +946,7 @@ public class CommandHandler {
 					bot.showQueue(channel);
 				}
 				return null;
+			case "\u1F50":
 			case "shuffle":
 				if (permLevel < PermissionTier.NORMAL)
 					return CommandResponse.insufficientPermission(permLevel, PermissionTier.NORMAL);
@@ -1558,6 +1586,12 @@ public class CommandHandler {
 									+ "**10% MORE!** - if megaminerzero is involved\n"
 									+ "**50% MORE!** - if bluemurderguitarbunny is selling popcorn at the same time"));
 					return null;
+				}
+			case "test":
+				if (permLevel < PermissionTier.ADMIN) {
+					return CommandResponse.insufficientPermission(permLevel, PermissionTier.ADMIN);
+				} else {
+					bot.radioChannel.leave();
 				}
 		}
 

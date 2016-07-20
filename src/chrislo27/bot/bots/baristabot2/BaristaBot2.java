@@ -442,7 +442,7 @@ public class BaristaBot2 extends Bot {
 		}
 
 		if (audioPlayer != null) {
-			audioPlayer.getPlaylist().clear();
+			audioPlayer.clear();
 		}
 		setStatus(null);
 	}
@@ -463,8 +463,8 @@ public class BaristaBot2 extends Bot {
 	}
 
 	public String checkMusicRestricted(IChannel channel, IUser author) {
-		if (audioPlayer == null) {
-			return "The AudioPlayer is null, ask a mod to use the command `%reconnectaudio`";
+		if (!canPlayMusic(channel)) {
+			return "Music could not be played because I wasn't connected - try again.";
 		}
 
 		if (debugMode && PermPrefs.getPermissionsLevel(author.getID()) < PermissionTier.ADMIN) {
@@ -494,7 +494,8 @@ public class BaristaBot2 extends Bot {
 		if (radioChannel == null || radioChannel.isConnected() == false) {
 			Main.info("Tried to play music, not connected to voice channel");
 			sendMessage(getNewBuilder(channel).appendContent(
-					"I'm not connected to the \"Radio\" channel, so I can't play music/do audio-related things."));
+					"I'm not connected to the \"Radio\" channel, so I can't play music/do audio-related things. **I " +
+							"will try to reconnect now!**"));
 
 			attemptConnectToRadioChannel(getDefaultRadioChannel());
 
@@ -504,7 +505,7 @@ public class BaristaBot2 extends Bot {
 		if (audioPlayer == null) {
 			Main.info("Audio player is null");
 			sendMessage(getNewBuilder(channel).appendContent(
-					"The AudioPlayer instance is null, ask a dev to reconnect it (reconnectaudio)"));
+					"The AudioPlayer instance is null, ask a mod or dev to manually reconnect it (%reconnectaudio)"));
 
 			attemptConnectToRadioChannel(getDefaultRadioChannel());
 
