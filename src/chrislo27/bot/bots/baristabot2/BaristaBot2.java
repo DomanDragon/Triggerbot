@@ -36,15 +36,13 @@ public class BaristaBot2 extends Bot {
 	public static final String SONG_METADATA_VOTE_SKIP = "voteSkip_";
 	public static final String[] RESTRICTED_CHANNELS = {"general", "botgeneralandmemes", "rhino"};
 	public static final String IDEAL_CHANNEL = "201511701345075200";
+	public final CommandHandler cmdHandler;
+	protected final Date startTime;
 	public IVoiceChannel radioChannel = null;
 	public AudioPlayer audioPlayer;
-	protected final Date startTime;
 	protected double secondsPlaying = 0;
 	protected long playingStartTime = System.currentTimeMillis();
 	protected boolean canAddToQueue = true;
-
-	public final CommandHandler cmdHandler;
-
 	private ChatterBot cleverbot;
 	private ChatterBotSession cleverbotSession;
 
@@ -68,6 +66,10 @@ public class BaristaBot2 extends Bot {
 		}
 	}
 
+	public boolean isDebugging() {
+		return debugMode;
+	}
+
 	public void setDebugging(boolean debug) {
 		debugMode = debug;
 
@@ -75,10 +77,6 @@ public class BaristaBot2 extends Bot {
 			client.changePresence(debugMode);
 			setStatus(null);
 		}
-	}
-
-	public boolean isDebugging() {
-		return debugMode;
 	}
 
 	public TriviaGame getCurrentTrivia() {
@@ -275,7 +273,7 @@ public class BaristaBot2 extends Bot {
 			currentTrivia.tickUpdate();
 		}
 
-		if (Main.ticks % Main.TICK_RATE * 2 == 0) {
+		if (ticksWithoutMusic == Main.TICK_RATE) {
 			Status st = client.getOurUser().getStatus();
 
 			if (audioPlayer != null && audioPlayer.getPlaylistSize() == 0 && !st.isEmpty()) {
