@@ -1587,12 +1587,6 @@ public class CommandHandler {
 									+ "**50% MORE!** - if bluemurderguitarbunny is selling popcorn at the same time"));
 					return null;
 				}
-			case "test":
-				if (permLevel < PermissionTier.ADMIN) {
-					return CommandResponse.insufficientPermission(permLevel, PermissionTier.ADMIN);
-				} else {
-					bot.radioChannel.leave();
-				}
 		}
 
 		return CommandResponse.doesNotExist();
