@@ -71,7 +71,7 @@ public class CommandHandler {
 		builder.appendContent("%timetravel [ms time] - Time travel\n");
 		builder.appendContent("%girafferator troger [size multiplier] [positionX offset in pixels] [positionY offset" +
 				" " +
-				"in pixels\n");
+				"in pixels]\n");
 	}
 
 	public void addTrustedHelpToBuilder(MessageBuilder builder) {
@@ -1427,7 +1427,7 @@ public class CommandHandler {
 
 					boolean additive = args.length >= 3 && args[2].equals("+");
 					long currentPermissions = PermPrefs.getPermissionsLevel(args[0]);
-					long banEndTime = (!additive && currentPermissions < 0 ? System.currentTimeMillis() : Math.abs
+					long banEndTime = (!additive || currentPermissions >= 0 ? System.currentTimeMillis() : Math.abs
 							(currentPermissions)
 					) + duration * 1000;
 
@@ -1439,7 +1439,8 @@ public class CommandHandler {
 							.appendContent((caseCommand.equals("arrest") ? "Arrested" : "Tempbanned")
 									+ " " + args[0] + (u != null ? " " + u.getName() : "") + " for " + (additive ?
 									"another " : "")
-									+ duration + " seconds"));
+									+ duration + " seconds (perm level now " + PermPrefs.getPermissionsLevel(args[0])
+							+ ")"));
 				}
 				return null;
 			case "bitrate":
